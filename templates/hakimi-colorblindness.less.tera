@@ -1,0 +1,38 @@
+---
+whiskers:
+  version: "2.9.0"
+  filename: "dist/hakimi-colorblindness.less"
+---
+// Hakimi Colorblindness Safe (Light Version)
+@cb-light-background: #{{ light.background }};
+@cb-light-foreground: #{{ light.foreground }};
+@cb-light-primary: #{{ light.primary }};
+@cb-light-secondary: #{{ light.secondary }};
+@cb-light-success: #{{ light.success }};
+@cb-light-warning: #{{ light.warning }};
+@cb-light-error: #{{ light.error }};
+@cb-light-info: #{{ light.info }};
+@cb-light-accent: #{{ light.accent }};
+
+@cb-light-syn-keyword: #{{ light.syn_keyword }};
+@cb-light-syn-string: #{{ light.syn_string }};
+@cb-light-syn-function: #{{ light.syn_function }};
+@cb-light-syn-type: #{{ light.syn_type }};
+@cb-light-syn-comment: #{{ light.syn_comment }};
+
+// Hakimi Colorblindness Safe (Dark Version)
+@cb-dark-background: #{{ dark.background }};
+@cb-dark-foreground: #{{ dark.foreground }};
+@cb-dark-primary: #{{ dark.primary }};
+@cb-dark-secondary: #{{ dark.secondary }};
+@cb-dark-success: #{{ dark.success }};
+@cb-dark-warning: #{{ dark.warning }};
+@cb-dark-error: #{{ dark.error }};
+@cb-dark-info: #{{ dark.info }};
+@cb-dark-accent: #{{ dark.accent }};
+
+@cb-dark-syn-keyword: #{{ dark.syn_keyword }};
+@cb-dark-syn-string: #{{ dark.syn_string }};
+@cb-dark-syn-function: #{{ dark.syn_function }};
+@cb-dark-syn-type: #{{ dark.syn_type }};
+@cb-dark-syn-comment: #{{ dark.syn_comment }};

@@ -1,0 +1,44 @@
+---
+whiskers:
+  version: "2.9.0"
+  filename: "dist/hakimi-colorblindness.css"
+---
+:root, .theme-light {
+  /* Functional UI Tokens */
+  --cb-background: #{{ light.background }};
+  --cb-foreground: #{{ light.foreground }};
+  --cb-primary: #{{ light.primary }};
+  --cb-secondary: #{{ light.secondary }};
+  --cb-success: #{{ light.success }};
+  --cb-warning: #{{ light.warning }};
+  --cb-error: #{{ light.error }};
+  --cb-info: #{{ light.info }};
+  --cb-accent: #{{ light.accent }};
+
+  /* Syntax Highlight Tokens */
+  --cb-syn-keyword: #{{ light.syn_keyword }};
+  --cb-syn-string: #{{ light.syn_string }};
+  --cb-syn-function: #{{ light.syn_function }};
+  --cb-syn-type: #{{ light.syn_type }};
+  --cb-syn-comment: #{{ light.syn_comment }};
+}
+
+.theme-dark {
+  /* Functional UI Tokens */
+  --cb-background: #{{ dark.background }};
+  --cb-foreground: #{{ dark.foreground }};
+  --cb-primary: #{{ dark.primary }};
+  --cb-secondary: #{{ dark.secondary }};
+  --cb-success: #{{ dark.success }};
+  --cb-warning: #{{ dark.warning }};
+  --cb-error: #{{ dark.error }};
+  --cb-info: #{{ dark.info }};
+  --cb-accent: #{{ dark.accent }};
+
+  /* Syntax Highlight Tokens */
+  --cb-syn-keyword: #{{ dark.syn_keyword }};
+  --cb-syn-string: #{{ dark.syn_string }};
+  --cb-syn-function: #{{ dark.syn_function }};
+  --cb-syn-type: #{{ dark.syn_type }};
+  --cb-syn-comment: #{{ dark.syn_comment }};
+}

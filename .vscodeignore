@@ -1,0 +1,9 @@
+# A theme extension ships only static JSON + manifest; nothing here runs.
+node_modules/**
+scripts/**
+templates/**
+dist/**
+.gitignore
+.vscodeignore
+package-lock.json
+*.vsix

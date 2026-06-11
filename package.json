@@ -1,0 +1,52 @@
+{
+  "name": "hakimi-theme",
+  "version": "1.2.0",
+  "publisher": "hakimi",
+  "displayName": "Hakimi Colorblindness Safe",
+  "description": "A colorblind-safe VSCode theme extension built entirely using accessible colors (Light and Dark versions)",
+  "type": "module",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "contributes": {
+    "themes": [
+      {
+        "label": "Hakimi Colorblindness Light",
+        "uiTheme": "vs",
+        "path": "./themes/hakimi-colorblindness-light.json"
+      },
+      {
+        "label": "Hakimi Colorblindness Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/hakimi-colorblindness-dark.json"
+      },
+      {
+        "label": "Hakimi Colorblindness Dark Bright",
+        "uiTheme": "vs-dark",
+        "path": "./themes/hakimi-colorblindness-dark-bright.json"
+      }
+    ]
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./palette.json": "./dist/palette.json",
+    "./css": "./dist/hakimi-colorblindness.css",
+    "./scss": "./dist/hakimi-colorblindness.scss",
+    "./less": "./dist/hakimi-colorblindness.less"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/test.mjs && node scripts/verify-consistency.mjs && node scripts/audit-deutan.mjs"
+  },
+  "dependencies": {
+    "@catppuccin/palette": "^1.7.1"
+  }
+}

@@ -1,0 +1,238 @@
+---
+whiskers:
+  version: "2.9.0"
+  filename: "themes/hakimi-colorblindness-dark.json"
+---
+{
+  "name": "Hakimi Colorblindness Dark",
+  "type": "dark",
+  "colors": {
+    "editor.background": "#{{ background }}",
+    "editor.foreground": "#{{ foreground }}",
+    "editorCursor.foreground": "#{{ primary }}",
+    "editor.lineHighlightBackground": "#1e1e1e",
+    "editor.lineHighlightBorder": "#2a2a2a",
+    "editorLineNumber.foreground": "#707070",
+    "editorLineNumber.activeForeground": "#{{ primary }}",
+    "editorBracketMatch.background": "#40b0a640",
+    "editorBracketMatch.border": "#{{ success }}",
+
+    "activityBar.background": "#181818",
+    "activityBar.foreground": "#{{ primary }}",
+    "activityBar.inactiveForeground": "#{{ syn_comment }}",
+    "activityBar.border": "#2a2a2a",
+
+    "sideBar.background": "#181818",
+    "sideBar.foreground": "#{{ foreground }}",
+    "sideBar.border": "#2a2a2a",
+    "sideBarTitle.foreground": "#{{ primary }}",
+
+    "statusBar.background": "#{{ background }}",
+    "statusBar.foreground": "#{{ syn_comment }}",
+    "statusBar.border": "#{{ background }}",
+
+    "titleBar.activeBackground": "#181818",
+    "titleBar.activeForeground": "#{{ foreground }}",
+    "titleBar.border": "#2a2a2a",
+
+    "tab.activeBackground": "#{{ background }}",
+    "tab.activeForeground": "#{{ primary }}",
+    "tab.inactiveBackground": "#1a1a1a",
+    "tab.inactiveForeground": "#{{ syn_comment }}",
+    "tab.border": "#2a2a2a",
+
+    "button.background": "#{{ primary }}",
+    "button.foreground": "#{{ background }}",
+    "button.hoverBackground": "#{{ accent }}",
+
+    "input.background": "#1e1e1e",
+    "input.foreground": "#{{ foreground }}",
+    "input.border": "#2a2a2a",
+    "input.placeholderForeground": "#{{ syn_comment }}"
+  },
+  "semanticHighlighting": true,
+  "semanticTokenColors": {
+    "class": "#{{ syn_type }}",
+    "type": "#{{ syn_type }}",
+    "interface": "#{{ syn_type }}",
+    "struct": "#{{ syn_type }}",
+    "enum": "#{{ syn_type }}",
+    "enumMember": "#{{ syn_type }}",
+    "typeParameter": "#{{ syn_type }}",
+    "type:defaultLibrary": "#{{ foreground }}",
+    "class:defaultLibrary": "#{{ syn_keyword }}",
+    "function": "#{{ syn_function }}",
+    "method": "#{{ syn_function }}",
+    "property": "#{{ foreground }}",
+    "variable": "#{{ foreground }}",
+    "parameter": "#{{ foreground }}",
+    "keyword": "#{{ syn_keyword }}",
+    "number": "#{{ syn_type }}",
+    "string": "#{{ syn_string }}"
+  },
+  "tokenColors": [
+    {
+      "name": "Comments",
+      "scope": [
+        "comment",
+        "punctuation.definition.comment",
+        "unused"
+      ],
+      "settings": {
+        "foreground": "#{{ syn_comment }}",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "name": "Strings",
+      "scope": [
+        "string",
+        "punctuation.definition.string",
+        "string.template"
+      ],
+      "settings": {
+        "foreground": "#{{ syn_string }}"
+      }
+    },
+    {
+      "name": "Keywords & Control",
+      "scope": [
+        "keyword",
+        "keyword.control",
+        "keyword.operator",
+        "punctuation.separator",
+        "punctuation.terminator"
+      ],
+      "settings": {
+        "foreground": "#{{ syn_keyword }}",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "name": "Functions & Methods",
+      "scope": [
+        "entity.name.function",
+        "support.function",
+        "variable.function",
+        "meta.function-call"
+      ],
+      "settings": {
+        "foreground": "#{{ syn_function }}"
+      }
+    },
+    {
+      "name": "Numbers & Constants",
+      "scope": [
+        "constant.numeric",
+        "constant.language",
+        "constant.character",
+        "constant.other",
+        "variable.other.constant"
+      ],
+      "settings": {
+        "foreground": "#{{ syn_type }}"
+      }
+    },
+    {
+      "name": "Types & Classes",
+      "scope": [
+        "entity.name.type",
+        "entity.name.class",
+        "support.class",
+        "storage.type",
+        "storage.modifier"
+      ],
+      "settings": {
+        "foreground": "#{{ syn_type }}"
+      }
+    },
+    {
+      "name": "Built-in Classes",
+      "scope": [
+        "support.class.builtin",
+        "support.class.js",
+        "support.class.ts"
+      ],
+      "settings": {
+        "foreground": "#{{ syn_keyword }}"
+      }
+    },
+    {
+      "name": "Variables, Parameters & Properties",
+      "scope": [
+        "variable",
+        "variable.parameter",
+        "variable.other",
+        "meta.block variable.other",
+        "variable.other.property",
+        "support.variable.property"
+      ],
+      "settings": {
+        "foreground": "#{{ foreground }}"
+      }
+    },
+    {
+      "name": "HTML/XML Tags",
+      "scope": [
+        "entity.name.tag",
+        "punctuation.definition.tag",
+        "meta.tag"
+      ],
+      "settings": {
+        "foreground": "#{{ syn_keyword }}"
+      }
+    },
+    {
+      "name": "HTML/XML Attributes",
+      "scope": [
+        "entity.other.attribute-name",
+        "meta.attribute"
+      ],
+      "settings": {
+        "foreground": "#{{ syn_string }}"
+      }
+    },
+    {
+      "name": "Errors",
+      "scope": [
+        "invalid",
+        "invalid.illegal"
+      ],
+      "settings": {
+        "foreground": "#{{ error }}",
+        "fontStyle": "bold underline"
+      }
+    },
+    {
+      "name": "Type Parameters and Brackets",
+      "scope": [
+        "punctuation.definition.typeparameters"
+      ],
+      "settings": {
+        "foreground": "#{{ syn_type }}"
+      }
+    },
+    {
+      "name": "Primitive Types",
+      "scope": [
+        "support.type.primitive",
+        "keyword.type"
+      ],
+      "settings": {
+        "foreground": "#{{ foreground }}"
+      }
+    },
+    {
+      "name": "JSON/YAML Keys",
+      "scope": [
+        "support.type.property-name.json",
+        "support.type.property-name.yaml",
+        "support.type.property-name.toml",
+        "entity.name.tag.yaml"
+      ],
+      "settings": {
+        "foreground": "#{{ primary }}"
+      }
+    }
+  ]
+}

@@ -1,0 +1,861 @@
+---
+whiskers:
+  version: "2.9.0"
+  filename: "themes/hakimi-colorblindness.json"
+---
+{
+  "$schema": "https://zed.dev/schema/themes/v0.2.0.json",
+  "name": "Hakimi Colorblindness Safe",
+  "author": "hakimi",
+  "themes": [
+    {
+      "name": "Hakimi Colorblindness Light",
+      "appearance": "light",
+      "style": {
+        "accents": [
+          "#{{ light.primary }}",
+          "#{{ light.secondary }}",
+          "#{{ light.accent }}"
+        ],
+        "background": "#{{ light.background }}",
+        "border": "#e9ecef",
+        "border.focused": "#{{ light.primary }}",
+        "border.selected": "#{{ light.primary }}",
+        "border.variant": "#f1f3f5",
+        "elevated_surface.background": "#f8f9fa",
+        "surface.background": "#f8f9fa",
+        "panel.background": "#f8f9fa",
+        "panel.focused_border": "#{{ light.primary }}4d",
+        "pane.focused_border": "#{{ light.primary }}",
+        "element.background": "#f1f3f5",
+        "element.hover": "#e9ecef",
+        "element.active": "#dee2e6",
+        "element.selected": "#dee2e6",
+        "element.disabled": "#f8f9fa",
+        "ghost_element.background": "#00000000",
+        "ghost_element.hover": "#e9ecef80",
+        "ghost_element.active": "#dee2e680",
+        "ghost_element.selected": "#dee2e680",
+        "ghost_element.disabled": "#00000000",
+        "drop_target.background": "#{{ light.primary }}26",
+        "text": "#{{ light.foreground }}",
+        "text.muted": "#{{ light.syn_comment }}",
+        "text.placeholder": "#{{ light.syn_comment }}a0",
+        "text.disabled": "#{{ light.syn_comment }}60",
+        "text.accent": "#{{ light.primary }}",
+        "icon": "#{{ light.foreground }}",
+        "icon.muted": "#{{ light.syn_comment }}",
+        "icon.disabled": "#{{ light.syn_comment }}60",
+        "icon.accent": "#{{ light.primary }}",
+        "status_bar.background": "#{{ light.primary }}",
+        "title_bar.background": "#f8f9fa",
+        "title_bar.inactive_background": "#f8f9fa",
+        "toolbar.background": "#{{ light.background }}",
+        "tab_bar.background": "#f8f9fa",
+        "tab.inactive_background": "#f1f3f5",
+        "tab.active_background": "#{{ light.background }}",
+        "search.match_background": "#{{ light.primary }}33",
+        "search.active_match_background": "#{{ light.secondary }}4d",
+        "scrollbar.thumb.background": "#{{ light.foreground }}1a",
+        "scrollbar.thumb.hover_background": "#{{ light.foreground }}33",
+        "scrollbar.thumb.border": "#00000000",
+        "scrollbar.track.background": "#00000000",
+        "scrollbar.track.border": "#00000000",
+        "editor.background": "#{{ light.background }}",
+        "editor.foreground": "#{{ light.foreground }}",
+        "editor.gutter.background": "#{{ light.background }}",
+        "editor.line_number": "#{{ light.syn_comment }}b0",
+        "editor.active_line_number": "#{{ light.primary }}",
+        "editor.active_line.background": "#f8f9fa",
+        "editor.highlighted_line.background": "#f1f3f5",
+        "editor.indent_guide": "#{{ light.foreground }}1a",
+        "editor.indent_guide_active": "#{{ light.primary }}66",
+        "editor.wrap_guide": "#{{ light.foreground }}0d",
+        "editor.active_wrap_guide": "#{{ light.foreground }}1a",
+        "editor.document_highlight.read_background": "#{{ light.primary }}1a",
+        "editor.document_highlight.write_background": "#{{ light.secondary }}26",
+        "editor.document_highlight.bracket_background": "#{{ light.success }}40",
+        "terminal.background": "#{{ light.background }}",
+        "terminal.foreground": "#{{ light.foreground }}",
+        "terminal.ansi.background": "#{{ light.background }}",
+        "terminal.ansi.black": "#000000",
+        "terminal.ansi.red": "#{{ light.error }}",
+        "terminal.ansi.green": "#{{ light.success }}",
+        "terminal.ansi.yellow": "#{{ light.warning }}",
+        "terminal.ansi.blue": "#{{ light.primary }}",
+        "terminal.ansi.magenta": "#{{ light.accent }}",
+        "terminal.ansi.cyan": "#{{ light.info }}",
+        "terminal.ansi.white": "#{{ light.syn_comment }}",
+        "terminal.ansi.bright_black": "#{{ light.syn_comment }}",
+        "terminal.ansi.bright_red": "#{{ light.error }}",
+        "terminal.ansi.bright_green": "#{{ light.success }}",
+        "terminal.ansi.bright_yellow": "#{{ light.warning }}",
+        "terminal.ansi.bright_blue": "#{{ light.primary }}",
+        "terminal.ansi.bright_magenta": "#{{ light.accent }}",
+        "terminal.ansi.bright_cyan": "#{{ light.info }}",
+        "terminal.ansi.bright_white": "#{{ light.background }}",
+        "created": "#{{ light.success }}",
+        "created.background": "#{{ light.success }}1a",
+        "created.border": "#{{ light.success }}4d",
+        "modified": "#{{ light.warning }}",
+        "modified.background": "#{{ light.warning }}1a",
+        "modified.border": "#{{ light.warning }}4d",
+        "deleted": "#{{ light.error }}",
+        "deleted.background": "#{{ light.error }}1a",
+        "deleted.border": "#{{ light.error }}4d",
+        "ignored": "#{{ light.syn_comment }}80",
+        "ignored.background": "#{{ light.syn_comment }}10",
+        "ignored.border": "#{{ light.syn_comment }}30",
+        "conflict": "#{{ light.warning }}",
+        "conflict.background": "#{{ light.warning }}1a",
+        "conflict.border": "#{{ light.warning }}4d",
+        "renamed": "#{{ light.info }}",
+        "renamed.background": "#{{ light.info }}1a",
+        "renamed.border": "#{{ light.info }}4d",
+        "success": "#{{ light.success }}",
+        "success.background": "#{{ light.success }}1a",
+        "success.border": "#{{ light.success }}4d",
+        "warning": "#{{ light.warning }}",
+        "warning.background": "#{{ light.warning }}1a",
+        "warning.border": "#{{ light.warning }}4d",
+        "error": "#{{ light.error }}",
+        "error.background": "#{{ light.error }}1a",
+        "error.border": "#{{ light.error }}4d",
+        "version_control.added": "#{{ light.success }}",
+        "version_control.modified": "#{{ light.warning }}",
+        "version_control.deleted": "#{{ light.error }}",
+        "players": [
+          { "cursor": "#{{ light.primary }}", "background": "#{{ light.primary }}", "selection": "#{{ light.primary }}3d" },
+          { "cursor": "#{{ light.secondary }}", "background": "#{{ light.secondary }}", "selection": "#{{ light.secondary }}3d" },
+          { "cursor": "#{{ light.accent }}", "background": "#{{ light.accent }}", "selection": "#{{ light.accent }}3d" }
+        ],
+        "syntax": {
+          "attribute": {
+            "color": "#{{ light.syn_string }}"
+          },
+          "boolean": {
+            "color": "#{{ light.syn_type }}"
+          },
+          "comment": {
+            "color": "#{{ light.syn_comment }}",
+            "font_style": "italic"
+          },
+          "comment.doc": {
+            "color": "#{{ light.syn_comment }}",
+            "font_style": "italic"
+          },
+          "constant": {
+            "color": "#{{ light.syn_type }}"
+          },
+          "constant.builtin": {
+            "color": "#{{ light.syn_type }}"
+          },
+          "constructor": {
+            "color": "#{{ light.syn_type }}"
+          },
+          "embedded": {
+            "color": "#{{ light.foreground }}"
+          },
+          "emphasis": {
+            "color": "#{{ light.primary }}"
+          },
+          "emphasis.strong": {
+            "color": "#{{ light.primary }}",
+            "font_weight": 700
+          },
+          "enum": {
+            "color": "#{{ light.syn_type }}"
+          },
+          "function": {
+            "color": "#{{ light.syn_function }}"
+          },
+          "function.method": {
+            "color": "#{{ light.syn_function }}"
+          },
+          "keyword": {
+            "color": "#{{ light.syn_keyword }}",
+            "font_weight": 700
+          },
+          "keyword.control": {
+            "color": "#{{ light.syn_keyword }}",
+            "font_weight": 700
+          },
+          "keyword.operator": {
+            "color": "#{{ light.syn_keyword }}"
+          },
+          "label": {
+            "color": "#{{ light.syn_keyword }}"
+          },
+          "link_text": {
+            "color": "#{{ light.syn_string }}",
+            "font_style": "italic"
+          },
+          "link_uri": {
+            "color": "#{{ light.primary }}"
+          },
+          "namespace": {
+            "color": "#{{ light.syn_type }}"
+          },
+          "number": {
+            "color": "#{{ light.syn_type }}"
+          },
+          "operator": {
+            "color": "#{{ light.syn_keyword }}"
+          },
+          "preproc": {
+            "color": "#{{ light.syn_keyword }}"
+          },
+          "primary": {
+            "color": "#{{ light.foreground }}"
+          },
+          "property": {
+            "color": "#{{ light.foreground }}"
+          },
+          "punctuation": {
+            "color": "#{{ light.foreground }}"
+          },
+          "punctuation.bracket": {
+            "color": "#{{ light.foreground }}bf"
+          },
+          "punctuation.delimiter": {
+            "color": "#{{ light.foreground }}bf"
+          },
+          "punctuation.list_marker": {
+            "color": "#{{ light.syn_keyword }}"
+          },
+          "punctuation.markup": {
+            "color": "#{{ light.syn_keyword }}"
+          },
+          "punctuation.special": {
+            "color": "#{{ light.primary }}"
+          },
+          "selector": {
+            "color": "#{{ light.syn_keyword }}"
+          },
+          "selector.pseudo": {
+            "color": "#{{ light.syn_string }}"
+          },
+          "string": {
+            "color": "#{{ light.syn_string }}"
+          },
+          "string.escape": {
+            "color": "#{{ light.syn_string }}"
+          },
+          "string.regex": {
+            "color": "#{{ light.syn_string }}"
+          },
+          "string.special": {
+            "color": "#{{ light.syn_string }}"
+          },
+          "string.special.symbol": {
+            "color": "#{{ light.syn_string }}"
+          },
+          "tag": {
+            "color": "#{{ light.syn_keyword }}"
+          },
+          "text.literal": {
+            "color": "#{{ light.syn_string }}"
+          },
+          "title": {
+            "color": "#{{ light.syn_keyword }}",
+            "font_weight": 700
+          },
+          "type": {
+            "color": "#{{ light.syn_type }}"
+          },
+          "type.builtin": {
+            "color": "#{{ light.syn_type }}"
+          },
+          "variable": {
+            "color": "#{{ light.foreground }}"
+          },
+          "variable.parameter": {
+            "color": "#{{ light.foreground }}"
+          },
+          "variable.special": {
+            "color": "#{{ light.syn_keyword }}"
+          },
+          "variant": {
+            "color": "#{{ light.syn_type }}"
+          },
+          "error": {
+            "color": "#{{ light.error }}",
+            "font_weight": 700
+          },
+          "diff.plus": {
+            "color": "#{{ light.success }}"
+          },
+          "diff.minus": {
+            "color": "#{{ light.error }}"
+          }
+        }
+      }
+    },
+    {
+      "name": "Hakimi Colorblindness Dark",
+      "appearance": "dark",
+      "style": {
+        "accents": [
+          "#{{ dark.primary }}",
+          "#{{ dark.secondary }}",
+          "#{{ dark.accent }}"
+        ],
+        "background": "#{{ dark.background }}",
+        "border": "#2a2a2a",
+        "border.focused": "#{{ dark.primary }}",
+        "border.selected": "#{{ dark.primary }}",
+        "border.variant": "#1e1e1e",
+        "elevated_surface.background": "#1e1e1e",
+        "surface.background": "#181818",
+        "panel.background": "#181818",
+        "panel.focused_border": "#{{ dark.primary }}4d",
+        "pane.focused_border": "#{{ dark.primary }}",
+        "element.background": "#1e1e1e",
+        "element.hover": "#2a2a2a",
+        "element.active": "#333333",
+        "element.selected": "#333333",
+        "element.disabled": "#181818",
+        "ghost_element.background": "#00000000",
+        "ghost_element.hover": "#2a2a2a80",
+        "ghost_element.active": "#33333380",
+        "ghost_element.selected": "#33333380",
+        "ghost_element.disabled": "#00000000",
+        "drop_target.background": "#{{ dark.primary }}26",
+        "text": "#{{ dark.foreground }}",
+        "text.muted": "#{{ dark.syn_comment }}",
+        "text.placeholder": "#{{ dark.syn_comment }}a0",
+        "text.disabled": "#{{ dark.syn_comment }}60",
+        "text.accent": "#{{ dark.primary }}",
+        "icon": "#{{ dark.foreground }}",
+        "icon.muted": "#{{ dark.syn_comment }}",
+        "icon.disabled": "#{{ dark.syn_comment }}60",
+        "icon.accent": "#{{ dark.primary }}",
+        "status_bar.background": "#{{ dark.background }}",
+        "title_bar.background": "#181818",
+        "title_bar.inactive_background": "#181818",
+        "toolbar.background": "#{{ dark.background }}",
+        "tab_bar.background": "#181818",
+        "tab.inactive_background": "#181818",
+        "tab.active_background": "#{{ dark.background }}",
+        "search.match_background": "#{{ dark.primary }}33",
+        "search.active_match_background": "#{{ dark.secondary }}4d",
+        "scrollbar.thumb.background": "#{{ dark.foreground }}1a",
+        "scrollbar.thumb.hover_background": "#{{ dark.foreground }}33",
+        "scrollbar.thumb.border": "#00000000",
+        "scrollbar.track.background": "#00000000",
+        "scrollbar.track.border": "#00000000",
+        "editor.background": "#{{ dark.background }}",
+        "editor.foreground": "#{{ dark.foreground }}",
+        "editor.gutter.background": "#{{ dark.background }}",
+        "editor.line_number": "#{{ dark.syn_comment }}b0",
+        "editor.active_line_number": "#{{ dark.primary }}",
+        "editor.active_line.background": "#1a1a1a",
+        "editor.highlighted_line.background": "#1e1e1e",
+        "editor.indent_guide": "#{{ dark.foreground }}1a",
+        "editor.indent_guide_active": "#{{ dark.primary }}66",
+        "editor.wrap_guide": "#{{ dark.foreground }}0d",
+        "editor.active_wrap_guide": "#{{ dark.foreground }}1a",
+        "editor.document_highlight.read_background": "#{{ dark.primary }}1a",
+        "editor.document_highlight.write_background": "#{{ dark.secondary }}26",
+        "editor.document_highlight.bracket_background": "#{{ dark.success }}40",
+        "terminal.background": "#{{ dark.background }}",
+        "terminal.foreground": "#{{ dark.foreground }}",
+        "terminal.ansi.background": "#{{ dark.background }}",
+        "terminal.ansi.black": "#{{ dark.background }}",
+        "terminal.ansi.red": "#{{ dark.error }}",
+        "terminal.ansi.green": "#{{ dark.success }}",
+        "terminal.ansi.yellow": "#{{ dark.warning }}",
+        "terminal.ansi.blue": "#{{ dark.primary }}",
+        "terminal.ansi.magenta": "#{{ dark.accent }}",
+        "terminal.ansi.cyan": "#{{ dark.info }}",
+        "terminal.ansi.white": "#{{ dark.syn_comment }}",
+        "terminal.ansi.bright_black": "#{{ dark.syn_comment }}",
+        "terminal.ansi.bright_red": "#{{ dark.error }}",
+        "terminal.ansi.bright_green": "#{{ dark.success }}",
+        "terminal.ansi.bright_yellow": "#{{ dark.warning }}",
+        "terminal.ansi.bright_blue": "#{{ dark.primary }}",
+        "terminal.ansi.bright_magenta": "#{{ dark.accent }}",
+        "terminal.ansi.bright_cyan": "#{{ dark.info }}",
+        "terminal.ansi.bright_white": "#{{ dark.foreground }}",
+        "created": "#{{ dark.success }}",
+        "created.background": "#{{ dark.success }}1a",
+        "created.border": "#{{ dark.success }}4d",
+        "modified": "#{{ dark.warning }}",
+        "modified.background": "#{{ dark.warning }}1a",
+        "modified.border": "#{{ dark.warning }}4d",
+        "deleted": "#{{ dark.error }}",
+        "deleted.background": "#{{ dark.error }}1a",
+        "deleted.border": "#{{ dark.error }}4d",
+        "ignored": "#{{ dark.syn_comment }}80",
+        "ignored.background": "#{{ dark.syn_comment }}10",
+        "ignored.border": "#{{ dark.syn_comment }}30",
+        "conflict": "#{{ dark.warning }}",
+        "conflict.background": "#{{ dark.warning }}1a",
+        "conflict.border": "#{{ dark.warning }}4d",
+        "renamed": "#{{ dark.info }}",
+        "renamed.background": "#{{ dark.info }}1a",
+        "renamed.border": "#{{ dark.info }}4d",
+        "success": "#{{ dark.success }}",
+        "success.background": "#{{ dark.success }}1a",
+        "success.border": "#{{ dark.success }}4d",
+        "warning": "#{{ dark.warning }}",
+        "warning.background": "#{{ dark.warning }}1a",
+        "warning.border": "#{{ dark.warning }}4d",
+        "error": "#{{ dark.error }}",
+        "error.background": "#{{ dark.error }}1a",
+        "error.border": "#{{ dark.error }}4d",
+        "version_control.added": "#{{ dark.success }}",
+        "version_control.modified": "#{{ dark.warning }}",
+        "version_control.deleted": "#{{ dark.error }}",
+        "players": [
+          { "cursor": "#{{ dark.primary }}", "background": "#{{ dark.primary }}", "selection": "#{{ dark.primary }}3d" },
+          { "cursor": "#{{ dark.secondary }}", "background": "#{{ dark.secondary }}", "selection": "#{{ dark.secondary }}3d" },
+          { "cursor": "#{{ dark.accent }}", "background": "#{{ dark.accent }}", "selection": "#{{ dark.accent }}3d" }
+        ],
+        "syntax": {
+          "attribute": {
+            "color": "#{{ dark.syn_string }}"
+          },
+          "boolean": {
+            "color": "#{{ dark.syn_type }}"
+          },
+          "comment": {
+            "color": "#{{ dark.syn_comment }}",
+            "font_style": "italic"
+          },
+          "comment.doc": {
+            "color": "#{{ dark.syn_comment }}",
+            "font_style": "italic"
+          },
+          "constant": {
+            "color": "#{{ dark.syn_type }}"
+          },
+          "constant.builtin": {
+            "color": "#{{ dark.syn_type }}"
+          },
+          "constructor": {
+            "color": "#{{ dark.syn_type }}"
+          },
+          "embedded": {
+            "color": "#{{ dark.foreground }}"
+          },
+          "emphasis": {
+            "color": "#{{ dark.primary }}"
+          },
+          "emphasis.strong": {
+            "color": "#{{ dark.primary }}",
+            "font_weight": 700
+          },
+          "enum": {
+            "color": "#{{ dark.syn_type }}"
+          },
+          "function": {
+            "color": "#{{ dark.syn_function }}"
+          },
+          "function.method": {
+            "color": "#{{ dark.syn_function }}"
+          },
+          "keyword": {
+            "color": "#{{ dark.syn_keyword }}",
+            "font_weight": 700
+          },
+          "keyword.control": {
+            "color": "#{{ dark.syn_keyword }}",
+            "font_weight": 700
+          },
+          "keyword.operator": {
+            "color": "#{{ dark.syn_keyword }}"
+          },
+          "label": {
+            "color": "#{{ dark.syn_keyword }}"
+          },
+          "link_text": {
+            "color": "#{{ dark.syn_string }}",
+            "font_style": "italic"
+          },
+          "link_uri": {
+            "color": "#{{ dark.primary }}"
+          },
+          "namespace": {
+            "color": "#{{ dark.syn_type }}"
+          },
+          "number": {
+            "color": "#{{ dark.syn_type }}"
+          },
+          "operator": {
+            "color": "#{{ dark.syn_keyword }}"
+          },
+          "preproc": {
+            "color": "#{{ dark.syn_keyword }}"
+          },
+          "primary": {
+            "color": "#{{ dark.foreground }}"
+          },
+          "property": {
+            "color": "#{{ dark.foreground }}"
+          },
+          "punctuation": {
+            "color": "#{{ dark.foreground }}"
+          },
+          "punctuation.bracket": {
+            "color": "#{{ dark.foreground }}bf"
+          },
+          "punctuation.delimiter": {
+            "color": "#{{ dark.foreground }}bf"
+          },
+          "punctuation.list_marker": {
+            "color": "#{{ dark.syn_keyword }}"
+          },
+          "punctuation.markup": {
+            "color": "#{{ dark.syn_keyword }}"
+          },
+          "punctuation.special": {
+            "color": "#{{ dark.primary }}"
+          },
+          "selector": {
+            "color": "#{{ dark.syn_keyword }}"
+          },
+          "selector.pseudo": {
+            "color": "#{{ dark.syn_string }}"
+          },
+          "string": {
+            "color": "#{{ dark.syn_string }}"
+          },
+          "string.escape": {
+            "color": "#{{ dark.syn_string }}"
+          },
+          "string.regex": {
+            "color": "#{{ dark.syn_string }}"
+          },
+          "string.special": {
+            "color": "#{{ dark.syn_string }}"
+          },
+          "string.special.symbol": {
+            "color": "#{{ dark.syn_string }}"
+          },
+          "tag": {
+            "color": "#{{ dark.syn_keyword }}"
+          },
+          "text.literal": {
+            "color": "#{{ dark.syn_string }}"
+          },
+          "title": {
+            "color": "#{{ dark.syn_keyword }}",
+            "font_weight": 700
+          },
+          "type": {
+            "color": "#{{ dark.syn_type }}"
+          },
+          "type.builtin": {
+            "color": "#{{ dark.syn_type }}"
+          },
+          "variable": {
+            "color": "#{{ dark.foreground }}"
+          },
+          "variable.parameter": {
+            "color": "#{{ dark.foreground }}"
+          },
+          "variable.special": {
+            "color": "#{{ dark.syn_keyword }}"
+          },
+          "variant": {
+            "color": "#{{ dark.syn_type }}"
+          },
+          "error": {
+            "color": "#{{ dark.error }}",
+            "font_weight": 700
+          },
+          "diff.plus": {
+            "color": "#{{ dark.success }}"
+          },
+          "diff.minus": {
+            "color": "#{{ dark.error }}"
+          }
+        }
+      }
+    },
+    {
+      "name": "Hakimi Colorblindness Dark Bright",
+      "appearance": "dark",
+      "style": {
+        "accents": [
+          "#{{ darkBright.primary }}",
+          "#{{ darkBright.secondary }}",
+          "#{{ darkBright.accent }}"
+        ],
+        "background": "#{{ darkBright.background }}",
+        "border": "#2a2a2a",
+        "border.focused": "#{{ darkBright.primary }}",
+        "border.selected": "#{{ darkBright.primary }}",
+        "border.variant": "#1e1e1e",
+        "elevated_surface.background": "#1e1e1e",
+        "surface.background": "#181818",
+        "panel.background": "#181818",
+        "panel.focused_border": "#{{ darkBright.primary }}4d",
+        "pane.focused_border": "#{{ darkBright.primary }}",
+        "element.background": "#1e1e1e",
+        "element.hover": "#2a2a2a",
+        "element.active": "#333333",
+        "element.selected": "#333333",
+        "element.disabled": "#181818",
+        "ghost_element.background": "#00000000",
+        "ghost_element.hover": "#2a2a2a80",
+        "ghost_element.active": "#33333380",
+        "ghost_element.selected": "#33333380",
+        "ghost_element.disabled": "#00000000",
+        "drop_target.background": "#{{ darkBright.primary }}26",
+        "text": "#{{ darkBright.foreground }}",
+        "text.muted": "#{{ darkBright.syn_comment }}",
+        "text.placeholder": "#{{ darkBright.syn_comment }}a0",
+        "text.disabled": "#{{ darkBright.syn_comment }}60",
+        "text.accent": "#{{ darkBright.primary }}",
+        "icon": "#{{ darkBright.foreground }}",
+        "icon.muted": "#{{ darkBright.syn_comment }}",
+        "icon.disabled": "#{{ darkBright.syn_comment }}60",
+        "icon.accent": "#{{ darkBright.primary }}",
+        "status_bar.background": "#{{ darkBright.background }}",
+        "title_bar.background": "#181818",
+        "title_bar.inactive_background": "#181818",
+        "toolbar.background": "#{{ darkBright.background }}",
+        "tab_bar.background": "#181818",
+        "tab.inactive_background": "#181818",
+        "tab.active_background": "#{{ darkBright.background }}",
+        "search.match_background": "#{{ darkBright.primary }}33",
+        "search.active_match_background": "#{{ darkBright.secondary }}4d",
+        "scrollbar.thumb.background": "#{{ darkBright.foreground }}1a",
+        "scrollbar.thumb.hover_background": "#{{ darkBright.foreground }}33",
+        "scrollbar.thumb.border": "#00000000",
+        "scrollbar.track.background": "#00000000",
+        "scrollbar.track.border": "#00000000",
+        "editor.background": "#{{ darkBright.background }}",
+        "editor.foreground": "#{{ darkBright.foreground }}",
+        "editor.gutter.background": "#{{ darkBright.background }}",
+        "editor.line_number": "#{{ darkBright.syn_comment }}b0",
+        "editor.active_line_number": "#{{ darkBright.primary }}",
+        "editor.active_line.background": "#1a1a1a",
+        "editor.highlighted_line.background": "#1e1e1e",
+        "editor.indent_guide": "#{{ darkBright.foreground }}1a",
+        "editor.indent_guide_active": "#{{ darkBright.primary }}66",
+        "editor.wrap_guide": "#{{ darkBright.foreground }}0d",
+        "editor.active_wrap_guide": "#{{ darkBright.foreground }}1a",
+        "editor.document_highlight.read_background": "#{{ darkBright.primary }}1a",
+        "editor.document_highlight.write_background": "#{{ darkBright.secondary }}26",
+        "editor.document_highlight.bracket_background": "#{{ darkBright.success }}40",
+        "terminal.background": "#{{ darkBright.background }}",
+        "terminal.foreground": "#{{ darkBright.foreground }}",
+        "terminal.ansi.background": "#{{ darkBright.background }}",
+        "terminal.ansi.black": "#{{ darkBright.background }}",
+        "terminal.ansi.red": "#{{ darkBright.error }}",
+        "terminal.ansi.green": "#{{ darkBright.success }}",
+        "terminal.ansi.yellow": "#{{ darkBright.warning }}",
+        "terminal.ansi.blue": "#{{ darkBright.primary }}",
+        "terminal.ansi.magenta": "#{{ darkBright.accent }}",
+        "terminal.ansi.cyan": "#{{ darkBright.info }}",
+        "terminal.ansi.white": "#{{ darkBright.syn_comment }}",
+        "terminal.ansi.bright_black": "#{{ darkBright.syn_comment }}",
+        "terminal.ansi.bright_red": "#{{ darkBright.error }}",
+        "terminal.ansi.bright_green": "#{{ darkBright.success }}",
+        "terminal.ansi.bright_yellow": "#{{ darkBright.warning }}",
+        "terminal.ansi.bright_blue": "#{{ darkBright.primary }}",
+        "terminal.ansi.bright_magenta": "#{{ darkBright.accent }}",
+        "terminal.ansi.bright_cyan": "#{{ darkBright.info }}",
+        "terminal.ansi.bright_white": "#{{ darkBright.foreground }}",
+        "created": "#{{ darkBright.success }}",
+        "created.background": "#{{ darkBright.success }}1a",
+        "created.border": "#{{ darkBright.success }}4d",
+        "modified": "#{{ darkBright.warning }}",
+        "modified.background": "#{{ darkBright.warning }}1a",
+        "modified.border": "#{{ darkBright.warning }}4d",
+        "deleted": "#{{ darkBright.error }}",
+        "deleted.background": "#{{ darkBright.error }}1a",
+        "deleted.border": "#{{ darkBright.error }}4d",
+        "ignored": "#{{ darkBright.syn_comment }}80",
+        "ignored.background": "#{{ darkBright.syn_comment }}10",
+        "ignored.border": "#{{ darkBright.syn_comment }}30",
+        "conflict": "#{{ darkBright.warning }}",
+        "conflict.background": "#{{ darkBright.warning }}1a",
+        "conflict.border": "#{{ darkBright.warning }}4d",
+        "renamed": "#{{ darkBright.info }}",
+        "renamed.background": "#{{ darkBright.info }}1a",
+        "renamed.border": "#{{ darkBright.info }}4d",
+        "success": "#{{ darkBright.success }}",
+        "success.background": "#{{ darkBright.success }}1a",
+        "success.border": "#{{ darkBright.success }}4d",
+        "warning": "#{{ darkBright.warning }}",
+        "warning.background": "#{{ darkBright.warning }}1a",
+        "warning.border": "#{{ darkBright.warning }}4d",
+        "error": "#{{ darkBright.error }}",
+        "error.background": "#{{ darkBright.error }}1a",
+        "error.border": "#{{ darkBright.error }}4d",
+        "version_control.added": "#{{ darkBright.success }}",
+        "version_control.modified": "#{{ darkBright.warning }}",
+        "version_control.deleted": "#{{ darkBright.error }}",
+        "players": [
+          { "cursor": "#{{ darkBright.primary }}", "background": "#{{ darkBright.primary }}", "selection": "#{{ darkBright.primary }}3d" },
+          { "cursor": "#{{ darkBright.secondary }}", "background": "#{{ darkBright.secondary }}", "selection": "#{{ darkBright.secondary }}3d" },
+          { "cursor": "#{{ darkBright.accent }}", "background": "#{{ darkBright.accent }}", "selection": "#{{ darkBright.accent }}3d" }
+        ],
+        "syntax": {
+          "attribute": {
+            "color": "#{{ darkBright.syn_string }}"
+          },
+          "boolean": {
+            "color": "#{{ darkBright.syn_type }}"
+          },
+          "comment": {
+            "color": "#{{ darkBright.syn_comment }}",
+            "font_style": "italic"
+          },
+          "comment.doc": {
+            "color": "#{{ darkBright.syn_comment }}",
+            "font_style": "italic"
+          },
+          "constant": {
+            "color": "#{{ darkBright.syn_type }}"
+          },
+          "constant.builtin": {
+            "color": "#{{ darkBright.syn_type }}"
+          },
+          "constructor": {
+            "color": "#{{ darkBright.syn_type }}"
+          },
+          "embedded": {
+            "color": "#{{ darkBright.foreground }}"
+          },
+          "emphasis": {
+            "color": "#{{ darkBright.primary }}"
+          },
+          "emphasis.strong": {
+            "color": "#{{ darkBright.primary }}",
+            "font_weight": 700
+          },
+          "enum": {
+            "color": "#{{ darkBright.syn_type }}"
+          },
+          "function": {
+            "color": "#{{ darkBright.syn_function }}"
+          },
+          "function.method": {
+            "color": "#{{ darkBright.syn_function }}"
+          },
+          "keyword": {
+            "color": "#{{ darkBright.syn_keyword }}",
+            "font_weight": 700
+          },
+          "keyword.control": {
+            "color": "#{{ darkBright.syn_keyword }}",
+            "font_weight": 700
+          },
+          "keyword.operator": {
+            "color": "#{{ darkBright.syn_keyword }}"
+          },
+          "label": {
+            "color": "#{{ darkBright.syn_keyword }}"
+          },
+          "link_text": {
+            "color": "#{{ darkBright.syn_string }}",
+            "font_style": "italic"
+          },
+          "link_uri": {
+            "color": "#{{ darkBright.primary }}"
+          },
+          "namespace": {
+            "color": "#{{ darkBright.syn_type }}"
+          },
+          "number": {
+            "color": "#{{ darkBright.syn_type }}"
+          },
+          "operator": {
+            "color": "#{{ darkBright.syn_keyword }}"
+          },
+          "preproc": {
+            "color": "#{{ darkBright.syn_keyword }}"
+          },
+          "primary": {
+            "color": "#{{ darkBright.foreground }}"
+          },
+          "property": {
+            "color": "#{{ darkBright.foreground }}"
+          },
+          "punctuation": {
+            "color": "#{{ darkBright.foreground }}"
+          },
+          "punctuation.bracket": {
+            "color": "#{{ darkBright.foreground }}bf"
+          },
+          "punctuation.delimiter": {
+            "color": "#{{ darkBright.foreground }}bf"
+          },
+          "punctuation.list_marker": {
+            "color": "#{{ darkBright.syn_keyword }}"
+          },
+          "punctuation.markup": {
+            "color": "#{{ darkBright.syn_keyword }}"
+          },
+          "punctuation.special": {
+            "color": "#{{ darkBright.primary }}"
+          },
+          "selector": {
+            "color": "#{{ darkBright.syn_keyword }}"
+          },
+          "selector.pseudo": {
+            "color": "#{{ darkBright.syn_string }}"
+          },
+          "string": {
+            "color": "#{{ darkBright.syn_string }}"
+          },
+          "string.escape": {
+            "color": "#{{ darkBright.syn_string }}"
+          },
+          "string.regex": {
+            "color": "#{{ darkBright.syn_string }}"
+          },
+          "string.special": {
+            "color": "#{{ darkBright.syn_string }}"
+          },
+          "string.special.symbol": {
+            "color": "#{{ darkBright.syn_string }}"
+          },
+          "tag": {
+            "color": "#{{ darkBright.syn_keyword }}"
+          },
+          "text.literal": {
+            "color": "#{{ darkBright.syn_string }}"
+          },
+          "title": {
+            "color": "#{{ darkBright.syn_keyword }}",
+            "font_weight": 700
+          },
+          "type": {
+            "color": "#{{ darkBright.syn_type }}"
+          },
+          "type.builtin": {
+            "color": "#{{ darkBright.syn_type }}"
+          },
+          "variable": {
+            "color": "#{{ darkBright.foreground }}"
+          },
+          "variable.parameter": {
+            "color": "#{{ darkBright.foreground }}"
+          },
+          "variable.special": {
+            "color": "#{{ darkBright.syn_keyword }}"
+          },
+          "variant": {
+            "color": "#{{ darkBright.syn_type }}"
+          },
+          "error": {
+            "color": "#{{ darkBright.error }}",
+            "font_weight": 700
+          },
+          "diff.plus": {
+            "color": "#{{ darkBright.success }}"
+          },
+          "diff.minus": {
+            "color": "#{{ darkBright.error }}"
+          }
+        }
+      }
+    }
+  ]
+}
