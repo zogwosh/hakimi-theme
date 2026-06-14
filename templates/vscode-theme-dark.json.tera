@@ -1,10 +1,10 @@
 ---
 whiskers:
   version: "2.9.0"
-  filename: "themes/hakimi-colorblindness-dark.json"
+  filename: "themes/hakimi-deuteranopia-dark.json"
 ---
 {
-  "name": "Hakimi Colorblindness Dark",
+  "name": "Hakimi Deuteranopia Dark",
   "type": "dark",
   "colors": {
     "editor.background": "#{{ background }}",
@@ -16,6 +16,13 @@ whiskers:
     "editorLineNumber.activeForeground": "#{{ primary }}",
     "editorBracketMatch.background": "#40b0a640",
     "editorBracketMatch.border": "#{{ success }}",
+    "editorBracketHighlight.foreground1": "#{{ primary }}",
+    "editorBracketHighlight.foreground2": "#{{ secondary }}",
+    "editorBracketHighlight.foreground3": "#{{ success }}",
+    "editorBracketHighlight.foreground4": "#{{ info }}",
+    "editorBracketHighlight.foreground5": "#{{ accent }}",
+    "editorBracketHighlight.foreground6": "#{{ primary }}",
+    "editorBracketHighlight.unexpectedBracket.foreground": "#{{ error }}",
 
     "activityBar.background": "#181818",
     "activityBar.foreground": "#{{ primary }}",
@@ -48,7 +55,47 @@ whiskers:
     "input.background": "#1e1e1e",
     "input.foreground": "#{{ foreground }}",
     "input.border": "#2a2a2a",
-    "input.placeholderForeground": "#{{ syn_comment }}"
+    "input.placeholderForeground": "#{{ syn_comment }}",
+
+    "editorError.foreground": "#{{ error }}",
+    "editorWarning.foreground": "#{{ warning }}",
+    "editorInfo.foreground": "#{{ info }}",
+    "editorHint.foreground": "#{{ syn_comment }}",
+
+    "gitDecoration.addedResourceForeground": "#{{ success }}",
+    "gitDecoration.modifiedResourceForeground": "#{{ warning }}",
+    "gitDecoration.deletedResourceForeground": "#{{ error }}",
+    "gitDecoration.ignoredResourceForeground": "#{{ syn_comment }}80",
+    "gitDecoration.conflictingResourceForeground": "#{{ warning }}",
+    "gitDecoration.untrackedResourceForeground": "#{{ info }}",
+
+    "scrollbarSlider.background": "#{{ foreground }}2b",
+    "scrollbarSlider.hoverBackground": "#{{ primary }}4d",
+    "scrollbarSlider.activeBackground": "#{{ primary }}66",
+
+    "editorIndentGuide.background": "#{{ foreground }}1a",
+    "editorIndentGuide.activeBackground": "#{{ primary }}66",
+
+    "editor.selectionBackground": "#{{ primary }}33",
+    "editor.findMatchBackground": "#{{ primary }}4d",
+    "editor.findMatchHighlightBackground": "#{{ primary }}33",
+
+    "terminal.ansiBlack": "#{{ background }}",
+    "terminal.ansiRed": "#{{ error }}",
+    "terminal.ansiGreen": "#{{ success }}",
+    "terminal.ansiYellow": "#{{ warning }}",
+    "terminal.ansiBlue": "#{{ primary }}",
+    "terminal.ansiMagenta": "#{{ accent }}",
+    "terminal.ansiCyan": "#{{ info }}",
+    "terminal.ansiWhite": "#{{ syn_comment }}",
+    "terminal.ansiBrightBlack": "#{{ syn_comment }}",
+    "terminal.ansiBrightRed": "#{{ error }}",
+    "terminal.ansiBrightGreen": "#{{ success }}",
+    "terminal.ansiBrightYellow": "#{{ warning }}",
+    "terminal.ansiBrightBlue": "#{{ primary }}",
+    "terminal.ansiBrightMagenta": "#{{ accent }}",
+    "terminal.ansiBrightCyan": "#{{ info }}",
+    "terminal.ansiBrightWhite": "#{{ foreground }}"
   },
   "semanticHighlighting": true,
   "semanticTokenColors": {

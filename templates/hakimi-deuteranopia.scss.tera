@@ -1,9 +1,9 @@
 ---
 whiskers:
   version: "2.9.0"
-  filename: "dist/hakimi-colorblindness.scss"
+  filename: "dist/hakimi-deuteranopia.scss"
 ---
-// Hakimi Colorblindness Safe (Light Version)
+// Hakimi Deuteranopia Safe (Light Version)
 $cb-light-background: #{{ light.background }};
 $cb-light-foreground: #{{ light.foreground }};
 $cb-light-primary: #{{ light.primary }};
@@ -20,7 +20,7 @@ $cb-light-syn-function: #{{ light.syn_function }};
 $cb-light-syn-type: #{{ light.syn_type }};
 $cb-light-syn-comment: #{{ light.syn_comment }};
 
-// Hakimi Colorblindness Safe (Dark Version)
+// Hakimi Deuteranopia Safe (Dark Version)
 $cb-dark-background: #{{ dark.background }};
 $cb-dark-foreground: #{{ dark.foreground }};
 $cb-dark-primary: #{{ dark.primary }};

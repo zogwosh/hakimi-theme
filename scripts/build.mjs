@@ -127,45 +127,45 @@ const sharedColors = {
 // hue signals "error" to a deuteranope.
 const flavorColors = {
   light: {
-    background: "#ffffff",
-    foreground: "#000000",      // = variable/property/parameter (neutral, 21:1)
-    primary: "#0a3d91",         // UI accent + keyword/tag/built-in (blue, bold)
+    background: "#faf9f6",
+    foreground: "#45494c",      // = variable/property/parameter (neutral)
+    primary: "#869ec5",         // UI accent + keyword/tag/built-in (blue, bold)
     secondary: "#c2570a",       // = syn_function
     success: "#009e73",         // UI only (bracket match / git additions)
     warning: "#9a6700",         // UI only (darkened for light-bg legibility)
-    error: "#c4141a",           // error/invalid (carried by bold+underline)
-    info: "#1d6fd0",            // = syn_string
-    accent: "#7a2e00",          // = syn_type
+    error: "#dc7c7e",           // error/invalid (carried by bold+underline)
+    info: "#4387d7",            // = syn_string
+    accent: "#89461e",          // = syn_type
     // deutan-optimized syntax roles
-    syn_keyword: "#0a3d91",     // cool family, dark blue
-    syn_string: "#1d6fd0",      // cool family, medium blue (teal desaturates to grey)
+    syn_keyword: "#869ec5",     // cool family, soft blue
+    syn_string: "#4387d7",      // cool family, soft medium blue
     syn_function: "#c2570a",    // warm family, burnt orange
-    syn_type: "#7a2e00",        // warm family, dark brown (type/class/num/const/enum)
-    syn_comment: "#6e6e6e"      // neutral grey, italic
+    syn_type: "#89461e",        // warm family, warm brown (adjusted for separation)
+    syn_comment: "#9c9c9b"      // neutral grey, italic
   },
   dark: {
     background: "#121212",
     foreground: "#e0e0e0",      // = variable/property/parameter (neutral, APCA Lc 87)
-    primary: "#6aa6ff",         // UI accent + keyword/tag/built-in (blue, bold)
+    primary: "#6ea9ff",         // UI accent + keyword/tag/built-in (blue, bold)
     secondary: "#e2cb8d",       // = syn_function
     success: "#40b0a6",         // UI only (bracket match / git additions)
     warning: "#e1be6a",         // UI only
-    error: "#ff5e5e",           // error/invalid (carried by bold+underline)
+    error: "#ff7575",           // error/invalid (carried by bold+underline)
     info: "#74d7e3",            // = syn_string
     accent: "#785ef0",          // UI only (button hover)
     // deutan-optimized syntax roles — brightened so each clears its APCA Lc floor
     // (regular>=60, bold>=50) when read on the dark editor background.
-    syn_keyword: "#6aa6ff",     // cool family, blue (bold, Lc 50)
+    syn_keyword: "#6ea9ff",     // cool family, blue (bold, Lc 50)
     syn_string: "#74d7e3",      // cool family, light cyan (Lc 70)
     syn_function: "#e2cb8d",    // warm family, bright yellow (Lc 84)
-    syn_type: "#f5933f",        // warm family, orange (Lc 61) — type/class/num/const/enum
+    syn_type: "#f7993f",        // warm family, orange (Lc 61) — type/class/num/const/enum
     syn_comment: "#99a0a8"      // faint-cool neutral grey, italic (Lc 49)
   }
 };
 
 const customPalette = {
   version: "1.2.0",
-  theme: "colorblindness",
+  theme: "deuteranopia",
   flavors: {
     light: { name: "Light", dark: false, colors: {} },
     dark: { name: "Dark", dark: true, colors: {} }
@@ -264,21 +264,60 @@ export declare const flavorEntries: [FlavorName, FlavorInfo][];
 fs.writeFileSync('dist/index.d.ts', typeDefs);
 console.log('Successfully wrote dist/index.d.ts');
 
-
 // B. Compile styling and VSCode theme tokens using Whiskers CLI
-const whiskersExecutable = process.platform === 'win32'
-  ? path.join(process.env.USERPROFILE, '.cargo', 'bin', 'whiskers.exe')
-  : 'whiskers';
+function findWhiskers() {
+  // 1. Try running 'whiskers' directly from PATH
+  const testRun = spawnSync(process.platform === 'win32' ? 'whiskers.exe' : 'whiskers', ['--version'], { shell: false });
+  if (testRun.error === undefined && testRun.status === 0) {
+    return process.platform === 'win32' ? 'whiskers.exe' : 'whiskers';
+  }
 
+  // 2. If on Windows and 'whiskers' is not in PATH, try Cargo default bin location
+  if (process.platform === 'win32') {
+    const userProfile = process.env.USERPROFILE || process.env.HOMEPATH;
+    if (userProfile) {
+      const cargoBinPath = path.join(userProfile, '.cargo', 'bin', 'whiskers.exe');
+      if (fs.existsSync(cargoBinPath)) {
+        return cargoBinPath;
+      }
+    }
+  }
+
+  // 3. Fallback/Error: Whiskers not found
+  console.error('Error: "whiskers" CLI compiler was not found in PATH or in the default cargo bin directory.');
+  console.error('Please install whiskers (e.g. `cargo install catppuccin-whiskers` or ensure it is in your PATH).');
+  process.exit(1);
+}
+
+const whiskersExecutable = findWhiskers();
 console.log(`Using whiskers executable: ${whiskersExecutable}`);
+
+function runWhiskers(template, overridesStr) {
+  const result = spawnSync(whiskersExecutable, [template, '--overrides', overridesStr], {
+    encoding: 'utf-8',
+    shell: false
+  });
+
+  if (result.error) {
+    console.error(`Error spawning whiskers for ${template}:`, result.error.message);
+    process.exit(1);
+  }
+
+  if (result.status !== 0) {
+    console.error(`Error compiling ${template}:`, result.stderr || result.stdout);
+    process.exit(1);
+  }
+  
+  console.log(`Successfully compiled ${template}.`);
+}
 
 // Ensure output directories exist
 fs.mkdirSync('themes', { recursive: true });
 
 const styleTemplates = [
-  'templates/hakimi-colorblindness.css.tera',
-  'templates/hakimi-colorblindness.scss.tera',
-  'templates/hakimi-colorblindness.less.tera',
+  'templates/hakimi-deuteranopia.css.tera',
+  'templates/hakimi-deuteranopia.scss.tera',
+  'templates/hakimi-deuteranopia.less.tera',
   'templates/vscode-theme-light.json.tera',
   'templates/vscode-theme-dark.json.tera'
 ];
@@ -288,97 +327,38 @@ console.log('Compiling stylesheets using Whiskers...');
 for (const template of styleTemplates) {
   if (template.includes('vscode-theme')) continue;
   console.log(`Compiling ${template}...`);
-  const result = spawnSync(whiskersExecutable, [template, '--overrides', combinedOverridesStr], {
-    encoding: 'utf-8',
-    shell: false
-  });
-
-  if (result.status !== 0) {
-    console.error(`Error compiling ${template}:`, result.stderr);
-    process.exit(1);
-  } else {
-    console.log(`Successfully compiled ${template}.`);
-  }
+  runWhiskers(template, combinedOverridesStr);
 }
 
 // 2. Compile VSCode Themes (Light with lightOverrides, Dark with darkOverrides)
 const lightOverridesStr = JSON.stringify(lightOverrides);
 const darkOverridesStr = JSON.stringify(darkOverrides);
 
-// Aggressive "Dark Bright" variant: the syntax palette is pushed so EVERY token clears
-// APCA Lc >= 60 (no bold relaxation). Trade-off vs "Dark": brighter/pastel colors and a
-// louder comment, with tighter deutan separation leaned more on font style. Same UI chrome
-// as Dark (primary etc. inherited) — only syn_* and the error color differ.
-const darkBrightColors = {
-  ...flavorColors.dark,
-  foreground: "#ffffff",
-  error: "#ff8f8f",       // lighter salmon so the error token itself clears APCA Lc 60
-  syn_keyword: "#80baff",
-  syn_string: "#a3e4ef",
-  syn_function: "#ffdd6e",
-  syn_type: "#ff8f36",
-  syn_comment: "#b4b4ba"
-};
-const darkBrightOverrides = {};
-for (const [name, hex] of Object.entries({ ...darkBrightColors, ...sharedColors })) {
-  darkBrightOverrides[name] = hex.replace(/^#/, '').toLowerCase();
-}
-const darkBrightOverridesStr = JSON.stringify(darkBrightOverrides);
-
 console.log('Compiling VSCode Light theme...');
-const resultLight = spawnSync(whiskersExecutable, ['templates/vscode-theme-light.json.tera', '--overrides', lightOverridesStr], {
-  encoding: 'utf-8',
-  shell: false
-});
-if (resultLight.status !== 0) {
-  console.error(`Error compiling templates/vscode-theme-light.json.tera:`, resultLight.stderr);
-  process.exit(1);
-} else {
-  console.log(`Successfully compiled templates/vscode-theme-light.json.tera.`);
-}
+runWhiskers('templates/vscode-theme-light.json.tera', lightOverridesStr);
 
 console.log('Compiling VSCode Dark theme...');
-const resultDark = spawnSync(whiskersExecutable, ['templates/vscode-theme-dark.json.tera', '--overrides', darkOverridesStr], {
-  encoding: 'utf-8',
-  shell: false
-});
-if (resultDark.status !== 0) {
-  console.error(`Error compiling templates/vscode-theme-dark.json.tera:`, resultDark.stderr);
-  process.exit(1);
-} else {
-  console.log(`Successfully compiled templates/vscode-theme-dark.json.tera.`);
-}
-
-console.log('Compiling VSCode Dark Bright theme...');
-const resultDarkBright = spawnSync(whiskersExecutable, ['templates/vscode-theme-dark-bright.json.tera', '--overrides', darkBrightOverridesStr], {
-  encoding: 'utf-8',
-  shell: false
-});
-if (resultDarkBright.status !== 0) {
-  console.error(`Error compiling templates/vscode-theme-dark-bright.json.tera:`, resultDarkBright.stderr);
-  process.exit(1);
-} else {
-  console.log(`Successfully compiled templates/vscode-theme-dark-bright.json.tera.`);
-}
+runWhiskers('templates/vscode-theme-dark.json.tera', darkOverridesStr);
 
 // 3. Compile Zed Theme Family
 const zedOverrides = {
   light: lightOverrides,
-  dark: darkOverrides,
-  darkBright: darkBrightOverrides
+  dark: darkOverrides
 };
 const zedOverridesStr = JSON.stringify(zedOverrides);
 
 console.log('Compiling Zed theme family...');
-const resultZed = spawnSync(whiskersExecutable, ['templates/zed-theme.json.tera', '--overrides', zedOverridesStr], {
-  encoding: 'utf-8',
-  shell: false
-});
-if (resultZed.status !== 0) {
-  console.error(`Error compiling templates/zed-theme.json.tera:`, resultZed.stderr);
-  process.exit(1);
-} else {
-  console.log(`Successfully compiled templates/zed-theme.json.tera.`);
+runWhiskers('templates/zed-theme.json.tera', zedOverridesStr);
+
+// 4. Update extension.toml version to match package.json version
+try {
+  const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+  let extToml = fs.readFileSync('extension.toml', 'utf8');
+  extToml = extToml.replace(/^version\s*=\s*".*"/m, `version = "${pkg.version}"`);
+  fs.writeFileSync('extension.toml', extToml, 'utf8');
+  console.log(`Successfully updated extension.toml version to ${pkg.version}`);
+} catch (err) {
+  console.error('Warning: Failed to update extension.toml version:', err.message);
 }
 
 console.log('All theme tokens successfully generated in dist/ and themes/!');

@@ -3,16 +3,14 @@
 import fs from 'fs';
 
 const themes = {
-  dark: JSON.parse(fs.readFileSync('themes/hakimi-colorblindness-dark.json','utf8')),
-  darkBright: JSON.parse(fs.readFileSync('themes/hakimi-colorblindness-dark-bright.json','utf8')),
-  light: JSON.parse(fs.readFileSync('themes/hakimi-colorblindness-light.json','utf8')),
+  dark: JSON.parse(fs.readFileSync('themes/hakimi-deuteranopia-dark.json','utf8')),
+  light: JSON.parse(fs.readFileSync('themes/hakimi-deuteranopia-light.json','utf8')),
 };
 
 // expected role -> color per flavor
 const ROLE = {
-  dark:       { keyword:'#6aa6ff', string:'#74d7e3', function:'#e2cb8d', type:'#f5933f', neutral:'#e0e0e0', comment:'#99a0a8', error:'#ff5e5e' },
-  darkBright: { keyword:'#80baff', string:'#a3e4ef', function:'#ffdd6e', type:'#ff8f36', neutral:'#ffffff', comment:'#b4b4ba', error:'#ff8f8f' },
-  light:      { keyword:'#0a3d91', string:'#1d6fd0', function:'#c2570a', type:'#7a2e00', neutral:'#000000', comment:'#6e6e6e', error:'#c4141a' },
+  dark:       { keyword:'#6ea9ff', string:'#74d7e3', function:'#e2cb8d', type:'#f7993f', neutral:'#e0e0e0', comment:'#99a0a8', error:'#ff7575' },
+  light:      { keyword:'#869ec5', string:'#4387d7', function:'#c2570a', type:'#89461e', neutral:'#45494c', comment:'#9c9c9b', error:'#dc7c7e' },
 };
 const BANNED = ['#fe6100','#ff8c42','#d35fb7','#ffb000','#648fff','#0c7bdc','#ffc20a','#e66100','#5d3a9b','#ee6677','#dc3220','#fefe62','#1aff1a'];
 
@@ -25,7 +23,7 @@ const tmFg = (theme, scope) => {
 let fail = 0;
 const eq = (label, got, want) => { const ok = (got||'').toLowerCase()===want.toLowerCase(); if(!ok){console.log(`  ✗ ${label}: got ${got} want ${want}`);fail++;} else console.log(`  ✓ ${label} = ${got}`); };
 
-for (const flavor of ['dark','darkBright','light']) {
+for (const flavor of ['dark','light']) {
   const t = themes[flavor], R = ROLE[flavor], S = t.semanticTokenColors;
   console.log(`\n===== ${flavor.toUpperCase()} : semantic == TextMate per role =====`);
   // keyword

@@ -1,18 +1,18 @@
 import { flavors, theme, version } from '../dist/index.js';
 import fs from 'fs';
 
-console.log('Validating generated colorblindness theme tokens...');
+console.log('Validating generated deuteranopia theme tokens...');
 
 // 1. Verify version and theme name
 if (version !== '1.2.0') {
   console.error(`FAIL: Version is ${version}, expected 1.2.0`);
   process.exit(1);
 }
-if (theme !== 'colorblindness') {
-  console.error(`FAIL: Theme is ${theme}, expected colorblindness`);
+if (theme !== 'deuteranopia') {
+  console.error(`FAIL: Theme is ${theme}, expected deuteranopia`);
   process.exit(1);
 }
-console.log('✓ Theme meta parameters are correct (1.1.0, colorblindness)');
+console.log(`✓ Theme meta parameters are correct (${version}, ${theme})`);
 
 // 2. Check flavors exist
 if (!flavors.light || !flavors.dark) {
@@ -45,28 +45,28 @@ console.log(`✓ All ${expectedTokens.length} color tokens are present in both l
 
 // 4. Verify specific color hex codes in light and dark flavors
 const checkLightColors = {
-  background: '#ffffff',
-  foreground: '#000000',
-  primary: '#0a3d91',
+  background: '#faf9f6',
+  foreground: '#45494c',
+  primary: '#869ec5',
   success: '#009e73',
-  error: '#c4141a',
-  syn_keyword: '#0a3d91',
-  syn_string: '#1d6fd0',
+  error: '#dc7c7e',
+  syn_keyword: '#869ec5',
+  syn_string: '#4387d7',
   syn_function: '#c2570a',
-  syn_type: '#7a2e00',
-  syn_comment: '#6e6e6e'
+  syn_type: '#89461e',
+  syn_comment: '#9c9c9b'
 };
 
 const checkDarkColors = {
   background: '#121212',
   foreground: '#e0e0e0',
-  primary: '#6aa6ff',
+  primary: '#6ea9ff',
   success: '#40b0a6',
-  error: '#ff5e5e',
-  syn_keyword: '#6aa6ff',
+  error: '#ff7575',
+  syn_keyword: '#6ea9ff',
   syn_string: '#74d7e3',
   syn_function: '#e2cb8d',
-  syn_type: '#f5933f',
+  syn_type: '#f7993f',
   syn_comment: '#99a0a8'
 };
 
@@ -89,13 +89,12 @@ console.log('✓ Specific color hex values matched exactly in both flavors');
 
 // 5. Verify styling and theme files exist and have content
 const styleFiles = [
-  'dist/hakimi-colorblindness.css',
-  'dist/hakimi-colorblindness.scss',
-  'dist/hakimi-colorblindness.less',
-  'themes/hakimi-colorblindness-light.json',
-  'themes/hakimi-colorblindness-dark.json',
-  'themes/hakimi-colorblindness-dark-bright.json',
-  'themes/hakimi-colorblindness.json'
+  'dist/hakimi-deuteranopia.css',
+  'dist/hakimi-deuteranopia.scss',
+  'dist/hakimi-deuteranopia.less',
+  'themes/hakimi-deuteranopia-light.json',
+  'themes/hakimi-deuteranopia-dark.json',
+  'themes/hakimi-deuteranopia.json'
 ];
 for (const file of styleFiles) {
   if (!fs.existsSync(file)) {
@@ -111,43 +110,37 @@ for (const file of styleFiles) {
 console.log('✓ CSS, SCSS, Less, VSCode and Zed theme files successfully compiled');
 
 // 6. Verify VSCode theme files content
-const lightTheme = JSON.parse(fs.readFileSync('themes/hakimi-colorblindness-light.json', 'utf8'));
-const darkTheme = JSON.parse(fs.readFileSync('themes/hakimi-colorblindness-dark.json', 'utf8'));
+const lightTheme = JSON.parse(fs.readFileSync('themes/hakimi-deuteranopia-light.json', 'utf8'));
+const darkTheme = JSON.parse(fs.readFileSync('themes/hakimi-deuteranopia-dark.json', 'utf8'));
 
-if (lightTheme.name !== 'Hakimi Colorblindness Light' || lightTheme.type !== 'light') {
+if (lightTheme.name !== 'Hakimi Deuteranopia Light' || lightTheme.type !== 'light') {
   console.error('FAIL: Light theme metadata is incorrect', lightTheme);
   process.exit(1);
 }
-if (darkTheme.name !== 'Hakimi Colorblindness Dark' || darkTheme.type !== 'dark') {
+if (darkTheme.name !== 'Hakimi Deuteranopia Dark' || darkTheme.type !== 'dark') {
   console.error('FAIL: Dark theme metadata is incorrect', darkTheme);
   process.exit(1);
 }
-const darkBrightTheme = JSON.parse(fs.readFileSync('themes/hakimi-colorblindness-dark-bright.json', 'utf8'));
-if (darkBrightTheme.name !== 'Hakimi Colorblindness Dark Bright' || darkBrightTheme.type !== 'dark') {
-  console.error('FAIL: Dark Bright theme metadata is incorrect', darkBrightTheme);
-  process.exit(1);
-}
-console.log('✓ Light, Dark, and Dark Bright theme configurations successfully validated');
+console.log('✓ Light and Dark theme configurations successfully validated');
 
 // 7. Verify Zed theme family content
-const zedThemeFamily = JSON.parse(fs.readFileSync('themes/hakimi-colorblindness.json', 'utf8'));
+const zedThemeFamily = JSON.parse(fs.readFileSync('themes/hakimi-deuteranopia.json', 'utf8'));
 if (zedThemeFamily.$schema !== 'https://zed.dev/schema/themes/v0.2.0.json') {
   console.error(`FAIL: Zed theme schema is ${zedThemeFamily.$schema}, expected https://zed.dev/schema/themes/v0.2.0.json`);
   process.exit(1);
 }
-if (zedThemeFamily.name !== 'Hakimi Colorblindness Safe') {
-  console.error(`FAIL: Zed theme family name is ${zedThemeFamily.name}, expected Hakimi Colorblindness Safe`);
+if (zedThemeFamily.name !== 'Hakimi Deuteranopia Safe') {
+  console.error(`FAIL: Zed theme family name is ${zedThemeFamily.name}, expected Hakimi Deuteranopia Safe`);
   process.exit(1);
 }
-if (!Array.isArray(zedThemeFamily.themes) || zedThemeFamily.themes.length !== 3) {
-  console.error(`FAIL: Expected 3 themes in Zed theme family, found ${zedThemeFamily.themes ? zedThemeFamily.themes.length : 0}`);
+if (!Array.isArray(zedThemeFamily.themes) || zedThemeFamily.themes.length !== 2) {
+  console.error(`FAIL: Expected 2 themes in Zed theme family, found ${zedThemeFamily.themes ? zedThemeFamily.themes.length : 0}`);
   process.exit(1);
 }
 
 const expectedZedThemes = {
-  'Hakimi Colorblindness Light': 'light',
-  'Hakimi Colorblindness Dark': 'dark',
-  'Hakimi Colorblindness Dark Bright': 'dark'
+  'Hakimi Deuteranopia Light': 'light',
+  'Hakimi Deuteranopia Dark': 'dark'
 };
 
 for (const zedTheme of zedThemeFamily.themes) {
@@ -167,4 +160,4 @@ for (const zedTheme of zedThemeFamily.themes) {
 }
 console.log('✓ Zed theme family file successfully validated');
 
-console.log('\nALL TESTS PASSED SUCCESSFULLY! The Light and Dark colorblindness theme tokens are verified.');
+console.log('\nALL TESTS PASSED SUCCESSFULLY! The Light and Dark deuteranopia theme tokens are verified.');

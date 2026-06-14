@@ -1,9 +1,9 @@
 {
-  "name": "hakimi-theme",
-  "version": "1.2.0",
+  "name": "hakimi-deutan-theme",
+  "version": "1.2.1",
   "publisher": "hakimi",
-  "displayName": "Hakimi Colorblindness Safe",
-  "description": "A colorblind-safe VSCode theme extension built entirely using accessible colors (Light and Dark versions)",
+  "displayName": "Hakimi Deuteranopia Safe",
+  "description": "A VSCode theme extension optimized specifically for deuteranopia (green-blindness) accessibility (Light and Dark versions)",
   "type": "module",
   "engines": {
     "vscode": "^1.80.0"
@@ -11,26 +11,38 @@
   "categories": [
     "Themes"
   ],
+  "keywords": [
+    "colorblind",
+    "accessibility",
+    "deuteranopia",
+    "deutan",
+    "theme",
+    "colorblind-safe",
+    "accessible"
+  ],
+  "icon": "images/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hakimi/hakimi-theme.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hakimi/hakimi-theme/issues"
+  },
+  "homepage": "https://github.com/hakimi/hakimi-theme#readme",
   "contributes": {
     "themes": [
       {
-        "label": "Hakimi Colorblindness Light",
+        "label": "Hakimi Deuteranopia Light",
         "uiTheme": "vs",
-        "path": "./themes/hakimi-colorblindness-light.json"
+        "path": "./themes/hakimi-deuteranopia-light.json"
       },
       {
-        "label": "Hakimi Colorblindness Dark",
+        "label": "Hakimi Deuteranopia Dark",
         "uiTheme": "vs-dark",
-        "path": "./themes/hakimi-colorblindness-dark.json"
-      },
-      {
-        "label": "Hakimi Colorblindness Dark Bright",
-        "uiTheme": "vs-dark",
-        "path": "./themes/hakimi-colorblindness-dark-bright.json"
+        "path": "./themes/hakimi-deuteranopia-dark.json"
       }
     ]
   },
-  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
@@ -38,15 +50,16 @@
       "import": "./dist/index.js"
     },
     "./palette.json": "./dist/palette.json",
-    "./css": "./dist/hakimi-colorblindness.css",
-    "./scss": "./dist/hakimi-colorblindness.scss",
-    "./less": "./dist/hakimi-colorblindness.less"
+    "./css": "./dist/hakimi-deuteranopia.css",
+    "./scss": "./dist/hakimi-deuteranopia.scss",
+    "./less": "./dist/hakimi-deuteranopia.less"
   },
   "scripts": {
-    "build": "node scripts/build.mjs",
-    "test": "node scripts/test.mjs && node scripts/verify-consistency.mjs && node scripts/audit-deutan.mjs"
+    "build": "node scripts/build.mjs && npx @vscode/vsce package",
+    "test": "node scripts/test.mjs && node scripts/verify-consistency.mjs && node scripts/audit-deutan.mjs",
+    "vscode:prepublish": "node scripts/build.mjs"
   },
-  "dependencies": {
-    "@catppuccin/palette": "^1.7.1"
+  "devDependencies": {
+    "@bjornlu/colorblind": "^1.0.3"
   }
 }

@@ -1,7 +1,7 @@
-id = "hakimi-colorblindness"
-name = "Hakimi Colorblindness Safe"
-version = "1.2.0"
+id = "hakimi-deuteranopia"
+name = "Hakimi Deuteranopia Safe"
+version = "1.2.1"
 schema_version = 1
 authors = ["hakimi"]
-description = "A colorblind-safe theme extension built entirely using accessible colors"
+description = "A deuteranopia-safe theme extension built entirely using accessible colors"
 repository = "https://github.com/hakimi/hakimi-theme"

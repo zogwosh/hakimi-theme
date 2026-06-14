@@ -12,21 +12,45 @@
 // de-emphasized); role separation dEok >= 0.10 (error exempt vs the warm family, since it
 // is carried by bold+underline). Lc 75 = body-text-grade, reported as "preferred".
 import fs from 'fs';
+import { simulate } from '@bjornlu/colorblind';
 
 const clamp01=x=>Math.min(1,Math.max(0,x));
-const h2=h=>(h=h.replace(/^#/,''),[parseInt(h.slice(0,2),16)/255,parseInt(h.slice(2,4),16)/255,parseInt(h.slice(4,6),16)/255]);
-const x2h=([r,g,b])=>'#'+[r,g,b].map(x=>Math.round(clamp01(x)*255).toString(16).padStart(2,'0')).join('');
+
+const hexToRgb = hex => {
+  let h = hex.replace(/^#/, '');
+  if (h.length === 3) {
+    h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+  }
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return { r, g, b };
+};
+
+const rgbToHex = ({ r, g, b }) => {
+  const toHex = val => {
+    const clamped = Math.min(255, Math.max(0, Math.round(val)));
+    return clamped.toString(16).padStart(2, '0');
+  };
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+};
+
+const h2 = hex => {
+  const rgb = hexToRgb(hex);
+  return [rgb.r / 255, rgb.g / 255, rgb.b / 255];
+};
+
 const toLin=x=>x<=0.04045?x/12.92:Math.pow((x+0.055)/1.055,2.4);
-const toSrgb=x=>x<=0.0031308?12.92*x:1.055*Math.pow(x,1/2.4)-0.055;
 function oklab([r,g,b]){const lr=toLin(r),lg=toLin(g),lb=toLin(b);
   const l=Math.cbrt(0.4122214708*lr+0.5363325363*lg+0.0514459929*lb),m=Math.cbrt(0.2119034982*lr+0.6806995477*lg+0.1073969541*lb),s=Math.cbrt(0.0883024619*lr+0.2817188376*lg+0.6299787005*lb);
   return{L:0.2104542553*l+0.793617785*m-0.0040720468*s,a:1.9779984951*l-2.428592205*m+0.4505937099*s,b:0.0259040371*l+0.7827717662*m-0.808675766*s};}
 const dEok=(a,b)=>{const A=oklab(h2(a)),B=oklab(h2(b));return Math.hypot(A.L-B.L,A.a-B.a,A.b-B.b);};
 
-// Vienot-1999 deutan projection in linear RGB
-const Md=[[0.367322,0.860646,-0.227968],[0.280085,0.672501,0.047413],[-0.011820,0.042940,0.968881]];
-const mul=(m,[r,g,b])=>[m[0][0]*r+m[0][1]*g+m[0][2]*b,m[1][0]*r+m[1][1]*g+m[1][2]*b,m[2][0]*r+m[2][1]*g+m[2][2]*b];
-const deutan=hex=>{const l=h2(hex).map(toLin);return x2h(mul(Md,l).map(x=>toSrgb(clamp01(x))));};
+const deutan = hex => {
+  const rgb = hexToRgb(hex);
+  const simulated = simulate(rgb, 'deuteranopia');
+  return rgbToHex(simulated);
+};
 
 // ---- APCA (apca-w3 0.1.9 / "0.0.98G-4g" constants) ----
 const APCA={ Rco:0.2126729, Gco:0.7151522, Bco:0.0721750, trc:2.4,
@@ -52,7 +76,7 @@ if(Math.abs(a1-106.04)>0.5||Math.abs(a2+107.88)>0.5){console.error(`APCA self-te
 const FLOOR={ keyword:50, error:50, comment:45 }, DEFAULT_FLOOR=60, BODY=75, SEP_MIN=0.10;
 let fail=0;
 
-for (const [flavor,file] of [['DARK','themes/hakimi-colorblindness-dark.json'],['DARK-BRIGHT','themes/hakimi-colorblindness-dark-bright.json'],['LIGHT','themes/hakimi-colorblindness-light.json']]) {
+for (const [flavor,file] of [['DARK','themes/hakimi-deuteranopia-dark.json'],['LIGHT','themes/hakimi-deuteranopia-light.json']]) {
   const t=JSON.parse(fs.readFileSync(file,'utf8')), S=t.semanticTokenColors, bg=t.colors['editor.background'];
   const tm=s=>t.tokenColors.find(e=>e.scope.includes(s)).settings.foreground;
   const roles={ keyword:S.keyword, string:S.string, function:S.function, type:S.type,

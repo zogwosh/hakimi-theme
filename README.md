@@ -49,13 +49,13 @@ applied in linear RGB), and only then measured. `npm test` enforces three gates:
 
 | Role | Dark | Dark Bright | Light |
 | --- | --- | --- | --- |
-| Keyword / tag / built-in (bold) | `#6aa6ff` | `#80baff` | `#0a3d91` |
+| Keyword / tag / built-in (bold) | `#6ea9ff` | `#80baff` | `#0a3d91` |
 | String / attribute | `#74d7e3` | `#a3e4ef` | `#1d6fd0` |
 | Function / method | `#e2cb8d` | `#ffdd6e` | `#c2570a` |
-| Type / class / number / const / enum | `#f5933f` | `#ff8f36` | `#7a2e00` |
-| Variable / property / parameter | `#ffffff` | `#ffffff` | `#000000` |
+| Type / class / number / const / enum | `#f7993f` | `#ff9536` | `#7a2e00` |
+| Variable / property / parameter | `#e0e0e0` | `#ffffff` | `#000000` |
 | Comment (italic) | `#99a0a8` | `#b4b4ba` | `#6e6e6e` |
-| Error / invalid (bold + underline) | `#ff5e5e` | `#ff8f8f` | `#c4141a` |
+| Error / invalid (bold + underline) | `#ff7575` | `#ff8f8f` | `#c4141a` |
 
 ## Choosing a dark variant
 
