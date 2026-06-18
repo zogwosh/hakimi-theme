@@ -23,12 +23,12 @@
   "icon": "images/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/hakimi/hakimi-theme.git"
+    "url": "https://github.com/zogwosh/hakimi-theme.git"
   },
   "bugs": {
-    "url": "https://github.com/hakimi/hakimi-theme/issues"
+    "url": "https://github.com/zogwosh/hakimi-theme/issues"
   },
-  "homepage": "https://github.com/hakimi/hakimi-theme#readme",
+  "homepage": "https://github.com/zogwosh/hakimi-theme#readme",
   "contributes": {
     "themes": [
       {
