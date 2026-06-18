@@ -34,12 +34,12 @@
       {
         "label": "Hakimi Deuteranopia Light",
         "uiTheme": "vs",
-        "path": "./themes/hakimi-deuteranopia-light.json"
+        "path": "./vscode-themes/hakimi-deuteranopia-light.json"
       },
       {
         "label": "Hakimi Deuteranopia Dark",
         "uiTheme": "vs-dark",
-        "path": "./themes/hakimi-deuteranopia-dark.json"
+        "path": "./vscode-themes/hakimi-deuteranopia-dark.json"
       }
     ]
   },

@@ -213,6 +213,7 @@ const combinedOverrides = {
 // Ensure output directories exist
 fs.mkdirSync('dist', { recursive: true });
 fs.mkdirSync('themes', { recursive: true });
+fs.mkdirSync('vscode-themes', { recursive: true });
 
 // A. Write program files directly from Node
 console.log('Writing package definitions (palette.json, index.js, index.d.ts)...');
@@ -313,6 +314,7 @@ function runWhiskers(template, overridesStr) {
 
 // Ensure output directories exist
 fs.mkdirSync('themes', { recursive: true });
+fs.mkdirSync('vscode-themes', { recursive: true });
 
 const styleTemplates = [
   'templates/hakimi-deuteranopia.css.tera',

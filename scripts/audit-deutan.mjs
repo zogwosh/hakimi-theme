@@ -76,7 +76,7 @@ if(Math.abs(a1-106.04)>0.5||Math.abs(a2+107.88)>0.5){console.error(`APCA self-te
 const FLOOR={ keyword:50, error:50, comment:45 }, DEFAULT_FLOOR=60, BODY=75, SEP_MIN=0.10;
 let fail=0;
 
-for (const [flavor,file] of [['DARK','themes/hakimi-deuteranopia-dark.json'],['LIGHT','themes/hakimi-deuteranopia-light.json']]) {
+for (const [flavor,file] of [['DARK','vscode-themes/hakimi-deuteranopia-dark.json'],['LIGHT','vscode-themes/hakimi-deuteranopia-light.json']]) {
   const t=JSON.parse(fs.readFileSync(file,'utf8')), S=t.semanticTokenColors, bg=t.colors['editor.background'];
   const tm=s=>t.tokenColors.find(e=>e.scope.includes(s)).settings.foreground;
   const roles={ keyword:S.keyword, string:S.string, function:S.function, type:S.type,

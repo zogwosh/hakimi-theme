@@ -92,8 +92,8 @@ const styleFiles = [
   'dist/hakimi-deuteranopia.css',
   'dist/hakimi-deuteranopia.scss',
   'dist/hakimi-deuteranopia.less',
-  'themes/hakimi-deuteranopia-light.json',
-  'themes/hakimi-deuteranopia-dark.json',
+  'vscode-themes/hakimi-deuteranopia-light.json',
+  'vscode-themes/hakimi-deuteranopia-dark.json',
   'themes/hakimi-deuteranopia.json'
 ];
 for (const file of styleFiles) {
@@ -110,8 +110,8 @@ for (const file of styleFiles) {
 console.log('✓ CSS, SCSS, Less, VSCode and Zed theme files successfully compiled');
 
 // 6. Verify VSCode theme files content
-const lightTheme = JSON.parse(fs.readFileSync('themes/hakimi-deuteranopia-light.json', 'utf8'));
-const darkTheme = JSON.parse(fs.readFileSync('themes/hakimi-deuteranopia-dark.json', 'utf8'));
+const lightTheme = JSON.parse(fs.readFileSync('vscode-themes/hakimi-deuteranopia-light.json', 'utf8'));
+const darkTheme = JSON.parse(fs.readFileSync('vscode-themes/hakimi-deuteranopia-dark.json', 'utf8'));
 
 if (lightTheme.name !== 'Hakimi Deuteranopia Light' || lightTheme.type !== 'light') {
   console.error('FAIL: Light theme metadata is incorrect', lightTheme);

@@ -1,7 +1,7 @@
 ---
 whiskers:
   version: "2.9.0"
-  filename: "themes/hakimi-deuteranopia-light.json"
+  filename: "vscode-themes/hakimi-deuteranopia-light.json"
 ---
 {
   "name": "Hakimi Deuteranopia Light",

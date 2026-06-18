@@ -3,8 +3,8 @@
 import fs from 'fs';
 
 const themes = {
-  dark: JSON.parse(fs.readFileSync('themes/hakimi-deuteranopia-dark.json','utf8')),
-  light: JSON.parse(fs.readFileSync('themes/hakimi-deuteranopia-light.json','utf8')),
+  dark: JSON.parse(fs.readFileSync('vscode-themes/hakimi-deuteranopia-dark.json','utf8')),
+  light: JSON.parse(fs.readFileSync('vscode-themes/hakimi-deuteranopia-light.json','utf8')),
 };
 
 // expected role -> color per flavor
