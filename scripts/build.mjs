@@ -355,9 +355,9 @@ runWhiskers('templates/zed-theme.json.tera', zedOverridesStr);
 // 4. Update extension.toml version to match package.json version
 try {
   const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-  let extToml = fs.readFileSync('extension.toml', 'utf8');
+  let extToml = fs.readFileSync('zed/extension.toml', 'utf8');
   extToml = extToml.replace(/^version\s*=\s*".*"/m, `version = "${pkg.version}"`);
-  fs.writeFileSync('extension.toml', extToml, 'utf8');
+  fs.writeFileSync('zed/extension.toml', extToml, 'utf8');
   console.log(`Successfully updated extension.toml version to ${pkg.version}`);
 } catch (err) {
   console.error('Warning: Failed to update extension.toml version:', err.message);

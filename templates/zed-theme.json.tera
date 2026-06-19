@@ -1,7 +1,7 @@
 ---
 whiskers:
   version: "2.9.0"
-  filename: "themes/hakimi-deuteranopia.json"
+  filename: "zed/themes/hakimi-deuteranopia.json"
 ---
 {
   "$schema": "https://zed.dev/schema/themes/v0.2.0.json",

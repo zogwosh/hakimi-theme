@@ -94,7 +94,7 @@ const styleFiles = [
   'dist/hakimi-deuteranopia.less',
   'vscode-themes/hakimi-deuteranopia-light.json',
   'vscode-themes/hakimi-deuteranopia-dark.json',
-  'themes/hakimi-deuteranopia.json'
+  'zed/themes/hakimi-deuteranopia.json'
 ];
 for (const file of styleFiles) {
   if (!fs.existsSync(file)) {
@@ -124,7 +124,7 @@ if (darkTheme.name !== 'Hakimi Deuteranopia Dark' || darkTheme.type !== 'dark') 
 console.log('✓ Light and Dark theme configurations successfully validated');
 
 // 7. Verify Zed theme family content
-const zedThemeFamily = JSON.parse(fs.readFileSync('themes/hakimi-deuteranopia.json', 'utf8'));
+const zedThemeFamily = JSON.parse(fs.readFileSync('zed/themes/hakimi-deuteranopia.json', 'utf8'));
 if (zedThemeFamily.$schema !== 'https://zed.dev/schema/themes/v0.2.0.json') {
   console.error(`FAIL: Zed theme schema is ${zedThemeFamily.$schema}, expected https://zed.dev/schema/themes/v0.2.0.json`);
   process.exit(1);
