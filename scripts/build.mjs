@@ -137,15 +137,15 @@ const sharedColors = {
 // font decoration (bold + underline), since no hue signals "error" to a deuteranope.
 const flavorColors = {
   light: {
-    background: '#dfccc0',
-    surface_editor: '#dfccc0',
-    surface_base: '#d2bbae',
-    surface_header: '#c8b1a5',
-    surface_tab_active: '#eadbd2',
-    surface_tab_inactive: '#d2bbae',
-    surface_raised: '#eadbd2',
-    surface_input: '#e7d5ca',
-    surface_line: '#e7d5ca',
+    background: '#ffead8',
+    surface_editor: '#ffead8',
+    surface_base: '#f0d8cf',
+    surface_header: '#f0d8cf',
+    surface_tab_active: '#f0d8cf',
+    surface_tab_inactive: '#f0d8cf',
+    surface_raised: '#f0d8cf',
+    surface_input: '#f0d8cf',
+    surface_line: '#f0d8cf',
     border_subtle: '#00000000',
     border_strong: '#00000000',
     foreground: '#45494c', // = variable/property/parameter (neutral)

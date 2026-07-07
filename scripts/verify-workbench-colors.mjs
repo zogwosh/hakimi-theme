@@ -184,6 +184,81 @@ const DISTINCT_SURFACE_KEYS = [
   'input.background',
 ];
 
+const LIGHT_EDITOR_LAYER = '#ffead8';
+const LIGHT_UI_LAYER = '#f0d8cf';
+const LIGHT_EDITOR_LAYER_KEYS = [
+  'editor.background',
+  'editorGroup.emptyBackground',
+  'outputView.background',
+  'peekViewEditor.background',
+  'terminal.background',
+  'welcomePage.background',
+  'walkThrough.embeddedEditorBackground',
+];
+const LIGHT_UI_LAYER_KEYS = [
+  'activityBar.background',
+  'activityBarTop.background',
+  'sideBar.background',
+  'sideBarTitle.background',
+  'sideBarSectionHeader.background',
+  'sideBarStickyScroll.background',
+  'statusBar.background',
+  'titleBar.activeBackground',
+  'titleBar.inactiveBackground',
+  'tab.activeBackground',
+  'tab.inactiveBackground',
+  'tab.unfocusedActiveBackground',
+  'tab.unfocusedInactiveBackground',
+  'tab.hoverBackground',
+  'editorGroupHeader.tabsBackground',
+  'editorGroupHeader.noTabsBackground',
+  'button.secondaryBackground',
+  'button.secondaryHoverBackground',
+  'checkbox.background',
+  'checkbox.selectBackground',
+  'checkbox.disabled.background',
+  'radio.activeBackground',
+  'radio.inactiveBackground',
+  'dropdown.background',
+  'dropdown.listBackground',
+  'input.background',
+  'quickInput.background',
+  'quickInputTitle.background',
+  'keybindingTable.headerBackground',
+  'listFilterWidget.background',
+  'panel.background',
+  'panelSectionHeader.background',
+  'panelStickyScroll.background',
+  'outputViewStickyScroll.background',
+  'editorWidget.background',
+  'editorSuggestWidget.background',
+  'editorHoverWidget.background',
+  'editorHoverWidget.statusBarBackground',
+  'editorStickyScroll.background',
+  'editorStickyScrollHover.background',
+  'debugExceptionWidget.background',
+  'editorMarkerNavigation.background',
+  'peekViewEditorGutter.background',
+  'peekViewResult.background',
+  'peekViewTitle.background',
+  'debugToolBar.background',
+  'menu.background',
+  'commandCenter.background',
+  'notificationCenterHeader.background',
+  'notifications.background',
+  'banner.background',
+  'settings.dropdownBackground',
+  'settings.checkboxBackground',
+  'settings.textInputBackground',
+  'settings.numberInputBackground',
+  'breadcrumb.background',
+  'breadcrumbPicker.background',
+  'welcomePage.tileBackground',
+  'welcomePage.progress.background',
+  'inlineChat.background',
+  'inlineChatInput.background',
+];
+
 const BORDER_CONTRAST_CHECKS = [
   ['editorGroup.border', 'editor.background'],
   ['editorGroupHeader.tabsBorder', 'editorGroupHeader.tabsBackground'],
@@ -415,6 +490,26 @@ for (const [flavor, file] of Object.entries(THEME_FILES)) {
     }
   }
 
+  if (flavor === 'light') {
+    for (const key of LIGHT_EDITOR_LAYER_KEYS) {
+      if (colors[key] !== LIGHT_EDITOR_LAYER) {
+        console.log(
+          `  FAIL light editor layer ${key}: got ${colors[key]}, expected ${LIGHT_EDITOR_LAYER}`,
+        );
+        failures++;
+      }
+    }
+
+    for (const key of LIGHT_UI_LAYER_KEYS) {
+      if (colors[key] !== LIGHT_UI_LAYER) {
+        console.log(
+          `  FAIL light UI layer ${key}: got ${colors[key]}, expected ${LIGHT_UI_LAYER}`,
+        );
+        failures++;
+      }
+    }
+  }
+
   for (const key of DISTINCT_SURFACE_KEYS) {
     const distance = colorDistance(colors[key], bg, bg);
     if (distance < 8) {
@@ -425,16 +520,18 @@ for (const [flavor, file] of Object.entries(THEME_FILES)) {
     }
   }
 
-  const tabDistance = colorDistance(
-    colors['tab.activeBackground'],
-    colors['tab.inactiveBackground'],
-    bg,
-  );
-  if (tabDistance < 12) {
-    console.log(
-      `  FAIL ${flavor} tabs lack active/inactive separation: distance ${tabDistance.toFixed(1)}`,
+  if (flavor === 'dark') {
+    const tabDistance = colorDistance(
+      colors['tab.activeBackground'],
+      colors['tab.inactiveBackground'],
+      bg,
     );
-    failures++;
+    if (tabDistance < 12) {
+      console.log(
+        `  FAIL ${flavor} tabs lack active/inactive separation: distance ${tabDistance.toFixed(1)}`,
+      );
+      failures++;
+    }
   }
 
   const lineDistance = colorDistance(

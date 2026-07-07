@@ -93,7 +93,7 @@ console.log(
 
 // 4. Verify specific color hex codes in light and dark flavors
 const checkLightColors = {
-  background: '#dfccc0',
+  background: '#ffead8',
   foreground: '#45494c',
   primary: '#4c6698',
   success: '#00543f',
