@@ -56,10 +56,13 @@
   },
   "scripts": {
     "build": "node scripts/build.mjs && npx @vscode/vsce package",
-    "test": "node scripts/test.mjs && node scripts/verify-consistency.mjs && node scripts/audit-deutan.mjs",
+    "fmt": "biome format --write .",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "test": "node scripts/test.mjs && node scripts/verify-consistency.mjs && node scripts/verify-workbench-colors.mjs && node scripts/audit-deutan.mjs",
     "vscode:prepublish": "node scripts/build.mjs"
   },
   "devDependencies": {
-    "@bjornlu/colorblind": "^1.0.3"
+    "@biomejs/biome": "2.5.2"
   }
 }
