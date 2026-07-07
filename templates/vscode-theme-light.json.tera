@@ -408,14 +408,20 @@ whiskers:
     "class:defaultLibrary": "#{{ syn_keyword }}",
     "function": "#{{ syn_function }}",
     "method": "#{{ syn_function }}",
-    "macro": "#{{ syn_type }}",
+    "macro": {
+      "foreground": "#{{ syn_type }}",
+      "fontStyle": "bold"
+    },
     "property": "#{{ foreground }}",
     "property.readonly": "#{{ syn_type }}",
     "variable": "#{{ foreground }}",
     "variable.readonly": "#{{ syn_type }}",
     "variable.defaultLibrary": "#{{ syn_keyword }}",
     "parameter": "#{{ foreground }}",
-    "keyword": "#{{ syn_keyword }}",
+    "keyword": {
+      "foreground": "#{{ syn_keyword }}",
+      "fontStyle": "bold"
+    },
     "number": "#{{ syn_type }}",
     "string": "#{{ syn_string }}"
   },
@@ -458,6 +464,8 @@ whiskers:
         "keyword",
         "keyword.control",
         "keyword.operator",
+        "storage.type",
+        "storage.modifier",
         "punctuation.separator",
         "punctuation.terminator"
       ],
@@ -556,9 +564,7 @@ whiskers:
         "entity.name.impl",
         "entity.name.type.module",
         "entity.name.type.namespace",
-        "entity.name.type.alias",
-        "storage.type",
-        "storage.modifier"
+        "entity.name.type.alias"
       ],
       "settings": {
         "foreground": "#{{ syn_type }}"

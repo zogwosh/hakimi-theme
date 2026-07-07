@@ -10,8 +10,9 @@
 //   (2) OKLab dE for role separation in the deuteranope's perceived space.
 //
 // Gates: regular syntax Lc >= 60, bold syntax Lc >= 50, comment Lc >= 45,
-// terminal/UI text Lc >= 45, syntax separation dEok >= 0.10. Error keeps a
-// redundant bold+underline cue, but still has a small color-distance floor.
+// terminal/UI text Lc >= 45. General syntax separation is dEok >= 0.10, while
+// high-frequency adjacent token pairs use stricter comfort floors. Error keeps
+// a redundant bold+underline cue, but still needs real color separation.
 import fs from 'node:fs';
 
 const RGB_TO_LMS = [
@@ -166,6 +167,16 @@ const BODY = 75;
 const SEP_MIN = 0.1;
 const ERROR_SEP_MIN = 0.04;
 
+const LIGHT_PAIR_SEPARATION_FLOORS = {
+  'keyword|string': 0.15,
+  'keyword|variable': 0.16,
+  'keyword|comment': 0.15,
+  'function|variable': 0.14,
+  'function|type': 0.14,
+  'string|variable': 0.12,
+  'type|variable': 0.13,
+};
+
 let failures = 0;
 
 function scopeEntry(theme, scope) {
@@ -173,6 +184,40 @@ function scopeEntry(theme, scope) {
     const scopes = Array.isArray(entry.scope) ? entry.scope : [entry.scope];
     return scopes.includes(scope);
   });
+}
+
+function semanticForeground(value) {
+  if (typeof value === 'string') return value;
+  if (value && typeof value === 'object') return value.foreground;
+  return undefined;
+}
+
+function semanticStyle(value) {
+  return value && typeof value === 'object' ? value.fontStyle || '' : '';
+}
+
+function pairKey(a, b) {
+  return [a, b].sort().join('|');
+}
+
+function pairFloor(flavor, a, b) {
+  const key = pairKey(a, b);
+  if (flavor === 'LIGHT' && LIGHT_PAIR_SEPARATION_FLOORS[key])
+    return LIGHT_PAIR_SEPARATION_FLOORS[key];
+  const pair = new Set([a, b]);
+  return pair.has('error') ? ERROR_SEP_MIN : SEP_MIN;
+}
+
+function requireSemanticStyle(theme, key, required) {
+  const value = theme.semanticTokenColors[key];
+  const style = semanticStyle(value);
+  const ok = required.every((part) => style.includes(part));
+  if (!ok) {
+    console.log(
+      `  FAIL semantic ${key} should include fontStyle ${required.join('+')}; got ${JSON.stringify(value)}`,
+    );
+    failures++;
+  }
 }
 
 function recordTextCheck({ label, fg, bg, floor, contextBg = bg }) {
@@ -191,11 +236,11 @@ function recordTextCheck({ label, fg, bg, floor, contextBg = bg }) {
 function auditSyntax(flavor, theme) {
   const bg = theme.colors['editor.background'];
   const roles = {
-    keyword: theme.semanticTokenColors.keyword,
-    string: theme.semanticTokenColors.string,
-    function: theme.semanticTokenColors.function,
-    type: theme.semanticTokenColors.type,
-    variable: theme.semanticTokenColors.variable,
+    keyword: semanticForeground(theme.semanticTokenColors.keyword),
+    string: semanticForeground(theme.semanticTokenColors.string),
+    function: semanticForeground(theme.semanticTokenColors.function),
+    type: semanticForeground(theme.semanticTokenColors.type),
+    variable: semanticForeground(theme.semanticTokenColors.variable),
     comment: scopeEntry(theme, 'comment').settings.foreground,
     error: scopeEntry(theme, 'invalid').settings.foreground,
   };
@@ -218,13 +263,8 @@ function auditSyntax(flavor, theme) {
     for (let j = i + 1; j < names.length; j++) {
       const a = names[i];
       const b = names[j];
-      const pair = new Set([a, b]);
       const d = dEok(deutan(roles[a], bg), deutan(roles[b], bg));
-      const floor = pair.has('error')
-        ? ERROR_SEP_MIN
-        : pair.has('comment') && pair.has('keyword')
-          ? ERROR_SEP_MIN
-          : SEP_MIN;
+      const floor = pairFloor(flavor, a, b);
       if (d < floor) {
         console.log(`  FAIL ${a} vs ${b}: dEok ${d.toFixed(3)} < ${floor}`);
         failures++;
@@ -236,6 +276,10 @@ function auditSyntax(flavor, theme) {
   for (const [a, b, d, floor] of pairs.slice(0, 5)) {
     console.log(`  ${d >= floor ? 'OK' : 'FAIL'} ${d.toFixed(3)} ${a} vs ${b}`);
   }
+
+  console.log('-- semantic font-style cues --');
+  requireSemanticStyle(theme, 'keyword', ['bold']);
+  requireSemanticStyle(theme, 'macro', ['bold']);
 }
 
 function auditVsCodeWorkbench(flavor, theme) {

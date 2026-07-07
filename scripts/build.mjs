@@ -157,10 +157,10 @@ const flavorColors = {
     info: '#005b9f', // UI info
     accent: '#4a250e', // UI only
     // deutan-optimized syntax roles
-    syn_keyword: '#4c6698', // cool family, blue, darkened for warm light bg
+    syn_keyword: '#336fd6', // cool family, saturated blue for stronger keyword separation
     syn_string: '#004b8f', // cool family, deeper blue
-    syn_function: '#704400', // warm family, dark ochre
-    syn_type: '#4a250e', // warm family, dark brown separated by luminance
+    syn_function: '#8a5200', // warm family, ochre separated from neutral text
+    syn_type: '#3a1f0b', // warm family, dark brown separated by luminance
     syn_comment: '#6f706f', // neutral grey, italic
   },
   dark: {

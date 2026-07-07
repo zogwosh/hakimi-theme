@@ -98,10 +98,10 @@ const checkLightColors = {
   primary: '#4c6698',
   success: '#00543f',
   error: '#6f1f65',
-  syn_keyword: '#4c6698',
+  syn_keyword: '#336fd6',
   syn_string: '#004b8f',
-  syn_function: '#704400',
-  syn_type: '#4a250e',
+  syn_function: '#8a5200',
+  syn_type: '#3a1f0b',
   syn_comment: '#6f706f',
 };
 

@@ -23,10 +23,10 @@ const ROLE = {
     error: '#ff8585',
   },
   light: {
-    keyword: '#4c6698',
+    keyword: '#336fd6',
     string: '#004b8f',
-    function: '#704400',
-    type: '#4a250e',
+    function: '#8a5200',
+    type: '#3a1f0b',
     neutral: '#45494c',
     comment: '#6f706f',
     error: '#6f1f65',
@@ -65,6 +65,20 @@ const eq = (label, got, want) => {
   } else console.log(`  ✓ ${label} = ${got}`);
 };
 
+const semFg = (value) =>
+  typeof value === 'string' ? value : value?.foreground;
+const semStyle = (value) =>
+  value && typeof value === 'object' ? value.fontStyle || '' : '';
+
+const requireSemStyle = (label, value, required) => {
+  const style = semStyle(value);
+  const ok = required.every((part) => style.includes(part));
+  console.log(
+    `  ${ok ? '✓' : '✗'} ${label} semantic style ${required.join('+')} (${style || 'none'})`,
+  );
+  if (!ok) fail++;
+};
+
 for (const flavor of ['dark', 'light']) {
   const t = themes[flavor],
     R = ROLE[flavor],
@@ -73,27 +87,29 @@ for (const flavor of ['dark', 'light']) {
     `\n===== ${flavor.toUpperCase()} : semantic == TextMate per role =====`,
   );
   // keyword
-  eq('keyword (sem)', S.keyword, R.keyword);
+  eq('keyword (sem)', semFg(S.keyword), R.keyword);
   eq('keyword (tm)', tmFg(t, 'keyword.control').fg, R.keyword);
+  eq('storage.type (tm)', tmFg(t, 'storage.type').fg, R.keyword);
+  eq('storage.modifier (tm)', tmFg(t, 'storage.modifier').fg, R.keyword);
   // string
-  eq('string (sem)', S.string, R.string);
+  eq('string (sem)', semFg(S.string), R.string);
   eq('string (tm)', tmFg(t, 'string.template').fg, R.string);
   // function
-  eq('function (sem)', S.function, R.function);
+  eq('function (sem)', semFg(S.function), R.function);
   eq('function (tm)', tmFg(t, 'entity.name.function').fg, R.function);
   // type / class / number / enumMember
-  eq('type (sem)', S.type, R.type);
-  eq('enumMember(sem)', S.enumMember, R.type);
-  eq('number (sem)', S.number, R.type);
+  eq('type (sem)', semFg(S.type), R.type);
+  eq('enumMember(sem)', semFg(S.enumMember), R.type);
+  eq('number (sem)', semFg(S.number), R.type);
   eq('type (tm)', tmFg(t, 'entity.name.type').fg, R.type);
   eq('number (tm)', tmFg(t, 'constant.numeric').fg, R.type);
   // variable / property (the consistency bug we fixed)
-  eq('property (sem)', S.property, R.neutral);
-  eq('variable (sem)', S.variable, R.neutral);
+  eq('property (sem)', semFg(S.property), R.neutral);
+  eq('variable (sem)', semFg(S.variable), R.neutral);
   eq('property (tm)', tmFg(t, 'variable.other.property').fg, R.neutral);
   eq('variable (tm)', tmFg(t, 'variable.parameter').fg, R.neutral);
   // built-in class = keyword-blue both layers
-  eq('class:defaultLibrary (sem)', S['class:defaultLibrary'], R.keyword);
+  eq('class:defaultLibrary (sem)', semFg(S['class:defaultLibrary']), R.keyword);
   eq(
     'support.class.builtin (tm)',
     tmFg(t, 'support.class.builtin').fg,
@@ -102,12 +118,24 @@ for (const flavor of ['dark', 'light']) {
 
   console.log(`  --- font-style cues ---`);
   const kw = tmFg(t, 'keyword.control'),
+    st = tmFg(t, 'storage.type'),
+    sm = tmFg(t, 'storage.modifier'),
     cm = tmFg(t, 'comment'),
     er = tmFg(t, 'invalid');
+  requireSemStyle('keyword', S.keyword, ['bold']);
+  requireSemStyle('macro', S.macro, ['bold']);
   console.log(
     `  ${kw.style.includes('bold') ? '✓' : '✗'} keyword bold (${kw.style})`,
   );
   if (!kw.style.includes('bold')) fail++;
+  console.log(
+    `  ${st.style.includes('bold') ? '✓' : '✗'} storage.type bold (${st.style})`,
+  );
+  if (!st.style.includes('bold')) fail++;
+  console.log(
+    `  ${sm.style.includes('bold') ? '✓' : '✗'} storage.modifier bold (${sm.style})`,
+  );
+  if (!sm.style.includes('bold')) fail++;
   console.log(
     `  ${cm.style.includes('italic') ? '✓' : '✗'} comment italic (${cm.style})`,
   );

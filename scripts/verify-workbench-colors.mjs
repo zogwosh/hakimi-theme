@@ -323,10 +323,10 @@ const ROLE_EXPECTATIONS = {
     neutral: '#e0e0e0',
   },
   light: {
-    keyword: '#4c6698',
+    keyword: '#336fd6',
     string: '#004b8f',
-    function: '#704400',
-    type: '#4a250e',
+    function: '#8a5200',
+    type: '#3a1f0b',
     neutral: '#45494c',
   },
 };

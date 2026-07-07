@@ -394,14 +394,20 @@
     "class:defaultLibrary": "#7ab2ff",
     "function": "#f0d68f",
     "method": "#f0d68f",
-    "macro": "#ff9536",
+    "macro": {
+      "foreground": "#ff9536",
+      "fontStyle": "bold"
+    },
     "property": "#e0e0e0",
     "property.readonly": "#ff9536",
     "variable": "#e0e0e0",
     "variable.readonly": "#ff9536",
     "variable.defaultLibrary": "#7ab2ff",
     "parameter": "#e0e0e0",
-    "keyword": "#7ab2ff",
+    "keyword": {
+      "foreground": "#7ab2ff",
+      "fontStyle": "bold"
+    },
     "number": "#ff9536",
     "string": "#80dcff"
   },
@@ -444,6 +450,8 @@
         "keyword",
         "keyword.control",
         "keyword.operator",
+        "storage.type",
+        "storage.modifier",
         "punctuation.separator",
         "punctuation.terminator"
       ],
@@ -542,9 +550,7 @@
         "entity.name.impl",
         "entity.name.type.module",
         "entity.name.type.namespace",
-        "entity.name.type.alias",
-        "storage.type",
-        "storage.modifier"
+        "entity.name.type.alias"
       ],
       "settings": {
         "foreground": "#ff9536"
