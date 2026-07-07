@@ -200,6 +200,45 @@ const BORDER_CONTRAST_CHECKS = [
   ['input.border', 'input.background'],
 ];
 
+const INVISIBLE_BORDER_CHECKS = [
+  ...BORDER_CONTRAST_CHECKS,
+  ['window.activeBorder', 'editor.background'],
+  ['window.inactiveBorder', 'editor.background'],
+  ['sideBarSectionHeader.border', 'sideBarSectionHeader.background'],
+  ['sideBarTitle.border', 'sideBarTitle.background'],
+  ['sideBarStickyScroll.border', 'sideBarStickyScroll.background'],
+  ['panelTitle.border', 'panel.background'],
+  ['panelInput.border', 'panel.background'],
+  ['panelSection.border', 'panel.background'],
+  ['panelSectionHeader.border', 'panelSectionHeader.background'],
+  ['panelStickyScroll.border', 'panelStickyScroll.background'],
+  ['editorHoverWidget.border', 'editorHoverWidget.background'],
+  ['editorSuggestWidget.border', 'editorSuggestWidget.background'],
+  ['editorStickyScroll.border', 'editorStickyScroll.background'],
+  ['debugToolBar.border', 'debugToolBar.background'],
+  ['menu.border', 'menu.background'],
+  ['commandCenter.border', 'commandCenter.background'],
+  ['commandCenter.inactiveBorder', 'commandCenter.background'],
+  ['notificationCenter.border', 'notifications.background'],
+  ['notificationToast.border', 'notifications.background'],
+  ['notifications.border', 'notifications.background'],
+  ['settings.dropdownBorder', 'settings.dropdownBackground'],
+  ['settings.dropdownListBorder', 'settings.dropdownBackground'],
+  ['settings.checkboxBorder', 'settings.checkboxBackground'],
+  ['settings.textInputBorder', 'settings.textInputBackground'],
+  ['settings.numberInputBorder', 'settings.numberInputBackground'],
+  ['settings.headerBorder', 'editor.background'],
+  ['settings.sashBorder', 'editor.background'],
+  ['inlineChat.border', 'inlineChat.background'],
+  ['inlineChatInput.border', 'inlineChatInput.background'],
+  ['textBlockQuote.border', 'textBlockQuote.background'],
+  ['toolbar.hoverOutline', 'editor.background'],
+  ['button.secondaryBorder', 'button.secondaryBackground'],
+  ['checkbox.border', 'checkbox.background'],
+  ['radio.inactiveBorder', 'radio.inactiveBackground'],
+  ['pickerGroup.border', 'quickInput.background'],
+];
+
 const ROLE_EXPECTATIONS = {
   dark: {
     keyword: '#7ab2ff',
@@ -410,11 +449,15 @@ for (const [flavor, file] of Object.entries(THEME_FILES)) {
     failures++;
   }
 
-  for (const [borderKey, surfaceKey] of BORDER_CONTRAST_CHECKS) {
-    const ratio = contrast(colors[borderKey], colors[surfaceKey]);
-    if (ratio < 1.25) {
+  for (const [borderKey, surfaceKey] of INVISIBLE_BORDER_CHECKS) {
+    const distance = colorDistance(
+      colors[borderKey],
+      colors[surfaceKey],
+      colors[surfaceKey],
+    );
+    if (distance > 1) {
       console.log(
-        `  FAIL ${flavor} border ${borderKey} contrast ${ratio.toFixed(2)} < 1.25 against ${surfaceKey}`,
+        `  FAIL ${flavor} border should be invisible: ${borderKey}=${colors[borderKey]} against ${surfaceKey}=${colors[surfaceKey]} distance ${distance.toFixed(1)}`,
       );
       failures++;
     }

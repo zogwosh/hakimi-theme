@@ -146,8 +146,8 @@ const flavorColors = {
     surface_raised: '#eadbd2',
     surface_input: '#e7d5ca',
     surface_line: '#e7d5ca',
-    border_subtle: '#b59f94',
-    border_strong: '#ad968a',
+    border_subtle: '#00000000',
+    border_strong: '#00000000',
     foreground: '#45494c', // = variable/property/parameter (neutral)
     primary: '#4c6698', // UI accent
     secondary: '#7a3f00', // UI secondary accent
@@ -173,8 +173,8 @@ const flavorColors = {
     surface_raised: '#303f46',
     surface_input: '#2b3940',
     surface_line: '#2b383e',
-    border_subtle: '#3a474d',
-    border_strong: '#405057',
+    border_subtle: '#00000000',
+    border_strong: '#00000000',
     foreground: '#e0e0e0', // = variable/property/parameter (neutral, APCA Lc 87)
     primary: '#7ab2ff', // UI accent
     secondary: '#f0d68f', // UI secondary accent
