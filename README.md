@@ -1,4 +1,4 @@
-# Hakimi Colorblindness Safe Theme
+# Hakimi Deuteranopia Safe Theme
 
 > **本主题专为绿色盲（Deuteranopia / Green-blindness）的实际编程体验设计。**
 
@@ -61,10 +61,10 @@ The simulated colors are then checked with:
 
 | Role | Dark | Light |
 | --- | --- | --- |
-| Keyword / tag / built-in (bold) | `#7ab2ff` | `#4c6698` |
+| Keyword / tag / built-in (bold) | `#7ab2ff` | `#336fd6` |
 | String / attribute | `#80dcff` | `#004b8f` |
-| Function / method | `#f0d68f` | `#704400` |
-| Type / class / number / const / enum | `#ff9536` | `#4a250e` |
+| Function / method | `#f0d68f` | `#8a5200` |
+| Type / class / number / const / enum | `#ff9536` | `#3a1f0b` |
 | Variable / property / parameter | `#e0e0e0` | `#45494c` |
 | Comment (italic) | `#99a0a8` | `#6f706f` |
 | Error / invalid (bold + underline) | `#ff8585` | `#6f1f65` |
@@ -75,7 +75,7 @@ Themes are generated from the `templates/*.tera` files. Source color tokens live
 in `scripts/build.mjs`.
 
 ```sh
-npm run build   # regenerate VS Code, Zed, and dist outputs
+npm run build   # regenerate VS Code, Zed, dist outputs, and the VSIX package
 npm test        # validate tokens, consistency, and deutan safety
 ```
 
