@@ -59,7 +59,7 @@
     "fmt": "biome format --write .",
     "lint": "biome lint .",
     "lint:fix": "biome lint --write .",
-    "test": "node scripts/test.mjs && node scripts/verify-consistency.mjs && node scripts/verify-workbench-colors.mjs && node scripts/audit-deutan.mjs",
+    "test": "node scripts/test.mjs && node scripts/verify-consistency.mjs && node scripts/verify-workbench-colors.mjs && node scripts/verify-zed-theme.mjs && node scripts/audit-deutan.mjs",
     "vscode:prepublish": "node scripts/build.mjs"
   },
   "devDependencies": {

@@ -3,6 +3,7 @@ node_modules/**
 scripts/**
 templates/**
 dist/**
+vscode-tmp/**
 .gitignore
 .vscodeignore
 package-lock.json
