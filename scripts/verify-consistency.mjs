@@ -4,34 +4,29 @@ import fs from 'node:fs';
 
 const themes = {
   dark: JSON.parse(
-    fs.readFileSync('vscode-themes/hakimi-deuteranopia-dark.json', 'utf8'),
+    fs.readFileSync('vscode/themes/hakimi-deuteranopia-dark.json', 'utf8'),
   ),
   light: JSON.parse(
-    fs.readFileSync('vscode-themes/hakimi-deuteranopia-light.json', 'utf8'),
+    fs.readFileSync('vscode/themes/hakimi-deuteranopia-light.json', 'utf8'),
   ),
 };
 
 // expected role -> color per flavor
-const ROLE = {
-  dark: {
-    keyword: '#7ab2ff',
-    string: '#80dcff',
-    function: '#f0d68f',
-    type: '#ff9536',
-    neutral: '#e0e0e0',
-    comment: '#99a0a8',
-    error: '#ff8585',
-  },
-  light: {
-    keyword: '#336fd6',
-    string: '#004b8f',
-    function: '#8a5200',
-    type: '#3a1f0b',
-    neutral: '#45494c',
-    comment: '#6f706f',
-    error: '#6f1f65',
-  },
-};
+const palette = JSON.parse(fs.readFileSync('src/palette.json', 'utf8'));
+const ROLE = Object.fromEntries(
+  Object.entries(palette).map(([flavor, colors]) => [
+    flavor,
+    {
+      keyword: colors.syn_keyword,
+      string: colors.syn_string,
+      function: colors.syn_function,
+      type: colors.syn_type,
+      neutral: colors.foreground,
+      comment: colors.syn_comment,
+      error: colors.error,
+    },
+  ]),
+);
 const BANNED = [
   '#fe6100',
   '#ff8c42',
@@ -109,7 +104,7 @@ for (const flavor of ['dark', 'light']) {
   eq('property (tm)', tmFg(t, 'variable.other.property').fg, R.neutral);
   eq('variable (tm)', tmFg(t, 'variable.parameter').fg, R.neutral);
   // built-in class = keyword-blue both layers
-  eq('class:defaultLibrary (sem)', semFg(S['class:defaultLibrary']), R.keyword);
+  eq('class.defaultLibrary (sem)', semFg(S['class.defaultLibrary']), R.keyword);
   eq(
     'support.class.builtin (tm)',
     tmFg(t, 'support.class.builtin').fg,

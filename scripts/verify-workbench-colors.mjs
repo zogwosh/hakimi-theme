@@ -1,8 +1,10 @@
 import fs from 'node:fs';
+import { hexToRgb, flatten, luminance, contrast } from '../src/colors.mjs';
+const palette = JSON.parse(fs.readFileSync('src/palette.json', 'utf8'));
 
 const THEME_FILES = {
-  light: 'vscode-themes/hakimi-deuteranopia-light.json',
-  dark: 'vscode-themes/hakimi-deuteranopia-dark.json',
+  light: 'vscode/themes/hakimi-deuteranopia-light.json',
+  dark: 'vscode/themes/hakimi-deuteranopia-dark.json',
 };
 
 const REQUIRED_COLORS = [
@@ -184,8 +186,8 @@ const DISTINCT_SURFACE_KEYS = [
   'input.background',
 ];
 
-const LIGHT_EDITOR_LAYER = '#ffead8';
-const LIGHT_UI_LAYER = '#f0d8cf';
+const LIGHT_EDITOR_LAYER = palette.light.surface_editor;
+const LIGHT_UI_LAYER = palette.light.surface_base;
 const LIGHT_EDITOR_LAYER_KEYS = [
   'editor.background',
   'editorGroup.emptyBackground',
@@ -332,71 +334,27 @@ const INVISIBLE_BORDER_CHECKS = [
   ['pickerGroup.border', 'quickInput.background'],
 ];
 
-const ROLE_EXPECTATIONS = {
-  dark: {
-    keyword: '#7ab2ff',
-    string: '#80dcff',
-    function: '#f0d68f',
-    type: '#ff9536',
-    neutral: '#e0e0e0',
-  },
-  light: {
-    keyword: '#336fd6',
-    string: '#004b8f',
-    function: '#8a5200',
-    type: '#3a1f0b',
-    neutral: '#45494c',
-  },
-};
-
-function hexToRgb(hex) {
-  const raw = hex.replace(/^#/, '');
-  return {
-    r: parseInt(raw.slice(0, 2), 16),
-    g: parseInt(raw.slice(2, 4), 16),
-    b: parseInt(raw.slice(4, 6), 16),
-    a: raw.length >= 8 ? parseInt(raw.slice(6, 8), 16) / 255 : 1,
-  };
-}
-
-function blend(fg, bg) {
-  const f = hexToRgb(fg);
-  const b = hexToRgb(bg);
-  return {
-    r: Math.round(f.r * f.a + b.r * (1 - f.a)),
-    g: Math.round(f.g * f.a + b.g * (1 - f.a)),
-    b: Math.round(f.b * f.a + b.b * (1 - f.a)),
-  };
-}
-
-function luminance(rgb) {
-  const linear = [rgb.r, rgb.g, rgb.b].map((value) => {
-    const channel = value / 255;
-    return channel <= 0.03928
-      ? channel / 12.92
-      : ((channel + 0.055) / 1.055) ** 2.4;
-  });
-  return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
-}
-
-function contrast(fg, bg) {
-  const fgLum = luminance(blend(fg, bg));
-  const bgLum = luminance(hexToRgb(bg));
-  const lighter = Math.max(fgLum, bgLum);
-  const darker = Math.min(fgLum, bgLum);
-  return (lighter + 0.05) / (darker + 0.05);
-}
+const ROLE_EXPECTATIONS = Object.fromEntries(
+  Object.entries(palette).map(([flavor, colors]) => [
+    flavor,
+    {
+      keyword: colors.syn_keyword,
+      string: colors.syn_string,
+      function: colors.syn_function,
+      type: colors.syn_type,
+      neutral: colors.foreground,
+    },
+  ]),
+);
 
 function colorDistance(fg, bg, fallbackBg) {
-  const a = blend(fg, fallbackBg);
-  const b = blend(bg, fallbackBg);
-  return Math.sqrt(
-    (a.r - b.r) ** 2 + (a.g - b.g) ** 2 + (a.b - b.b) ** 2,
-  );
+  const a = hexToRgb(flatten(fg, fallbackBg));
+  const b = hexToRgb(flatten(bg, fallbackBg));
+  return Math.sqrt((a.r - b.r) ** 2 + (a.g - b.g) ** 2 + (a.b - b.b) ** 2);
 }
 
 function relativeLightness(hex, fallbackBg) {
-  return luminance(blend(hex, fallbackBg));
+  return luminance(hexToRgb(flatten(hex, fallbackBg)));
 }
 
 function scopeEntry(theme, scope) {

@@ -6,7 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!!**/dist", "!!vscode-themes", "!!zed/themes"]
+    "includes": ["**", "!!**/dist", "!!vscode", "!!zed/themes", "!!artifacts"]
   },
   "formatter": {
     "enabled": true,

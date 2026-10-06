@@ -7,7 +7,6 @@ const palette = JSON.parse(fs.readFileSync('dist/palette.json', 'utf8'));
 
 const requiredStyleKeys = [
   'background.appearance',
-  'vim.mode.text',
   'vim.normal.foreground',
   'vim.normal.background',
   'border',
@@ -293,12 +292,28 @@ function hasOwn(object, key) {
 }
 
 function expectEqual(label, actual, expected) {
-  if (actual !== expected) fail(`${label}: got ${actual}, expected ${expected}`);
+  if (actual !== expected)
+    fail(`${label}: got ${actual}, expected ${expected}`);
 }
 
 function expectDistinct(label, values) {
   if (new Set(values).size !== values.length) {
     fail(`${label} should use distinct state values, got ${values.join(', ')}`);
+  }
+}
+
+function colorAlpha(value) {
+  if (typeof value !== 'string') return null;
+  const match = /^#[0-9a-f]{6}([0-9a-f]{2})$/i.exec(value);
+  return match ? Number.parseInt(match[1], 16) : 255;
+}
+
+function expectBorderAlpha(style, themeName, key, minimum, maximum) {
+  const alpha = colorAlpha(style[key]);
+  if (alpha === null || alpha < minimum || alpha > maximum) {
+    fail(
+      `${themeName} ${key} alpha should be ${minimum}-${maximum}, got ${style[key]}`,
+    );
   }
 }
 
@@ -324,11 +339,17 @@ for (const theme of themeFamily.themes ?? []) {
     continue;
   }
 
-  expectEqual(`${theme.name} appearance`, theme.appearance, expected.appearance);
+  expectEqual(
+    `${theme.name} appearance`,
+    theme.appearance,
+    expected.appearance,
+  );
 
   const style = theme.style ?? {};
   const syntax = style.syntax ?? {};
-  const styleCount = Object.keys(style).filter((key) => key !== 'syntax').length;
+  const styleCount = Object.keys(style).filter(
+    (key) => key !== 'syntax',
+  ).length;
   const syntaxCount = Object.keys(syntax).length;
 
   if (styleCount < 170) fail(`${theme.name} has only ${styleCount} style keys`);
@@ -346,7 +367,8 @@ for (const theme of themeFamily.themes ?? []) {
     }
 
     const value = syntax[key];
-    if (!hasOwn(value, 'color')) fail(`${theme.name} syntax ${key} lacks color`);
+    if (!hasOwn(value, 'color'))
+      fail(`${theme.name} syntax ${key} lacks color`);
     if (!hasOwn(value, 'font_style'))
       fail(`${theme.name} syntax ${key} lacks font_style`);
     if (!hasOwn(value, 'font_weight'))
@@ -367,6 +389,51 @@ for (const theme of themeFamily.themes ?? []) {
     style['ghost_element.selected'],
   ]);
 
+  expectDistinct(`${theme.name} tab states`, [
+    style['tab.inactive_background'],
+    style['tab.active_background'],
+  ]);
+
+  for (const key of [
+    'border.transparent',
+    'border.disabled',
+    'scrollbar.track.border',
+  ]) {
+    expectBorderAlpha(style, theme.name, key, 0, 0);
+  }
+
+  for (const key of ['border', 'border.variant', 'pane_group.border']) {
+    expectBorderAlpha(style, theme.name, key, 1, 0x33);
+  }
+
+  for (const key of [
+    'border.focused',
+    'border.selected',
+    'panel.focused_border',
+    'pane.focused_border',
+  ]) {
+    expectBorderAlpha(style, theme.name, key, 0x66, 0x99);
+  }
+
+  for (const key of [
+    'conflict.border',
+    'created.border',
+    'deleted.border',
+    'hidden.border',
+    'hint.border',
+    'ignored.border',
+    'modified.border',
+    'predictive.border',
+    'renamed.border',
+    'info.border',
+    'warning.border',
+    'error.border',
+    'success.border',
+    'unreachable.border',
+  ]) {
+    expectBorderAlpha(style, theme.name, key, 0x33, 0x66);
+  }
+
   if (!Array.isArray(style.players) || style.players.length < 7) {
     fail(`${theme.name} should define at least 7 player colors`);
   }
@@ -376,7 +443,11 @@ for (const theme of themeFamily.themes ?? []) {
     style['editor.background'],
     expected.palette.surface_editor.hex,
   );
-  expectEqual(`${theme.name} text`, style.text, expected.palette.foreground.hex);
+  expectEqual(
+    `${theme.name} text`,
+    style.text,
+    expected.palette.foreground.hex,
+  );
   expectEqual(
     `${theme.name} keyword syntax`,
     syntax.keyword?.color,

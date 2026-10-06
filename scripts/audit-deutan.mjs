@@ -15,141 +15,7 @@
 // a redundant bold+underline cue, but still needs real color separation.
 import fs from 'node:fs';
 
-const RGB_TO_LMS = [
-  0.31399022, 0.63951294, 0.04649755, 0.15537241, 0.75789446, 0.08670142,
-  0.01775239, 0.10944209, 0.87256922,
-];
-const LMS_TO_RGB = [
-  5.47221206, -4.6419601, 0.16963708, -1.1252419, 2.29317094, -0.1678952,
-  0.02980165, -0.19318073, 1.16364789,
-];
-const DEUTAN_LMS = [1, 0, 0, 0.9513092, 0, 0.04866992, 0, 0, 1];
-
-const matMul = (m, v) => [
-  m[0] * v[0] + m[1] * v[1] + m[2] * v[2],
-  m[3] * v[0] + m[4] * v[1] + m[5] * v[2],
-  m[6] * v[0] + m[7] * v[1] + m[8] * v[2],
-];
-
-const clamp01 = (x) => Math.min(1, Math.max(0, x));
-const toLinear = (x) =>
-  x <= 0.04045 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4;
-const fromLinear = (x) =>
-  x <= 0.0031308 ? x * 12.92 : 1.055 * x ** (1 / 2.4) - 0.055;
-
-const hexToRgb = (hex) => {
-  let h = hex.replace(/^#/, '');
-  if (h.length === 3 || h.length === 4) {
-    h = [...h].map((ch) => ch + ch).join('');
-  }
-  return {
-    r: parseInt(h.slice(0, 2), 16),
-    g: parseInt(h.slice(2, 4), 16),
-    b: parseInt(h.slice(4, 6), 16),
-    a: h.length >= 8 ? parseInt(h.slice(6, 8), 16) / 255 : 1,
-  };
-};
-
-const rgbToHex = ({ r, g, b }) => {
-  const toHex = (val) => {
-    const clamped = Math.min(255, Math.max(0, Math.round(val)));
-    return clamped.toString(16).padStart(2, '0');
-  };
-  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-};
-
-const blend = (fg, bg) => {
-  const f = hexToRgb(fg);
-  const b = hexToRgb(bg);
-  return rgbToHex({
-    r: f.r * f.a + b.r * (1 - f.a),
-    g: f.g * f.a + b.g * (1 - f.a),
-    b: f.b * f.a + b.b * (1 - f.a),
-  });
-};
-
-const flatten = (hex, bg) => (hexToRgb(hex).a < 1 ? blend(hex, bg) : hex);
-
-const deutan = (hex, bg = '#000000') => {
-  const rgb = hexToRgb(flatten(hex, bg));
-  const linearRgb = [rgb.r, rgb.g, rgb.b].map((x) => toLinear(x / 255));
-  const lms = matMul(RGB_TO_LMS, linearRgb);
-  const simulatedLms = matMul(DEUTAN_LMS, lms);
-  const simulatedLinearRgb = matMul(LMS_TO_RGB, simulatedLms);
-  return rgbToHex({
-    r: 255 * fromLinear(clamp01(simulatedLinearRgb[0])),
-    g: 255 * fromLinear(clamp01(simulatedLinearRgb[1])),
-    b: 255 * fromLinear(clamp01(simulatedLinearRgb[2])),
-  });
-};
-
-const h2 = (hex) => {
-  const rgb = hexToRgb(hex);
-  return [rgb.r / 255, rgb.g / 255, rgb.b / 255];
-};
-
-function oklab([r, g, b]) {
-  const lr = toLinear(r),
-    lg = toLinear(g),
-    lb = toLinear(b);
-  const l = Math.cbrt(
-      0.4122214708 * lr + 0.5363325363 * lg + 0.0514459929 * lb,
-    ),
-    m = Math.cbrt(0.2119034982 * lr + 0.6806995477 * lg + 0.1073969541 * lb),
-    s = Math.cbrt(0.0883024619 * lr + 0.2817188376 * lg + 0.6299787005 * lb);
-  return {
-    L: 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s,
-    a: 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s,
-    b: 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s,
-  };
-}
-const dEok = (a, b) => {
-  const A = oklab(h2(a)),
-    B = oklab(h2(b));
-  return Math.hypot(A.L - B.L, A.a - B.a, A.b - B.b);
-};
-
-// ---- APCA (apca-w3 0.1.9 / "0.0.98G-4g" constants) ----
-const APCA = {
-  Rco: 0.2126729,
-  Gco: 0.7151522,
-  Bco: 0.072175,
-  trc: 2.4,
-  Ntx: 0.57,
-  Nbg: 0.56,
-  Rtx: 0.62,
-  Rbg: 0.65,
-  Bthr: 0.022,
-  Bclmp: Math.SQRT2,
-  scale: 1.14,
-  loOff: 0.027,
-  loClip: 0.1,
-  dMin: 0.0005,
-};
-function apcaY(hex) {
-  const [r, g, b] = h2(hex);
-  return (
-    APCA.Rco * r ** APCA.trc +
-    APCA.Gco * g ** APCA.trc +
-    APCA.Bco * b ** APCA.trc
-  );
-}
-function apcaLc(txt, bg) {
-  let Yt = apcaY(txt),
-    Yb = apcaY(bg);
-  if (Yt < APCA.Bthr) Yt += (APCA.Bthr - Yt) ** APCA.Bclmp;
-  if (Yb < APCA.Bthr) Yb += (APCA.Bthr - Yb) ** APCA.Bclmp;
-  if (Math.abs(Yb - Yt) < APCA.dMin) return 0;
-  let S, out;
-  if (Yb > Yt) {
-    S = (Yb ** APCA.Nbg - Yt ** APCA.Ntx) * APCA.scale;
-    out = S < APCA.loClip ? 0 : S - APCA.loOff;
-  } else {
-    S = (Yb ** APCA.Rbg - Yt ** APCA.Rtx) * APCA.scale;
-    out = S > -APCA.loClip ? 0 : S + APCA.loOff;
-  }
-  return out * 100;
-}
+import { apcaLc, deutan, dEok, flatten } from '../src/colors.mjs';
 
 const a1 = apcaLc('#000000', '#ffffff'),
   a2 = apcaLc('#ffffff', '#000000');
@@ -247,12 +113,37 @@ function auditSyntax(flavor, theme) {
 
   console.log(`\n===== ${flavor} syntax on editor.background ${bg} =====`);
   console.log('-- APCA Lc on simulated syntax colors --');
-  for (const [role, fg] of Object.entries(roles)) {
+  const samples = Object.entries(roles).map(([role, fg]) => ({
+    role,
+    fg,
+    style:
+      role === 'comment' || role === 'error'
+        ? scopeEntry(theme, role === 'comment' ? 'comment' : 'invalid').settings
+            .fontStyle || ''
+        : semanticStyle(theme.semanticTokenColors[role]),
+  }));
+  // Include language-specific overrides in the existing syntax readability audit.
+  for (const entry of theme.tokenColors) {
+    if (entry.settings.foreground === roles.keyword) {
+      samples.push({
+        role: 'keyword',
+        label: entry.name || String(entry.scope),
+        fg: entry.settings.foreground,
+        style: entry.settings.fontStyle || '',
+      });
+    }
+  }
+  for (const sample of samples) {
     recordTextCheck({
-      label: role,
-      fg,
+      label: sample.label || sample.role,
+      fg: sample.fg,
       bg,
-      floor: SYNTAX_FLOOR[role] ?? DEFAULT_SYNTAX_FLOOR,
+      floor:
+        sample.role === 'comment'
+          ? SYNTAX_FLOOR.comment
+          : sample.style.includes('bold')
+            ? 50
+            : DEFAULT_SYNTAX_FLOOR,
     });
   }
 
@@ -286,20 +177,64 @@ function auditVsCodeWorkbench(flavor, theme) {
   const c = theme.colors;
   const bg = c['editor.background'];
   const checks = [
-    ['quickInput foreground', c['quickInput.foreground'], c['quickInput.background']],
+    [
+      'quickInput foreground',
+      c['quickInput.foreground'],
+      c['quickInput.background'],
+    ],
     [
       'quickInput focused row',
       c['quickInputList.focusForeground'],
       flatten(c['quickInputList.focusBackground'], c['quickInput.background']),
     ],
-    ['list active selection', c['list.activeSelectionForeground'], flatten(c['list.activeSelectionBackground'], bg)],
-    ['list inactive selection', c['list.inactiveSelectionForeground'], flatten(c['list.inactiveSelectionBackground'], bg)],
-    ['list hover', c['list.hoverForeground'], flatten(c['list.hoverBackground'], bg)],
-    ['menu selection', c['menu.selectionForeground'], flatten(c['menu.selectionBackground'], c['menu.background'])],
+    [
+      'list active selection',
+      c['list.activeSelectionForeground'],
+      flatten(c['list.activeSelectionBackground'], bg),
+    ],
+    [
+      'list inactive selection',
+      c['list.inactiveSelectionForeground'],
+      flatten(c['list.inactiveSelectionBackground'], bg),
+    ],
+    [
+      'list hover',
+      c['list.hoverForeground'],
+      flatten(c['list.hoverBackground'], bg),
+    ],
+    [
+      'menu selection',
+      c['menu.selectionForeground'],
+      flatten(c['menu.selectionBackground'], c['menu.background']),
+    ],
     ['input foreground', c['input.foreground'], c['input.background']],
     ['button', c['button.foreground'], c['button.background']],
-    ['status error item', c['statusBarItem.errorForeground'], c['statusBarItem.errorBackground']],
-    ['status warning item', c['statusBarItem.warningForeground'], c['statusBarItem.warningBackground']],
+    ['button hover', c['button.foreground'], c['button.hoverBackground']],
+    [
+      'inlay hint',
+      c['editorInlayHint.foreground'],
+      flatten(c['editorInlayHint.background'], bg),
+    ],
+    [
+      'inlay type',
+      c['editorInlayHint.typeForeground'],
+      flatten(c['editorInlayHint.typeBackground'], bg),
+    ],
+    [
+      'inlay parameter',
+      c['editorInlayHint.parameterForeground'],
+      flatten(c['editorInlayHint.parameterBackground'], bg),
+    ],
+    [
+      'status error item',
+      c['statusBarItem.errorForeground'],
+      c['statusBarItem.errorBackground'],
+    ],
+    [
+      'status warning item',
+      c['statusBarItem.warningForeground'],
+      c['statusBarItem.warningBackground'],
+    ],
     ['git added', c['gitDecoration.addedResourceForeground'], bg],
     ['git modified', c['gitDecoration.modifiedResourceForeground'], bg],
     ['git deleted', c['gitDecoration.deletedResourceForeground'], bg],
@@ -307,7 +242,13 @@ function auditVsCodeWorkbench(flavor, theme) {
 
   console.log(`\n===== ${flavor} VS Code UI/readability states =====`);
   for (const [label, fg, rowBg] of checks) {
-    recordTextCheck({ label, fg, bg: rowBg, floor: UI_TEXT_FLOOR, contextBg: bg });
+    recordTextCheck({
+      label,
+      fg,
+      bg: rowBg,
+      floor: UI_TEXT_FLOOR,
+      contextBg: bg,
+    });
   }
 
   console.log('-- terminal ANSI readability --');
@@ -342,37 +283,92 @@ function auditZedSyntax(flavor, zedTheme) {
   const style = zedTheme.style;
   const syntax = style.syntax;
   const bg = style['editor.background'];
-  const roles = {
-    keyword: syntax.keyword.color,
-    string: syntax.string.color,
-    function: syntax.function.color,
-    type: syntax.type.color,
-    variable: syntax.variable.color,
-    comment: syntax.comment.color,
-    error: syntax.error.color,
-  };
 
   console.log(`\n===== ${flavor} Zed syntax on editor.background ${bg} =====`);
-  for (const [role, fg] of Object.entries(roles)) {
+  // Zed resolves the longest matching capture name. Each override must be readable
+  // with its own weight; a dotted name does not inherit its parent's bold style.
+  for (const [name, highlight] of Object.entries(syntax)) {
     recordTextCheck({
-      label: `zed ${role}`,
-      fg,
-      bg,
-      floor: SYNTAX_FLOOR[role] ?? DEFAULT_SYNTAX_FLOOR,
+      label: `zed ${name}`,
+      fg: highlight.color ?? style['editor.foreground'],
+      bg: flatten(highlight.background_color ?? bg, bg),
+      floor:
+        name.startsWith('comment') || ['hint', 'predictive'].includes(name)
+          ? SYNTAX_FLOOR.comment
+          : highlight.font_weight >= 700
+            ? 50
+            : DEFAULT_SYNTAX_FLOOR,
+    });
+  }
+
+  console.log(`\n===== ${flavor} Zed UI and terminal readability =====`);
+  for (const foreground of [
+    'text',
+    'text.muted',
+    'text.placeholder',
+    'text.accent',
+  ]) {
+    for (const background of [
+      'background',
+      'surface.background',
+      'elevated_surface.background',
+      'element.background',
+      'element.hover',
+      'element.active',
+      'element.selected',
+      'ghost_element.background',
+      'ghost_element.hover',
+      'ghost_element.active',
+      'ghost_element.selected',
+    ]) {
+      recordTextCheck({
+        label: `zed ${foreground} on ${background}`,
+        fg: style[foreground],
+        bg: flatten(style[background], style.background),
+        floor: UI_TEXT_FLOOR,
+      });
+    }
+  }
+  for (const [key, value] of Object.entries(style)) {
+    if (key.startsWith('terminal.ansi.') && !key.endsWith('background')) {
+      recordTextCheck({
+        label: `zed ${key}`,
+        fg: value,
+        bg: style['terminal.background'],
+        floor: UI_TEXT_FLOOR,
+      });
+    }
+    if (key.startsWith('vim.') && key.endsWith('.foreground')) {
+      recordTextCheck({
+        label: `zed ${key}`,
+        fg: value,
+        bg: style[key.replace('foreground', 'background')],
+        floor: UI_TEXT_FLOOR,
+      });
+    }
+  }
+  for (const key of ['editor.line_number', 'editor.active_line_number']) {
+    recordTextCheck({
+      label: `zed ${key}`,
+      fg: style[key],
+      bg: style['editor.gutter.background'],
+      floor: UI_TEXT_FLOOR,
     });
   }
 }
 
 for (const [flavor, file] of [
-  ['DARK', 'vscode-themes/hakimi-deuteranopia-dark.json'],
-  ['LIGHT', 'vscode-themes/hakimi-deuteranopia-light.json'],
+  ['DARK', 'vscode/themes/hakimi-deuteranopia-dark.json'],
+  ['LIGHT', 'vscode/themes/hakimi-deuteranopia-light.json'],
 ]) {
   const theme = JSON.parse(fs.readFileSync(file, 'utf8'));
   auditSyntax(flavor, theme);
   auditVsCodeWorkbench(flavor, theme);
 }
 
-const zed = JSON.parse(fs.readFileSync('zed/themes/hakimi-deuteranopia.json', 'utf8'));
+const zed = JSON.parse(
+  fs.readFileSync('zed/themes/hakimi-deuteranopia.json', 'utf8'),
+);
 for (const zedTheme of zed.themes) {
   auditZedSyntax(zedTheme.appearance.toUpperCase(), zedTheme);
 }

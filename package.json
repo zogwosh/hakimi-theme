@@ -1,16 +1,8 @@
 {
   "name": "hakimi-deutan-theme",
-  "version": "1.2.1",
-  "publisher": "hakimi",
-  "displayName": "Hakimi Deuteranopia Safe",
-  "description": "A VSCode theme extension optimized specifically for deuteranopia (green-blindness) accessibility (Light and Dark versions)",
+  "version": "2.0.0",
+  "description": "Deuteranopia-focused color tokens and themes for VS Code and Zed",
   "type": "module",
-  "engines": {
-    "vscode": "^1.80.0"
-  },
-  "categories": [
-    "Themes"
-  ],
   "keywords": [
     "colorblind",
     "accessibility",
@@ -20,7 +12,6 @@
     "colorblind-safe",
     "accessible"
   ],
-  "icon": "images/icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/zogwosh/hakimi-theme.git"
@@ -29,21 +20,6 @@
     "url": "https://github.com/zogwosh/hakimi-theme/issues"
   },
   "homepage": "https://github.com/zogwosh/hakimi-theme#readme",
-  "contributes": {
-    "themes": [
-      {
-        "label": "Hakimi Deuteranopia Light",
-        "uiTheme": "vs",
-        "path": "./vscode-themes/hakimi-deuteranopia-light.json"
-      },
-      {
-        "label": "Hakimi Deuteranopia Dark",
-        "uiTheme": "vs-dark",
-        "path": "./vscode-themes/hakimi-deuteranopia-dark.json"
-      }
-    ]
-  },
-  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -54,15 +30,29 @@
     "./scss": "./dist/hakimi-deuteranopia.scss",
     "./less": "./dist/hakimi-deuteranopia.less"
   },
+  "types": "./dist/index.d.ts",
+  "devDependencies": {
+    "@biomejs/biome": "2.5.2",
+    "@vscode/vsce": "4.0.0"
+  },
+  "license": "MIT",
+  "author": "hakimi",
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "node scripts/build.mjs && npx @vscode/vsce package",
+    "build": "node scripts/build.mjs",
+    "verify": "node scripts/test.mjs && node scripts/verify-consistency.mjs && node scripts/verify-workbench-colors.mjs && node scripts/verify-zed-theme.mjs && node scripts/audit-deutan.mjs",
+    "test": "npm run build && npm run verify",
+    "check": "npm test && npm run lint",
     "fmt": "biome format --write .",
     "lint": "biome lint .",
     "lint:fix": "biome lint --write .",
-    "test": "node scripts/test.mjs && node scripts/verify-consistency.mjs && node scripts/verify-workbench-colors.mjs && node scripts/verify-zed-theme.mjs && node scripts/audit-deutan.mjs",
-    "vscode:prepublish": "node scripts/build.mjs"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "2.5.2"
+    "package:vscode": "npm run check && node scripts/package-vscode.mjs",
+    "package:npm": "npm run check && npm pack --ignore-scripts --pack-destination artifacts",
+    "prepack": "npm run check"
   }
 }

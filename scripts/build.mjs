@@ -1,430 +1,167 @@
-import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { hexToRgb, rgbToHsl, rgbToOklch } from '../src/colors.mjs';
 
-const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+const root = fileURLToPath(new URL('../', import.meta.url));
+const pkg = JSON.parse(
+  fs.readFileSync(path.join(root, 'package.json'), 'utf8'),
+);
+const palette = JSON.parse(
+  fs.readFileSync(path.join(root, 'src/palette.json'), 'utf8'),
+);
+const vscode = JSON.parse(
+  fs.readFileSync(path.join(root, 'src/vscode.json'), 'utf8'),
+);
+const zed = JSON.parse(
+  fs.readFileSync(path.join(root, 'src/zed.json'), 'utf8'),
+);
+const tokenNames = Object.keys(palette.light);
+const flavors = {};
 
-// Helper: Hex to RGB
-function hexToRgb(hex) {
-  hex = hex.replace(/^#/, '');
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-  return { r, g, b };
-}
-
-// Helper: RGB to HSL
-function rgbToHsl(r, g, b) {
-  r /= 255;
-  g /= 255;
-  b /= 255;
-  const max = Math.max(r, g, b),
-    min = Math.min(r, g, b);
-  let h,
-    s,
-    l = (max + min) / 2;
-
-  if (max === min) {
-    h = s = 0; // achromatic
-  } else {
-    const d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    switch (max) {
-      case r:
-        h = (g - b) / d + (g < b ? 6 : 0);
-        break;
-      case g:
-        h = (b - r) / d + 2;
-        break;
-      case b:
-        h = (r - g) / d + 4;
-        break;
-    }
-    h /= 6;
+// Validate and render every output before writing any files.
+for (const flavor of ['light', 'dark']) {
+  if (
+    Object.keys(palette[flavor]).sort().join() !== [...tokenNames].sort().join()
+  ) {
+    throw new Error('Light and dark palettes must define the same tokens.');
   }
-
-  return {
-    h: Math.round(h * 360),
-    s: Math.round(s * 100),
-    l: Math.round(l * 100),
-  };
-}
-
-// Helper: sRGB to Linear
-function srgbToLinear(x) {
-  return x <= 0.04045 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4;
-}
-
-// Helper: RGB to OKLCH
-function rgbToOklch(r255, g255, b255) {
-  const r = srgbToLinear(r255 / 255);
-  const g = srgbToLinear(g255 / 255);
-  const b = srgbToLinear(b255 / 255);
-
-  const l = 0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b;
-  const m = 0.2119034982 * r + 0.6806995477 * g + 0.1073969541 * b;
-  const s = 0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b;
-
-  const l_ = Math.cbrt(l);
-  const m_ = Math.cbrt(m);
-  const s_ = Math.cbrt(s);
-
-  const L = 0.2104542553 * l_ + 0.793617785 * m_ - 0.0040720468 * s_;
-  const a = 1.9779984951 * l_ - 2.428592205 * m_ + 0.4505937099 * s_;
-  const b_ = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.808675766 * s_;
-
-  const C = Math.sqrt(a * a + b_ * b_);
-  let h = (Math.atan2(b_, a) * 180) / Math.PI;
-  if (h < 0) h += 360;
-
-  return { l: L, c: C, h: h };
-}
-
-// Constant Palettes (IBM, Wong, Paul Tol, Contrasting Pairs)
-const sharedColors = {
-  // 8 Pairs of Contrasting Colors
-  pair1_light: '#ffc20a',
-  pair1_dark: '#0c7bdc',
-  pair2_light: '#994f00',
-  pair2_dark: '#006cd1',
-  pair3_light: '#e1be6a',
-  pair3_dark: '#40b0a6',
-  pair4_light: '#e66100',
-  pair4_dark: '#5d3a9b',
-  pair5_light: '#1aff1a',
-  pair5_dark: '#4b0092',
-  pair6_light: '#fefe62',
-  pair6_dark: '#d35fb7',
-  pair7_light: '#005ab5',
-  pair7_dark: '#dc3220',
-  pair8_light: '#1a85ff',
-  pair8_dark: '#d41159',
-
-  // IBM Palette
-  ibm_blue: '#648fff',
-  ibm_violet: '#785ef0',
-  ibm_magenta: '#dc267f',
-  ibm_orange: '#fe6100',
-  ibm_yellow: '#ffb000',
-
-  // Wong Palette
-  wong_orange: '#e69f00',
-  wong_skyblue: '#56b4e9',
-  wong_bluishgreen: '#009e73',
-  wong_yellow: '#f0e442',
-  wong_blue: '#0072b2',
-  wong_vermillion: '#d55e00',
-  wong_reddishpurple: '#cc79a7',
-
-  // Paul Tol Palette
-  tol_blue: '#4477aa',
-  tol_cyan: '#66ccee',
-  tol_green: '#228833',
-  tol_yellow: '#ccbb44',
-  tol_red: '#ee6677',
-  tol_purple: '#aa3377',
-  tol_grey: '#bbbbbb',
-};
-
-// Flavor specific functional UI colors.
-//
-// Syntax palette (syn_*) is optimized for DEUTERANOPIA (green cone absent): every
-// simultaneously-visible token role is separated along the two axes a deuteranope
-// still perceives — luminance and blue<->yellow — while the red<->green axis is
-// treated as carrying zero information. The regression gate projects colors through
-// an explicit sRGB -> linear RGB -> LMS deutan -> sRGB pipeline, then checks APCA Lc
-// and OKLab dE in the simulated space. The error role is intentionally carried by
-// font decoration (bold + underline), since no hue signals "error" to a deuteranope.
-const flavorColors = {
-  light: {
-    background: '#ffead8',
-    surface_editor: '#ffead8',
-    surface_base: '#f0d8cf',
-    surface_header: '#f0d8cf',
-    surface_tab_active: '#f0d8cf',
-    surface_tab_inactive: '#f0d8cf',
-    surface_raised: '#f0d8cf',
-    surface_input: '#f0d8cf',
-    surface_line: '#f0d8cf',
-    border_subtle: '#00000000',
-    border_strong: '#00000000',
-    foreground: '#45494c', // = variable/property/parameter (neutral)
-    primary: '#4c6698', // UI accent
-    secondary: '#7a3f00', // UI secondary accent
-    success: '#00543f', // UI only (bracket match / git additions)
-    warning: '#684100', // UI only (darkened for light-bg legibility)
-    error: '#6f1f65', // error/invalid (carried by bold+underline)
-    info: '#005b9f', // UI info
-    accent: '#4a250e', // UI only
-    // deutan-optimized syntax roles
-    syn_keyword: '#336fd6', // cool family, saturated blue for stronger keyword separation
-    syn_string: '#004b8f', // cool family, deeper blue
-    syn_function: '#8a5200', // warm family, ochre separated from neutral text
-    syn_type: '#3a1f0b', // warm family, dark brown separated by luminance
-    syn_comment: '#6f706f', // neutral grey, italic
-  },
-  dark: {
-    background: '#263238',
-    surface_editor: '#263238',
-    surface_base: '#202b30',
-    surface_header: '#1f2b30',
-    surface_tab_active: '#2a3940',
-    surface_tab_inactive: '#202b30',
-    surface_raised: '#303f46',
-    surface_input: '#2b3940',
-    surface_line: '#2b383e',
-    border_subtle: '#00000000',
-    border_strong: '#00000000',
-    foreground: '#e0e0e0', // = variable/property/parameter (neutral, APCA Lc 87)
-    primary: '#7ab2ff', // UI accent
-    secondary: '#f0d68f', // UI secondary accent
-    success: '#50c0b6', // UI only (bracket match / git additions)
-    warning: '#e1be6a', // UI only
-    error: '#ff8585', // error/invalid (carried by bold+underline)
-    info: '#8bdcff', // UI info
-    accent: '#785ef0', // UI only (button hover)
-    // deutan-optimized syntax roles — brightened so each clears its APCA Lc floor
-    // (regular>=60, bold>=50) when read on the dark editor background.
-    syn_keyword: '#7ab2ff', // cool family, blue (bold)
-    syn_string: '#80dcff', // cool family, light cyan
-    syn_function: '#f0d68f', // warm family, bright yellow
-    syn_type: '#ff9536', // warm family, orange — type/class/num/const/enum
-    syn_comment: '#99a0a8', // faint-cool neutral grey, italic
-  },
-};
-
-const customPalette = {
-  version: pkg.version,
-  theme: 'deuteranopia',
-  flavors: {
-    light: { name: 'Light', dark: false, colors: {} },
-    dark: { name: 'Dark', dark: true, colors: {} },
-  },
-};
-
-// Overrides for whiskers templates (no leading #)
-const lightOverrides = {};
-const darkOverrides = {};
-
-// 1. Compile color objects for each flavor
-for (const flavorName of ['light', 'dark']) {
-  const targetColorsDict = customPalette.flavors[flavorName].colors;
-  const targetOverridesDict =
-    flavorName === 'light' ? lightOverrides : darkOverrides;
-
-  // Combine functional UI colors and shared constants
-  const mergedColors = {
-    ...flavorColors[flavorName],
-    ...sharedColors,
-  };
-
-  for (const [name, hex] of Object.entries(mergedColors)) {
-    const rgb = hexToRgb(hex);
-    const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
-    const oklch = rgbToOklch(rgb.r, rgb.g, rgb.b);
-
-    targetColorsDict[name] = {
-      name: name.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
-      hex: hex,
-      rgb: rgb,
-      hsl: hsl,
-      oklch: oklch,
+  const colors = {};
+  for (const [token, hex] of Object.entries(palette[flavor])) {
+    if (
+      !/^[a-z][a-z0-9_]*$/.test(token) ||
+      !/^#(?:[0-9a-f]{6}|[0-9a-f]{8})$/i.test(hex)
+    ) {
+      throw new Error(`Invalid palette token: ${flavor}.${token}=${hex}`);
+    }
+    const { r, g, b, a } = hexToRgb(hex);
+    colors[token] = {
+      name: token.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+      hex: hex.toLowerCase(),
+      alpha: a,
+      rgb: { r, g, b },
+      hsl: rgbToHsl(r, g, b),
+      oklch: rgbToOklch(r, g, b),
     };
-
-    targetOverridesDict[name] = hex.replace(/^#/, '').toLowerCase();
   }
+  flavors[flavor] = {
+    name: flavor === 'light' ? 'Light' : 'Dark',
+    dark: flavor === 'dark',
+    colors,
+  };
 }
 
-// Combined overrides for CSS/Sass/Less which compile both versions in one file
-const combinedOverrides = {
-  light: lightOverrides,
-  dark: darkOverrides,
-};
-
-// Ensure output directories exist
-fs.mkdirSync('dist', { recursive: true });
-fs.mkdirSync('themes', { recursive: true });
-fs.mkdirSync('vscode-themes', { recursive: true });
-
-// A. Write program files directly from Node
-console.log(
-  'Writing package definitions (palette.json, index.js, index.d.ts)...',
-);
-
-// 1. palette.json
-fs.writeFileSync('dist/palette.json', JSON.stringify(customPalette, null, 2));
-console.log('Successfully wrote dist/palette.json');
-
-// 2. index.js
-fs.writeFileSync(
-  'dist/index.js',
-  `// Pure Colorblind-safe theme tokens (colorblindness)
-export const version = "${customPalette.version}";
-export const theme = "${customPalette.theme}";
-export const flavors = ${JSON.stringify(customPalette.flavors, null, 2)};
-export const flavorEntries = Object.entries(flavors);
-`,
-);
-console.log('Successfully wrote dist/index.js');
-
-// 3. index.d.ts
-const typeDefs = `export type FlavorName = "light" | "dark";
-
-export type ColorTokenName =
-  | "background" | "foreground" | "primary" | "secondary" | "success" | "warning" | "error" | "info" | "accent"
-  | "syn_keyword" | "syn_string" | "syn_function" | "syn_type" | "syn_comment"
-  | "pair1_light" | "pair1_dark" | "pair2_light" | "pair2_dark" | "pair3_light" | "pair3_dark" | "pair4_light" | "pair4_dark"
-  | "pair5_light" | "pair5_dark" | "pair6_light" | "pair6_dark" | "pair7_light" | "pair7_dark" | "pair8_light" | "pair8_dark"
-  | "ibm_blue" | "ibm_violet" | "ibm_magenta" | "ibm_orange" | "ibm_yellow"
-  | "wong_orange" | "wong_skyblue" | "wong_bluishgreen" | "wong_yellow" | "wong_blue" | "wong_vermillion" | "wong_reddishpurple"
-  | "tol_blue" | "tol_cyan" | "tol_green" | "tol_yellow" | "tol_red" | "tol_purple" | "tol_grey";
-
-export type ColorFormat = Readonly<{
-    name: string;
-    hex: string;
-    rgb: { r: number; g: number; b: number; };
-    hsl: { h: number; s: number; l: number; };
-    oklch: { l: number; c: number; h: number; };
-}>;
-
-export type FlavorInfo = Readonly<{
-    name: string;
-    dark: boolean;
-    colors: Record<ColorTokenName, ColorFormat>;
-}>;
-
-export declare const version: string;
-export declare const theme: string;
-export declare const flavors: Record<FlavorName, FlavorInfo>;
-export declare const flavorEntries: [FlavorName, FlavorInfo][];
-`;
-fs.writeFileSync('dist/index.d.ts', typeDefs);
-console.log('Successfully wrote dist/index.d.ts');
-
-// B. Compile styling and VSCode theme tokens using Whiskers CLI
-function findWhiskers() {
-  // 1. Try running 'whiskers' directly from PATH
-  const testRun = spawnSync(
-    process.platform === 'win32' ? 'whiskers.exe' : 'whiskers',
-    ['--version'],
-    { shell: false },
-  );
-  if (testRun.error === undefined && testRun.status === 0) {
-    return process.platform === 'win32' ? 'whiskers.exe' : 'whiskers';
-  }
-
-  // 2. If on Windows and 'whiskers' is not in PATH, try Cargo default bin location
-  if (process.platform === 'win32') {
-    const userProfile = process.env.USERPROFILE || process.env.HOMEPATH;
-    if (userProfile) {
-      const cargoBinPath = path.join(
-        userProfile,
-        '.cargo',
-        'bin',
-        'whiskers.exe',
-      );
-      if (fs.existsSync(cargoBinPath)) {
-        return cargoBinPath;
-      }
+// JSON mappings use $token or $token/aa; {light, dark} selects a variant.
+function render(value, flavor) {
+  if (Array.isArray(value)) return value.map((item) => render(item, flavor));
+  if (value && typeof value === 'object') {
+    if (
+      Object.keys(value).length === 2 &&
+      Object.hasOwn(value, 'light') &&
+      Object.hasOwn(value, 'dark')
+    ) {
+      return render(value[flavor], flavor);
     }
-  }
-
-  // 3. Fallback/Error: Whiskers not found
-  console.error(
-    'Error: "whiskers" CLI compiler was not found in PATH or in the default cargo bin directory.',
-  );
-  console.error(
-    'Please install whiskers (e.g. `cargo install catppuccin-whiskers` or ensure it is in your PATH).',
-  );
-  process.exit(1);
-}
-
-const whiskersExecutable = findWhiskers();
-console.log(`Using whiskers executable: ${whiskersExecutable}`);
-
-function runWhiskers(template, overridesStr) {
-  const result = spawnSync(
-    whiskersExecutable,
-    [template, '--overrides', overridesStr],
-    {
-      encoding: 'utf-8',
-      shell: false,
-    },
-  );
-
-  if (result.error) {
-    console.error(
-      `Error spawning whiskers for ${template}:`,
-      result.error.message,
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [key, render(item, flavor)]),
     );
-    process.exit(1);
   }
-
-  if (result.status !== 0) {
-    console.error(
-      `Error compiling ${template}:`,
-      result.stderr || result.stdout,
-    );
-    process.exit(1);
+  if (typeof value !== 'string' || !value.startsWith('$')) return value;
+  const match = /^\$([a-z][a-z0-9_]*)(?:\/([0-9a-f]{2}))?$/i.exec(value);
+  const hex = match && flavors[flavor].colors[match[1]]?.hex;
+  if (!hex || (match[2] && hex.length !== 7)) {
+    throw new Error(`Invalid color reference: ${flavor} ${value}`);
   }
-
-  console.log(`Successfully compiled ${template}.`);
+  return hex + (match[2] ?? '');
 }
 
-// Ensure output directories exist
-fs.mkdirSync('themes', { recursive: true });
-fs.mkdirSync('vscode-themes', { recursive: true });
+const outputs = new Map();
+const json = (value) => `${JSON.stringify(value, null, 2)}\n`;
+outputs.set(
+  'dist/palette.json',
+  json({ version: pkg.version, theme: 'deuteranopia', flavors }),
+);
+outputs.set(
+  'dist/index.js',
+  `// Generated by scripts/build.mjs. Edit src/palette.json.\nexport const version = ${JSON.stringify(pkg.version)};\nexport const theme = "deuteranopia";\nexport const flavors = ${JSON.stringify(flavors, null, 2)};\nexport const flavorEntries = Object.entries(flavors);\n`,
+);
+outputs.set(
+  'dist/index.d.ts',
+  `// Generated from src/palette.json.\nexport type FlavorName = "light" | "dark";\nexport type ColorTokenName =\n${tokenNames.map((name) => `  | ${JSON.stringify(name)}`).join('\n')};\nexport type ColorFormat = Readonly<{\n  name: string;\n  hex: string;\n  alpha: number;\n  rgb: { r: number; g: number; b: number };\n  hsl: { h: number; s: number; l: number };\n  oklch: { l: number; c: number; h: number };\n}>;\nexport type FlavorInfo = Readonly<{\n  name: string;\n  dark: boolean;\n  colors: Record<ColorTokenName, ColorFormat>;\n}>;\nexport declare const version: string;\nexport declare const theme: string;\nexport declare const flavors: Record<FlavorName, FlavorInfo>;\nexport declare const flavorEntries: [FlavorName, FlavorInfo][];\n`,
+);
 
-const styleTemplates = [
-  'templates/hakimi-deuteranopia.css.tera',
-  'templates/hakimi-deuteranopia.scss.tera',
-  'templates/hakimi-deuteranopia.less.tera',
-  'templates/vscode-theme-light.json.tera',
-  'templates/vscode-theme-dark.json.tera',
-];
-const combinedOverridesStr = JSON.stringify(combinedOverrides);
-
-console.log('Compiling stylesheets using Whiskers...');
-for (const template of styleTemplates) {
-  if (template.includes('vscode-theme')) continue;
-  console.log(`Compiling ${template}...`);
-  runWhiskers(template, combinedOverridesStr);
+let css = '/* Generated from src/palette.json. */\n';
+let scss = '// Generated from src/palette.json.\n';
+let less = '// Generated from src/palette.json.\n';
+for (const [flavor, info] of Object.entries(flavors)) {
+  css += `${flavor === 'light' ? ':root, .theme-light' : '.theme-dark'} {\n`;
+  for (const [token, color] of Object.entries(info.colors)) {
+    const name = token.replace(/_/g, '-');
+    css += `  --cb-${name}: ${color.hex};\n`;
+    scss += `$cb-${flavor}-${name}: ${color.hex};\n`;
+    less += `@cb-${flavor}-${name}: ${color.hex};\n`;
+  }
+  css += '}\n';
 }
+outputs.set('dist/hakimi-deuteranopia.css', css);
+outputs.set('dist/hakimi-deuteranopia.scss', scss);
+outputs.set('dist/hakimi-deuteranopia.less', less);
 
-// 2. Compile VSCode Themes (Light with lightOverrides, Dark with darkOverrides)
-const lightOverridesStr = JSON.stringify(lightOverrides);
-const darkOverridesStr = JSON.stringify(darkOverrides);
-
-console.log('Compiling VSCode Light theme...');
-runWhiskers('templates/vscode-theme-light.json.tera', lightOverridesStr);
-
-console.log('Compiling VSCode Dark theme...');
-runWhiskers('templates/vscode-theme-dark.json.tera', darkOverridesStr);
-
-// 3. Compile Zed Theme Family
-const zedOverrides = {
-  light: lightOverrides,
-  dark: darkOverrides,
+const manifest = {
+  name: pkg.name,
+  version: pkg.version,
+  license: pkg.license,
+  author: pkg.author,
+  repository: pkg.repository,
+  bugs: pkg.bugs,
+  homepage: pkg.homepage,
+  ...vscode.manifest,
 };
-const zedOverridesStr = JSON.stringify(zedOverrides);
-
-console.log('Compiling Zed theme family...');
-runWhiskers('templates/zed-theme.json.tera', zedOverridesStr);
-
-// 4. Update extension.toml version to match package.json version
-try {
-  let extToml = fs.readFileSync('zed/extension.toml', 'utf8');
-  extToml = extToml.replace(
-    /^version\s*=\s*".*"/m,
-    `version = "${pkg.version}"`,
-  );
-  fs.writeFileSync('zed/extension.toml', extToml, 'utf8');
-  console.log(`Successfully updated extension.toml version to ${pkg.version}`);
-} catch (err) {
-  console.error(
-    'Warning: Failed to update extension.toml version:',
-    err.message,
+outputs.set('vscode/package.json', json(manifest));
+for (const [flavor, info] of Object.entries(flavors)) {
+  outputs.set(
+    `vscode/themes/hakimi-deuteranopia-${flavor}.json`,
+    json({
+      name: `Hakimi Deuteranopia ${info.name}`,
+      type: flavor,
+      ...render(vscode.theme, flavor),
+    }),
   );
 }
+outputs.set(
+  'zed/themes/hakimi-deuteranopia.json',
+  json({
+    $schema: zed.schema,
+    name: zed.name,
+    author: zed.author,
+    themes: Object.entries(flavors).map(([flavor, info]) => ({
+      name: `Hakimi Deuteranopia ${info.name}`,
+      appearance: flavor,
+      style: render(zed.style, flavor),
+    })),
+  }),
+);
+outputs.set(
+  'zed/extension.toml',
+  `${Object.entries({ ...zed.manifest, version: pkg.version })
+    .map(([key, value]) => `${key} = ${JSON.stringify(value)}`)
+    .join('\n')}\n`,
+);
+const license = fs.readFileSync(path.join(root, 'LICENSE'));
+outputs.set('zed/LICENSE', license);
+outputs.set('vscode/LICENSE', license);
+outputs.set('vscode/README.md', fs.readFileSync(path.join(root, 'README.md')));
+outputs.set(
+  'vscode/images/icon.png',
+  fs.readFileSync(path.join(root, 'images/icon.png')),
+);
 
-console.log('All theme tokens successfully generated in dist/ and themes/!');
+for (const [relative, content] of outputs) {
+  const target = path.join(root, relative);
+  fs.mkdirSync(path.dirname(target), { recursive: true });
+  fs.writeFileSync(target, content);
+}
+fs.mkdirSync(path.join(root, 'artifacts'), { recursive: true });
+console.log(
+  `Generated ${outputs.size} files for the palette, VS Code, and Zed (${pkg.version}).`,
+);
