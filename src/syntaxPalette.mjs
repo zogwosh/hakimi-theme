@@ -32,3 +32,41 @@ export const SYNTAX_PALETTE = {
     sapphire: '#7ab2ff',
   },
 };
+
+function createTerminalAnsiColors(syntaxColors) {
+  const chromaticSlots = {
+    red: syntaxColors.red,
+    green: syntaxColors.green,
+    yellow: syntaxColors.blue,
+    blue: syntaxColors.mauve,
+    magenta: syntaxColors.red,
+    cyan: syntaxColors.yellow,
+  };
+
+  return {
+    background: syntaxColors.base,
+    foreground: syntaxColors.text,
+    dimForeground: syntaxColors.overlay2,
+    brightForeground: syntaxColors.text,
+    normal: {
+      black: syntaxColors.text,
+      ...chromaticSlots,
+      white: syntaxColors.overlay2,
+    },
+    bright: {
+      black: syntaxColors.overlay2,
+      ...chromaticSlots,
+      white: syntaxColors.text,
+    },
+    dim: {
+      black: syntaxColors.overlay2,
+      ...chromaticSlots,
+      white: syntaxColors.overlay2,
+    },
+  };
+}
+
+export const TERMINAL_PALETTE = {
+  light: createTerminalAnsiColors(SYNTAX_PALETTE.light),
+  dark: createTerminalAnsiColors(SYNTAX_PALETTE.dark),
+};

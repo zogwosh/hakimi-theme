@@ -3,7 +3,8 @@
 // (4) generated editor canvas & syntax JSON is 100% byte-for-byte identical to baseline.
 import assert from 'node:assert';
 import fs from 'node:fs';
-import { SYNTAX_PALETTE } from '../src/syntaxPalette.mjs';
+import { apcaLc, deutan, dEok } from '../src/colors.mjs';
+import { SYNTAX_PALETTE, TERMINAL_PALETTE } from '../src/syntaxPalette.mjs';
 
 const themes = {
   dark: JSON.parse(
@@ -316,6 +317,147 @@ try {
 } catch (err) {
   console.error(`  ✗ Baseline comparison failure:`, err.message);
   fail++;
+}
+
+// -------------------------------------------------------------
+// Terminal ANSI 16-Color Consistency & Deuteranopia Verification
+// -------------------------------------------------------------
+console.log(
+  '\n===== Terminal ANSI 16-Color Consistency & Deuteranopia Audit =====',
+);
+
+const VSCODE_TERMINAL_SLOT_KEYS = {
+  normal: {
+    black: 'terminal.ansiBlack',
+    red: 'terminal.ansiRed',
+    green: 'terminal.ansiGreen',
+    yellow: 'terminal.ansiYellow',
+    blue: 'terminal.ansiBlue',
+    magenta: 'terminal.ansiMagenta',
+    cyan: 'terminal.ansiCyan',
+    white: 'terminal.ansiWhite',
+  },
+  bright: {
+    black: 'terminal.ansiBrightBlack',
+    red: 'terminal.ansiBrightRed',
+    green: 'terminal.ansiBrightGreen',
+    yellow: 'terminal.ansiBrightYellow',
+    blue: 'terminal.ansiBrightBlue',
+    magenta: 'terminal.ansiBrightMagenta',
+    cyan: 'terminal.ansiBrightCyan',
+    white: 'terminal.ansiBrightWhite',
+  },
+};
+
+const ZED_TERMINAL_SLOT_KEYS = {
+  normal: {
+    black: 'terminal.ansi.black',
+    red: 'terminal.ansi.red',
+    green: 'terminal.ansi.green',
+    yellow: 'terminal.ansi.yellow',
+    blue: 'terminal.ansi.blue',
+    magenta: 'terminal.ansi.magenta',
+    cyan: 'terminal.ansi.cyan',
+    white: 'terminal.ansi.white',
+  },
+  bright: {
+    black: 'terminal.ansi.bright_black',
+    red: 'terminal.ansi.bright_red',
+    green: 'terminal.ansi.bright_green',
+    yellow: 'terminal.ansi.bright_yellow',
+    blue: 'terminal.ansi.bright_blue',
+    magenta: 'terminal.ansi.bright_magenta',
+    cyan: 'terminal.ansi.bright_cyan',
+    white: 'terminal.ansi.bright_white',
+  },
+  dim: {
+    black: 'terminal.ansi.dim_black',
+    red: 'terminal.ansi.dim_red',
+    green: 'terminal.ansi.dim_green',
+    yellow: 'terminal.ansi.dim_yellow',
+    blue: 'terminal.ansi.dim_blue',
+    magenta: 'terminal.ansi.dim_magenta',
+    cyan: 'terminal.ansi.dim_cyan',
+    white: 'terminal.ansi.dim_white',
+  },
+};
+
+const DISTINCT_TERMINAL_CHROMATIC_SLOTS = [
+  'red',
+  'green',
+  'yellow',
+  'blue',
+  'cyan',
+];
+
+for (const [flavor, zedTheme] of [
+  ['dark', zedDark],
+  ['light', zedLight],
+]) {
+  const expectedTerminal = TERMINAL_PALETTE[flavor];
+  const vscodeColors = themes[flavor].colors;
+  const zedStyle = zedTheme.style;
+  const simulatedBg = deutan(expectedTerminal.background);
+
+  console.log(`\n--- ${flavor.toUpperCase()} Terminal ---`);
+  eq(
+    'vscode terminal.background',
+    vscodeColors['terminal.background'],
+    expectedTerminal.background,
+  );
+  eq(
+    'vscode terminal.foreground',
+    vscodeColors['terminal.foreground'],
+    expectedTerminal.foreground,
+  );
+  eq(
+    'zed terminal.background',
+    zedStyle['terminal.background'],
+    expectedTerminal.background,
+  );
+  eq(
+    'zed terminal. foreground',
+    zedStyle['terminal.foreground'],
+    expectedTerminal.foreground,
+  );
+
+  for (const [group, slotMap] of Object.entries(VSCODE_TERMINAL_SLOT_KEYS)) {
+    for (const [slot, vscodeKey] of Object.entries(slotMap)) {
+      const wantHex = expectedTerminal[group][slot];
+      const gotVscode = vscodeColors[vscodeKey];
+      const gotZed = zedStyle[ZED_TERMINAL_SLOT_KEYS[group][slot]];
+      eq(`vscode ${vscodeKey}`, gotVscode, wantHex);
+      eq(`zed ${ZED_TERMINAL_SLOT_KEYS[group][slot]}`, gotZed, wantHex);
+
+      const lc = Math.abs(apcaLc(deutan(wantHex), simulatedBg));
+      if (lc < 45) {
+        console.log(
+          `  ✗ ${flavor} ${vscodeKey} APCA Lc ${lc.toFixed(1)} < 45 on ${expectedTerminal.background}`,
+        );
+        fail++;
+      }
+    }
+  }
+
+  for (const [slot, zedKey] of Object.entries(ZED_TERMINAL_SLOT_KEYS.dim)) {
+    eq(`zed ${zedKey}`, zedStyle[zedKey], expectedTerminal.dim[slot]);
+  }
+
+  for (let i = 0; i < DISTINCT_TERMINAL_CHROMATIC_SLOTS.length; i++) {
+    for (let j = i + 1; j < DISTINCT_TERMINAL_CHROMATIC_SLOTS.length; j++) {
+      const slotA = DISTINCT_TERMINAL_CHROMATIC_SLOTS[i];
+      const slotB = DISTINCT_TERMINAL_CHROMATIC_SLOTS[j];
+      const dist = dEok(
+        deutan(expectedTerminal.normal[slotA]),
+        deutan(expectedTerminal.normal[slotB]),
+      );
+      const ok = dist >= 0.08;
+      console.log(
+        `  ${ok ? '✓' : '✗'} ${slotA} vs ${slotB} deutan dEok = ${dist.toFixed(4)}`,
+      );
+      if (!ok) fail++;
+    }
+  }
 }
 
 console.log(

@@ -1,5 +1,5 @@
 // Aligned with catppuccin-vsc/src/theme/index.ts
-import { SYNTAX_PALETTE } from '../syntaxPalette.mjs';
+import { SYNTAX_PALETTE, TERMINAL_PALETTE } from '../syntaxPalette.mjs';
 import { getSemanticTokens } from './semanticTokens.mjs';
 import { getTokenColors } from './tokenColors.mjs';
 import { getUiColors } from './uiColors.mjs';
@@ -52,28 +52,7 @@ export const defaultOptions = {
 
 export const compileTheme = (flavor, palette, options = defaultOptions) => {
   const isLatte = flavor === 'light';
-  const paletteAnsi = {
-    normal: {
-      black: isLatte ? palette.subtext1 : palette.surface1,
-      red: palette.red,
-      green: palette.green,
-      yellow: palette.yellow,
-      blue: palette.blue,
-      magenta: palette.pink,
-      cyan: palette.teal,
-      white: isLatte ? palette.surface2 : palette.subtext0,
-    },
-    bright: {
-      black: isLatte ? palette.subtext0 : palette.surface2,
-      red: palette.red,
-      green: palette.green,
-      yellow: palette.yellow,
-      blue: palette.blue,
-      magenta: palette.pink,
-      cyan: palette.teal,
-      white: isLatte ? palette.surface1 : palette.subtext1,
-    },
-  };
+  const paletteAnsi = TERMINAL_PALETTE[flavor];
 
   const context = {
     flavor,

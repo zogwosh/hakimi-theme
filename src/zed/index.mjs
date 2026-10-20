@@ -6,7 +6,7 @@ import {
   subLightness,
   transparent,
 } from '../colors.mjs';
-import { SYNTAX_PALETTE } from '../syntaxPalette.mjs';
+import { SYNTAX_PALETTE, TERMINAL_PALETTE } from '../syntaxPalette.mjs';
 import { getZedSyntax } from './syntax.mjs';
 
 export const manifest = {
@@ -19,7 +19,7 @@ export const manifest = {
   repository: 'https://github.com/zogwosh/hakimi-theme',
 };
 
-function compileZedStyle(c, isDark, syntaxPalette) {
+function compileZedStyle(c, isDark, syntaxPalette, terminalPalette) {
   const accent = c.sapphire;
   const rainbow = [
     c.red,
@@ -126,35 +126,35 @@ function compileZedStyle(c, isDark, syntaxPalette) {
     'editor.document_highlight.write_background': opacity(c.subtext0, 0.16),
     'editor.indent_guide': opacity(c.surface0, 0.6),
     'editor.indent_guide_active': c.surface2,
-    'terminal.background': c.base,
-    'terminal.ansi.background': c.base,
-    'terminal.foreground': c.text,
-    'terminal.dim_foreground': c.overlay1,
-    'terminal.bright_foreground': c.text,
-    'terminal.ansi.black': isDark ? c.surface1 : c.subtext1,
-    'terminal.ansi.white': isDark ? c.subtext0 : c.surface2,
-    'terminal.ansi.red': c.red,
-    'terminal.ansi.green': c.green,
-    'terminal.ansi.yellow': c.yellow,
-    'terminal.ansi.blue': c.blue,
-    'terminal.ansi.magenta': c.pink,
-    'terminal.ansi.cyan': c.teal,
-    'terminal.ansi.bright_black': isDark ? c.surface2 : c.subtext0,
-    'terminal.ansi.bright_white': isDark ? c.subtext1 : c.surface1,
-    'terminal.ansi.bright_red': c.red,
-    'terminal.ansi.bright_green': c.green,
-    'terminal.ansi.bright_yellow': c.yellow,
-    'terminal.ansi.bright_blue': c.blue,
-    'terminal.ansi.bright_magenta': c.pink,
-    'terminal.ansi.bright_cyan': c.teal,
-    'terminal.ansi.dim_black': isDark ? c.surface1 : c.subtext1,
-    'terminal.ansi.dim_white': isDark ? c.subtext0 : c.surface2,
-    'terminal.ansi.dim_red': c.red,
-    'terminal.ansi.dim_green': c.green,
-    'terminal.ansi.dim_yellow': c.yellow,
-    'terminal.ansi.dim_blue': c.blue,
-    'terminal.ansi.dim_magenta': c.pink,
-    'terminal.ansi.dim_cyan': c.teal,
+    'terminal.background': terminalPalette.background,
+    'terminal.ansi.background': terminalPalette.background,
+    'terminal.foreground': terminalPalette.foreground,
+    'terminal.dim_foreground': terminalPalette.dimForeground,
+    'terminal.bright_foreground': terminalPalette.brightForeground,
+    'terminal.ansi.black': terminalPalette.normal.black,
+    'terminal.ansi.white': terminalPalette.normal.white,
+    'terminal.ansi.red': terminalPalette.normal.red,
+    'terminal.ansi.green': terminalPalette.normal.green,
+    'terminal.ansi.yellow': terminalPalette.normal.yellow,
+    'terminal.ansi.blue': terminalPalette.normal.blue,
+    'terminal.ansi.magenta': terminalPalette.normal.magenta,
+    'terminal.ansi.cyan': terminalPalette.normal.cyan,
+    'terminal.ansi.bright_black': terminalPalette.bright.black,
+    'terminal.ansi.bright_white': terminalPalette.bright.white,
+    'terminal.ansi.bright_red': terminalPalette.bright.red,
+    'terminal.ansi.bright_green': terminalPalette.bright.green,
+    'terminal.ansi.bright_yellow': terminalPalette.bright.yellow,
+    'terminal.ansi.bright_blue': terminalPalette.bright.blue,
+    'terminal.ansi.bright_magenta': terminalPalette.bright.magenta,
+    'terminal.ansi.bright_cyan': terminalPalette.bright.cyan,
+    'terminal.ansi.dim_black': terminalPalette.dim.black,
+    'terminal.ansi.dim_white': terminalPalette.dim.white,
+    'terminal.ansi.dim_red': terminalPalette.dim.red,
+    'terminal.ansi.dim_green': terminalPalette.dim.green,
+    'terminal.ansi.dim_yellow': terminalPalette.dim.yellow,
+    'terminal.ansi.dim_blue': terminalPalette.dim.blue,
+    'terminal.ansi.dim_magenta': terminalPalette.dim.magenta,
+    'terminal.ansi.dim_cyan': terminalPalette.dim.cyan,
     'link_text.hover': c.sky,
     conflict: c.peach,
     'conflict.border': c.peach,
@@ -232,12 +232,22 @@ export const compileZedThemeFamily = (palettes) => ({
     {
       name: 'Hakimi Deuteranopia Light',
       appearance: 'light',
-      style: compileZedStyle(palettes.light, false, SYNTAX_PALETTE.light),
+      style: compileZedStyle(
+        palettes.light,
+        false,
+        SYNTAX_PALETTE.light,
+        TERMINAL_PALETTE.light,
+      ),
     },
     {
       name: 'Hakimi Deuteranopia Dark',
       appearance: 'dark',
-      style: compileZedStyle(palettes.dark, true, SYNTAX_PALETTE.dark),
+      style: compileZedStyle(
+        palettes.dark,
+        true,
+        SYNTAX_PALETTE.dark,
+        TERMINAL_PALETTE.dark,
+      ),
     },
   ],
 });

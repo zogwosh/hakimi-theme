@@ -474,7 +474,8 @@ export const getUiColors = (context) => {
     'tab.unfocusedInactiveBackground': shade(palette.mantle, -0.05),
 
     // Terminal
-    'terminal.foreground': palette.text,
+    'terminal.background': paletteAnsi.background,
+    'terminal.foreground': paletteAnsi.foreground,
     'terminal.ansiBlack': paletteAnsi.normal.black, // color0
     'terminal.ansiRed': paletteAnsi.normal.red, // color1
     'terminal.ansiGreen': paletteAnsi.normal.green, // color2
