@@ -1,6 +1,9 @@
 // Proves: (1) semantic token color == TextMate color for every shared role,
-// (2) required font-style cues exist, (3) no pre-redesign colors remain in syntax.
+// (2) required font-style cues exist, (3) no pre-redesign colors remain in syntax,
+// (4) generated editor canvas & syntax JSON is 100% byte-for-byte identical to baseline.
+import assert from 'node:assert';
 import fs from 'node:fs';
+import { SYNTAX_PALETTE } from '../src/syntaxPalette.mjs';
 
 const themes = {
   dark: JSON.parse(
@@ -11,22 +14,21 @@ const themes = {
   ),
 };
 
-// expected role -> color per flavor
-const palette = JSON.parse(fs.readFileSync('src/palette.json', 'utf8'));
 const ROLE = Object.fromEntries(
-  Object.entries(palette).map(([flavor, colors]) => [
+  Object.entries(SYNTAX_PALETTE).map(([flavor, colors]) => [
     flavor,
     {
-      keyword: colors.syn_keyword,
-      string: colors.syn_string,
-      function: colors.syn_function,
-      type: colors.syn_type,
-      neutral: colors.foreground,
-      comment: colors.syn_comment,
-      error: colors.error,
+      keyword: colors.mauve,
+      string: colors.green,
+      function: colors.blue,
+      type: colors.yellow,
+      neutral: colors.text,
+      comment: colors.overlay2,
+      error: colors.red,
     },
   ]),
 );
+
 const BANNED = [
   '#fe6100',
   '#ff8c42',
@@ -98,7 +100,7 @@ for (const flavor of ['dark', 'light']) {
   eq('number (sem)', semFg(S.number), R.type);
   eq('type (tm)', tmFg(t, 'entity.name.type').fg, R.type);
   eq('number (tm)', tmFg(t, 'constant.numeric').fg, R.type);
-  // variable / property (the consistency bug we fixed)
+  // variable / property
   eq('property (sem)', semFg(S.property), R.neutral);
   eq('variable (sem)', semFg(S.variable), R.neutral);
   eq('property (tm)', tmFg(t, 'variable.other.property').fg, R.neutral);
@@ -116,9 +118,29 @@ for (const flavor of ['dark', 'light']) {
     st = tmFg(t, 'storage.type'),
     sm = tmFg(t, 'storage.modifier'),
     cm = tmFg(t, 'comment'),
-    er = tmFg(t, 'invalid');
+    er = tmFg(t, 'invalid'),
+    tp = tmFg(t, 'entity.name.type'),
+    cl = tmFg(t, 'entity.name.type.class'),
+    mc = tmFg(t, 'entity.name.function.macro'),
+    pm = tmFg(t, 'variable.parameter'),
+    ns = tmFg(t, 'entity.name.namespace'),
+    sc = tmFg(t, 'support.class.builtin'),
+    cp = tmFg(t, 'support.class.component'),
+    tg = tmFg(t, 'entity.name.tag');
+
+  // Semantic checks
   requireSemStyle('keyword', S.keyword, ['bold']);
-  requireSemStyle('macro', S.macro, ['bold']);
+  requireSemStyle('type', S.type, ['italic']);
+  requireSemStyle('class', S.class, ['bold']);
+  requireSemStyle('macro', S.macro, ['bold', 'italic']);
+  requireSemStyle('parameter', S.parameter, ['italic']);
+  requireSemStyle('namespace', S.namespace, ['italic']);
+  requireSemStyle('class.defaultLibrary', S['class.defaultLibrary'], [
+    'bold',
+    'italic',
+  ]);
+
+  // TextMate checks
   console.log(
     `  ${kw.style.includes('bold') ? '✓' : '✗'} keyword bold (${kw.style})`,
   );
@@ -131,6 +153,41 @@ for (const flavor of ['dark', 'light']) {
     `  ${sm.style.includes('bold') ? '✓' : '✗'} storage.modifier bold (${sm.style})`,
   );
   if (!sm.style.includes('bold')) fail++;
+  console.log(
+    `  ${tp.style.includes('italic') ? '✓' : '✗'} type italic (${tp.style})`,
+  );
+  if (!tp.style.includes('italic')) fail++;
+  console.log(
+    `  ${cl.style.includes('bold') ? '✓' : '✗'} class bold (${cl.style})`,
+  );
+  if (!cl.style.includes('bold')) fail++;
+  console.log(
+    `  ${mc.style.includes('bold') && mc.style.includes('italic') ? '✓' : '✗'} macro bold italic (${mc.style})`,
+  );
+  if (!(mc.style.includes('bold') && mc.style.includes('italic'))) fail++;
+  console.log(
+    `  ${pm.style.includes('italic') ? '✓' : '✗'} parameter italic (${pm.style})`,
+  );
+  if (!pm.style.includes('italic')) fail++;
+  console.log(
+    `  ${ns.style.includes('italic') ? '✓' : '✗'} namespace italic (${ns.style})`,
+  );
+  if (!ns.style.includes('italic')) fail++;
+  console.log(
+    `  ${sc.style.includes('bold') && sc.style.includes('italic') ? '✓' : '✗'} support.class.builtin bold italic (${sc.style})`,
+  );
+  if (!(sc.style.includes('bold') && sc.style.includes('italic'))) fail++;
+  console.log(
+    `  ${cp.style.includes('bold') ? '✓' : '✗'} support.class.component bold (${cp.style})`,
+  );
+  if (!cp.style.includes('bold')) fail++;
+  eq('support.class.component fg', cp.fg, R.function);
+  console.log(
+    `  ${tg.style === '' ? '✓' : '✗'} entity.name.tag normal (${tg.style || 'normal'})`,
+  );
+  if (tg.style !== '') fail++;
+  eq('entity.name.tag fg', tg.fg, R.keyword);
+
   console.log(
     `  ${cm.style.includes('italic') ? '✓' : '✗'} comment italic (${cm.style})`,
   );
@@ -149,6 +206,116 @@ for (const flavor of ['dark', 'light']) {
     `  ${leaked.length ? `✗ leaked: ${leaked.join(', ')}` : `✓ none of ${BANNED.length} banned colors present`}`,
   );
   if (leaked.length) fail += leaked.length;
+}
+
+// -------------------------------------------------------------
+// Baseline JSON Verification (100% byte-for-byte fidelity)
+// -------------------------------------------------------------
+console.log('\n===== Baseline JSON Strict Equality Verification =====');
+const baseline = JSON.parse(
+  fs.readFileSync('scripts/editor-baseline.json', 'utf8'),
+);
+const zed = JSON.parse(
+  fs.readFileSync('zed/themes/hakimi-deuteranopia.json', 'utf8'),
+);
+const zedLight = zed.themes.find((t) => t.appearance === 'light');
+const zedDark = zed.themes.find((t) => t.appearance === 'dark');
+
+try {
+  // VS Code Light
+  assert.strictEqual(
+    themes.light.colors['editor.background'],
+    baseline.vscode.light['editor.background'],
+    'VS Code Light editor.background mismatch',
+  );
+  assert.strictEqual(
+    themes.light.colors['editor.foreground'],
+    baseline.vscode.light['editor.foreground'],
+    'VS Code Light editor.foreground mismatch',
+  );
+  assert.strictEqual(
+    themes.light.semanticHighlighting,
+    baseline.vscode.light.semanticHighlighting,
+    'VS Code Light semanticHighlighting mismatch',
+  );
+  assert.deepStrictEqual(
+    themes.light.semanticTokenColors,
+    baseline.vscode.light.semanticTokenColors,
+    'VS Code Light semanticTokenColors mismatch',
+  );
+  assert.deepStrictEqual(
+    themes.light.tokenColors,
+    baseline.vscode.light.tokenColors,
+    'VS Code Light tokenColors mismatch',
+  );
+  console.log('  ✓ VS Code Light baseline: 100% byte-for-byte identical');
+
+  // VS Code Dark
+  assert.strictEqual(
+    themes.dark.colors['editor.background'],
+    baseline.vscode.dark['editor.background'],
+    'VS Code Dark editor.background mismatch',
+  );
+  assert.strictEqual(
+    themes.dark.colors['editor.foreground'],
+    baseline.vscode.dark['editor.foreground'],
+    'VS Code Dark editor.foreground mismatch',
+  );
+  assert.strictEqual(
+    themes.dark.semanticHighlighting,
+    baseline.vscode.dark.semanticHighlighting,
+    'VS Code Dark semanticHighlighting mismatch',
+  );
+  assert.deepStrictEqual(
+    themes.dark.semanticTokenColors,
+    baseline.vscode.dark.semanticTokenColors,
+    'VS Code Dark semanticTokenColors mismatch',
+  );
+  assert.deepStrictEqual(
+    themes.dark.tokenColors,
+    baseline.vscode.dark.tokenColors,
+    'VS Code Dark tokenColors mismatch',
+  );
+  console.log('  ✓ VS Code Dark baseline: 100% byte-for-byte identical');
+
+  // Zed Light
+  assert.strictEqual(
+    zedLight.style['editor.background'],
+    baseline.zed.light['editor.background'],
+    'Zed Light editor.background mismatch',
+  );
+  assert.strictEqual(
+    zedLight.style['editor.foreground'],
+    baseline.zed.light['editor.foreground'],
+    'Zed Light editor.foreground mismatch',
+  );
+  assert.deepStrictEqual(
+    zedLight.style.syntax,
+    baseline.zed.light.syntax,
+    'Zed Light style.syntax mismatch',
+  );
+  console.log('  ✓ Zed Light baseline: 100% byte-for-byte identical');
+
+  // Zed Dark
+  assert.strictEqual(
+    zedDark.style['editor.background'],
+    baseline.zed.dark['editor.background'],
+    'Zed Dark editor.background mismatch',
+  );
+  assert.strictEqual(
+    zedDark.style['editor.foreground'],
+    baseline.zed.dark['editor.foreground'],
+    'Zed Dark editor.foreground mismatch',
+  );
+  assert.deepStrictEqual(
+    zedDark.style.syntax,
+    baseline.zed.dark.syntax,
+    'Zed Dark style.syntax mismatch',
+  );
+  console.log('  ✓ Zed Dark baseline: 100% byte-for-byte identical');
+} catch (err) {
+  console.error(`  ✗ Baseline comparison failure:`, err.message);
+  fail++;
 }
 
 console.log(

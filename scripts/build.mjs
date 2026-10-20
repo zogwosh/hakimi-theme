@@ -2,6 +2,14 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { hexToRgb, rgbToHsl, rgbToOklch } from '../src/colors.mjs';
+import {
+  compileTheme,
+  manifest as vscodeManifest,
+} from '../src/vscode/index.mjs';
+import {
+  compileZedThemeFamily,
+  manifest as zedManifest,
+} from '../src/zed/index.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const pkg = JSON.parse(
@@ -9,12 +17,6 @@ const pkg = JSON.parse(
 );
 const palette = JSON.parse(
   fs.readFileSync(path.join(root, 'src/palette.json'), 'utf8'),
-);
-const vscode = JSON.parse(
-  fs.readFileSync(path.join(root, 'src/vscode.json'), 'utf8'),
-);
-const zed = JSON.parse(
-  fs.readFileSync(path.join(root, 'src/zed.json'), 'utf8'),
 );
 const tokenNames = Object.keys(palette.light);
 const flavors = {};
@@ -49,30 +51,6 @@ for (const flavor of ['light', 'dark']) {
     dark: flavor === 'dark',
     colors,
   };
-}
-
-// JSON mappings use $token or $token/aa; {light, dark} selects a variant.
-function render(value, flavor) {
-  if (Array.isArray(value)) return value.map((item) => render(item, flavor));
-  if (value && typeof value === 'object') {
-    if (
-      Object.keys(value).length === 2 &&
-      Object.hasOwn(value, 'light') &&
-      Object.hasOwn(value, 'dark')
-    ) {
-      return render(value[flavor], flavor);
-    }
-    return Object.fromEntries(
-      Object.entries(value).map(([key, item]) => [key, render(item, flavor)]),
-    );
-  }
-  if (typeof value !== 'string' || !value.startsWith('$')) return value;
-  const match = /^\$([a-z][a-z0-9_]*)(?:\/([0-9a-f]{2}))?$/i.exec(value);
-  const hex = match && flavors[flavor].colors[match[1]]?.hex;
-  if (!hex || (match[2] && hex.length !== 7)) {
-    throw new Error(`Invalid color reference: ${flavor} ${value}`);
-  }
-  return hex + (match[2] ?? '');
 }
 
 const outputs = new Map();
@@ -115,35 +93,22 @@ const manifest = {
   repository: pkg.repository,
   bugs: pkg.bugs,
   homepage: pkg.homepage,
-  ...vscode.manifest,
+  ...vscodeManifest,
 };
 outputs.set('vscode/package.json', json(manifest));
-for (const [flavor, info] of Object.entries(flavors)) {
+for (const flavor of ['light', 'dark']) {
   outputs.set(
     `vscode/themes/hakimi-deuteranopia-${flavor}.json`,
-    json({
-      name: `Hakimi Deuteranopia ${info.name}`,
-      type: flavor,
-      ...render(vscode.theme, flavor),
-    }),
+    json(compileTheme(flavor, palette[flavor])),
   );
 }
 outputs.set(
   'zed/themes/hakimi-deuteranopia.json',
-  json({
-    $schema: zed.schema,
-    name: zed.name,
-    author: zed.author,
-    themes: Object.entries(flavors).map(([flavor, info]) => ({
-      name: `Hakimi Deuteranopia ${info.name}`,
-      appearance: flavor,
-      style: render(zed.style, flavor),
-    })),
-  }),
+  json(compileZedThemeFamily(palette)),
 );
 outputs.set(
   'zed/extension.toml',
-  `${Object.entries({ ...zed.manifest, version: pkg.version })
+  `${Object.entries({ ...zedManifest, version: pkg.version })
     .map(([key, value]) => `${key} = ${JSON.stringify(value)}`)
     .join('\n')}\n`,
 );

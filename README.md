@@ -4,14 +4,67 @@
 
 语法角色主要通过亮度、蓝黄方向和字体样式区分。关键词使用粗体，注释使用斜体；VS Code 的错误语法使用粗体和下划线，Zed 使用粗体。颜色差异通过绿色盲模拟后再检查，不依赖红绿对立。
 
+## 编辑器语法设计：6 基础色 × 4 字型矩阵
+
+### 1. 绿色盲视觉设计原理
+绿色盲（Deuteranopia）由于缺失绿色敏感视锥细胞，红-绿通道丧失鉴别能力，传统的红/绿/橙/棕语法高亮在视野中会退化为接近的黄褐色系。但绿色盲视力保留了完整的**蓝-黄（冷-暖）感知轴**与**明度（Lightness）对比感知**。
+
+为了在保证美观的同时实现绝对无歧义的代码阅读体验，Hakimi 摒弃了杂乱无章的多色杂糅，提炼出正交的 **6 基础色槽 × 4 种字体样式（常规 / 粗体 / 斜体 / 粗斜体）** 语法矩阵：
+- **冷色组（Cool）**：
+  - **冷色 1 (`mauve`)**：结构引导、语言控制、内置核心与标签
+  - **冷色 2 (`green`)**：字面量文本、正则/转义、模块包命名空间
+- **暖色组（Warm）**：
+  - **暖色 1 (`blue`)**：操作执行、函数方法、组件构造
+  - **暖色 2 (`yellow`)**：类型定义、实体规格、宏与注解修饰
+- **中性组（Neutral）**：
+  - **中性 1 (`text`)**：用户定义的数据载体（变量、属性、形参）
+  - **中性 2 (`overlay2`)**：次级视觉层（标点、注释、文档）
+- **语义告警（Error）**：`red`，仅用于非法语法与报错，且强制绑定加粗与下划线双重形态学提示。
+
+### 2. 6 基础色 × 4 字型核心矩阵
+
+| 色槽类别 | 对应色值 (Light / Dark) | 常规 (Normal) | 加粗 (Bold) | 斜体 (Italic) | 粗斜体 (Bold Italic) |
+|---|---|---|---|---|---|
+| **冷色 1 (`mauve`)** | `#336fd6` / `#7ab2ff` | HTML/XML 标签名 (`tag`) | 核心关键字 / 控制流程 (`keyword`, `storage.type`) | 自身指向 / 生命周期 / 异步修饰 (`this`, `self`, `lifetime`, `async`) | 语言内置类型 / 核心库基类 (`support.class.builtin`, `type.defaultLibrary`) |
+| **冷色 2 (`green`)** | `#004b8f` / `#80dcff` | 字符串字面量 (`string`) | 转义字符 / 正则表达式 / 格式占位符 (`escape`, `regexp`) | 命名空间 / 模块 / 包名 (`namespace`, `module`, `package`) | — |
+| **暖色 1 (`blue`)** | `#8a5200` / `#f0d68f` | 普通函数 / 方法调用与定义 (`function`, `method`) | 组件 / 构造器 / 枚举成员 (`component`, `constructor`, `enum-variant`) | — | — |
+| **暖色 2 (`yellow`)** | `#3a1f0b` / `#ff9536` | 数值 / 布尔值字面量 (`number`, `boolean`) | 自定义类 / 结构体 / 枚举 / 声明常量 (`class`, `struct`, `enum`, `constant`) | 抽象类型 / 接口 / Trait / 泛型形参 (`type`, `interface`, `trait`, `typeParameter`) | 宏 / 装饰器 / 编译器指令 / 注解 (`macro`, `decorator`, `annotation`, `preproc`) |
+| **中性 1 (`text`)** | `#45494c` / `#e0e0e0` | 局部变量 / 属性 / 结构字段 (`variable`, `property`, `field`) | — | 函数实参 / 形参 / 标签属性名 (`parameter`, `attribute-name`) | — |
+| **中性 2 (`overlay2`)**| `#6f706f` / `#99a0a8` | 标点符号 / 括号 / 分隔符 (`punctuation`, `delimiter`, `bracket`) | — | 单行与多行注释 (`comment`) | 文档注释与 Doc 标签 (`comment.doc`, `entity.name.tag.documentation`) |
+| **语义告警 (`red`)** | `#6f1f65` / `#ff8585` | — | 语法错误与非法标记 (`invalid`, `error`, 粗体+下划线) | — | — |
+
+### 3. 五大主流语言映射表 (TypeScript/TSX, Python, Go, Java, Rust)
+
+| 色槽 + 字型 | TypeScript / TSX | Python | Go | Java | Rust |
+|---|---|---|---|---|---|
+| **`mauve` 常规** | `<div>`, `<span>` 标签名 | — | — | — | — |
+| **`mauve` 加粗** | `const`, `function`, `return`, `if`, `import`, `export` | `def`, `class`, `return`, `if`, `for`, `import`, `with` | `func`, `package`, `import`, `return`, `if`, `for`, `defer`, `chan` | `public`, `class`, `void`, `return`, `if`, `new`, `extends` | `fn`, `let`, `pub`, `struct`, `impl`, `trait`, `match`, `use` |
+| **`mauve` 斜体** | `this`, `super`, `async`, `typeof`, `keyof`, `readonly` | `self`, `cls`, `async`, `lambda` | — | `this`, `super`, `static`, `final`, `abstract`, `synchronized` | `'a` (生命周期), `mut` (修饰符), `self`, `Self`, `async` |
+| **`mauve` 粗斜体** | `Promise`, `Array`, `Record`, `String`, `any`, `unknown` | `str`, `int`, `list`, `dict`, `set`, `Exception`, `isinstance` | `string`, `int`, `bool`, `error`, `byte`, `make`, `append`, `nil` | `int`, `boolean`, `String`, `Integer`, `List`, `Map`, `Object` | `i32`, `usize`, `bool`, `String`, `Vec`, `Option`, `Result`, `Some` |
+| **`green` 常规** | `'hello'`, `"world"`, `` `template ${x}` `` | `'hello'`, `"world"`, `f"hi {x}"` | `"hello"`, `` `raw string` `` | `"string literal"` | `"string"`, `r#"raw string"#` |
+| **`green` 加粗** | `\n`, `\t`, `/[a-z]+/`, `${` `}` 模板占位 | `\n`, `r"[a-z]+"`, `{}` 格式占位 | `\n`, `%s`, `%d`, `%v` 格式占位 | `\n`, `\t`, `Pattern.compile()` | `\n`, `\0`, `{}` 格式占位 |
+| **`green` 斜体** | `namespace Foo`, 模块导入名 | `import numpy as np` 模块别名 | `package main`, `import "fmt"` | `package com.app`, `import java.util.*` | `crate::models`, `use std::collections` |
+| **`blue` 常规** | `fetch()`, `console.log()` | `calculate()`, `math.sqrt()` | `fmt.Println()`, `ServeHTTP()` | `list.stream()`, `calc.sum()` | `iter().map()`, `tokio::spawn()` |
+| **`blue` 加粗** | React `<Header />`, `new User()` | `__init__`, `__str__`, 魔法方法 | `NewServer()` 构造函数 | `public User()` 构造函数 | `Status::Active` (枚举项), `User::new()` |
+| **`yellow` 常规** | `123`, `3.14`, `true`, `false` | `123`, `3.14`, `True`, `False`, `None` | `42`, `3.14`, `true`, `false`, `iota` | `100L`, `0.5f`, `true`, `false`, `null` | `100_000`, `3.14`, `true`, `false` |
+| **`yellow` 加粗** | `class Person`, `enum Status`, `MAX_RETRIES` | `class Person:`, `MAX_RETRIES` | `type User struct`, `const Timeout` | `class Customer`, `enum State`, `MAX_COUNT` | `struct Config`, `enum Message`, `const MAX` |
+| **`yellow` 斜体** | `interface User`, `type ID`, `T` 泛型形参 | `x: int | str`, `Callable` 类型注解 | `type Reader interface`, `[T any]` | `interface Runnable`, `class Box<T>` | `trait Display`, `impl<T: Clone>` |
+| **`yellow` 粗斜体** | `@deprecated`, `@observable` 装饰器 | `@dataclass`, `@property`, `@fixture` | `//go:build`, `//go:generate` 指令 | `@Override`, `@Autowired`, `@Entity` | `println!()`, `vec![]`, `#[derive(Debug)]` |
+| **`text` 常规** | `user`, `user.name`, `x` | `user`, `self.name`, `x` | `user`, `req.Header` | `user`, `this.name` | `user`, `point.x` |
+| **`text` 斜体** | `function(foo, bar)`, `id="app"` 属性 | `def run(foo, bar=1)` 形参 | `func handle(w, r)` 形参 | `void setAge(int age)` 形参 | `fn run(input: &str)` 形参 |
+| **`overlay2` 常规** | `{`, `}`, `(`, `)`, `;`, `,`, `<`, `>` 标点 | `(`, `)`, `:`, `,`, `.` 标点 | `{`, `}`, `:=`, `;`, `,` 标点 | `{`, `}`, `;`, `,`, `@` 标点 | `{`, `}`, `::`, `->`, `;`, `,` 标点 |
+| **`overlay2` 斜体** | `// comment`, `/* comment */` | `# line comment` | `// line comment` | `// comment`, `/* comment */` | `// line comment` |
+| **`overlay2` 粗斜体** | `/** @param foo */`, JSDoc | `"""docstring"""`, PEP-257 | Godoc 文档注释块 | `/** @param <T> */`, Javadoc | `/// Doc comment`, `//! Crate doc` |
+| **`red` 加粗+下划线** | 语法解析错误、未闭合语法 | 语法解析错误 | 编译错误语法 | 编译错误语法 | 编译错误语法 |
+
 ## 项目结构
 
 ```text
 src/
-  palette.json          所有颜色的唯一来源，包含 light / dark
-  vscode.json           VS Code 扩展信息和共享主题映射
-  zed.json              Zed 扩展信息和共享主题映射
-  colors.mjs            生成和可读性审计共用的颜色计算
+  palette.json          所有颜色的唯一来源（对齐 Catppuccin 26 令牌），包含 light / dark
+  vscode/               对齐 catppuccin/vscode 的模块化主题映射（uiColors、semanticTokens、tokenColors、extensions 等）
+  zed/                  对齐 catppuccin/zed 的主题与语法映射
+  colors.mjs            生成、颜色混合（opacity / mix / shade）和可读性审计共用的颜色计算
 scripts/
   build.mjs             生成配色库及两个编辑器的发布目录
   package-vscode.mjs    使用本地、锁定版本的 VSCE 打包
@@ -25,9 +78,9 @@ zed/                    生成的 Zed 扩展，提交以支持直接分发
 artifacts/              本地 VSIX 和 npm 压缩包，不提交
 ```
 
-修改配色时编辑 `src/palette.json`；修改编辑器映射时编辑相应的 JSON。生成目录里的文件会被下一次构建覆盖。
+修改配色时编辑 `src/palette.json`；修改编辑器映射时编辑 `src/vscode/` 或 `src/zed/` 下的模块。生成目录里的文件会被下一次构建覆盖。
 
-映射中的 `$foreground` 引用当前版本的颜色，`$primary/33` 在不透明颜色后添加十六进制透明度。只有明暗确实不同时，使用 `{ "light": "...", "dark": "..." }`。同一套语法规则生成两种版本，不分别维护两份大模板。
+映射模块通过 `colors.mjs` 中的 `opacity()`、`mix()` 和 `shade()` 直接基于 `palette.json` 的 26 个标准令牌计算明暗两套主题，同一套语法与界面规则生成两种版本，不分别维护两份大模板。
 
 所有产物的版本来自根目录 `package.json`。VS Code 清单和 Zed 清单由构建生成，无需手动同步版本。
 
@@ -56,14 +109,14 @@ npm 包只包含 `dist/`、README、许可证和包清单；VSIX 只包含扩展
 ```js
 import { flavors, flavorEntries, theme, version } from 'hakimi-deutan-theme';
 
-const background = flavors.dark.colors.surface_editor.hex;
-const keyword = flavors.dark.colors.syn_keyword;
+const background = flavors.dark.colors.base.hex;
+const keyword = flavors.dark.colors.mauve;
 // keyword.hex / alpha / rgb / hsl / oklch
 ```
 
 样式入口分别为 `hakimi-deutan-theme/css`、`hakimi-deutan-theme/scss` 和 `hakimi-deutan-theme/less`；原始配色数据入口为 `hakimi-deutan-theme/palette.json`。
 
-CSS 使用 `--cb-background`、`--cb-syn-keyword` 等变量。默认使用亮色，通过 `.theme-dark` 切换暗色，`.theme-light` 明确使用亮色。SCSS / Less 使用 `$cb-dark-background` / `@cb-dark-background` 等变量。
+CSS 使用 `--cb-base`、`--cb-mauve` 等变量。默认使用亮色，通过 `.theme-dark` 切换暗色，`.theme-light` 明确使用亮色。SCSS / Less 使用 `$cb-dark-base` / `@cb-dark-base` 等变量。
 
 类型声明和全部样式变量从实际颜色键生成，包含透明度和界面背景色。
 

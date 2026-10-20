@@ -192,6 +192,69 @@ function contrast(fg, bg) {
   const b = luminance(hexToRgb(bg));
   return (Math.max(f, b) + 0.05) / (Math.min(f, b) + 0.05);
 }
+
+const transparent = '#00000000';
+
+function opacity(color, alpha) {
+  const { r, g, b } = hexToRgb(color);
+  const a = Math.min(255, Math.max(0, Math.round(alpha * 255)))
+    .toString(16)
+    .padStart(2, '0');
+  return `${rgbToHex({ r, g, b })}${a}`;
+}
+
+function mix(color1, color2, amount) {
+  const c1 = hexToRgb(color1);
+  const c2 = hexToRgb(color2);
+  const w = clamp01(amount);
+  return rgbToHex({
+    r: c1.r * (1 - w) + c2.r * w,
+    g: c1.g * (1 - w) + c2.g * w,
+    b: c1.b * (1 - w) + c2.b * w,
+  });
+}
+
+function hslToRgb(h, s, l) {
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = l - c / 2;
+  let r1 = 0,
+    g1 = 0,
+    b1 = 0;
+  if (h < 60) [r1, g1, b1] = [c, x, 0];
+  else if (h < 120) [r1, g1, b1] = [x, c, 0];
+  else if (h < 180) [r1, g1, b1] = [0, c, x];
+  else if (h < 240) [r1, g1, b1] = [0, x, c];
+  else if (h < 300) [r1, g1, b1] = [x, 0, c];
+  else [r1, g1, b1] = [c, 0, x];
+  return {
+    r: (r1 + m) * 255,
+    g: (g1 + m) * 255,
+    b: (b1 + m) * 255,
+  };
+}
+
+function shade(color, magnitude) {
+  const { r, g, b } = hexToRgb(color);
+  const hsl = rgbToHsl(r, g, b);
+  const nextL = clamp01(hsl.l / 100 + magnitude);
+  return rgbToHex(hslToRgb(hsl.h, hsl.s / 100, nextL));
+}
+
+function addLightness(color, amount) {
+  const { r, g, b } = hexToRgb(color);
+  const hsl = rgbToHsl(r, g, b);
+  const nextL = clamp01((hsl.l + amount) / 100);
+  return rgbToHex(hslToRgb(hsl.h, hsl.s / 100, nextL));
+}
+
+function subLightness(color, amount) {
+  const { r, g, b } = hexToRgb(color);
+  const hsl = rgbToHsl(r, g, b);
+  const nextL = clamp01((hsl.l - amount) / 100);
+  return rgbToHex(hslToRgb(hsl.h, hsl.s / 100, nextL));
+}
+
 export {
   hexToRgb,
   flatten,
@@ -203,4 +266,10 @@ export {
   rgbToOklch,
   luminance,
   contrast,
+  transparent,
+  opacity,
+  mix,
+  shade,
+  addLightness,
+  subLightness,
 };
