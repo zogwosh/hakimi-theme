@@ -1,6 +1,6 @@
 # Hakimi Deuteranopia Safe
 
-面向绿色盲（Deuteranopia）的明暗配色，提供 VS Code、Zed 主题和可供其他项目使用的 JS / CSS / SCSS / Less 配色库。
+面向绿色盲（Deuteranopia）的明暗配色，提供 VS Code、Zed、Obsidian 主题和可供其他项目使用的 JS / CSS / SCSS / Less 配色库。
 
 语法角色主要通过亮度、蓝黄方向和字体样式区分。关键词使用粗体，注释使用斜体；VS Code 的错误语法使用粗体和下划线，Zed 使用粗体。颜色差异通过绿色盲模拟后再检查，不依赖红绿对立。
 
@@ -79,9 +79,10 @@ src/
   palette.json          所有颜色的唯一来源（对齐 Catppuccin 26 令牌），包含 light / dark
   vscode/               对齐 catppuccin/vscode 的模块化主题映射（uiColors、semanticTokens、tokenColors、extensions 等）
   zed/                  对齐 catppuccin/zed 的主题与语法映射
+  obsidian/             对齐 catppuccin/obsidian 的模块化主题构建（appVariables、paletteVars、syntax、components 等）
   colors.mjs            生成、颜色混合（opacity / mix / shade）和可读性审计共用的颜色计算
 scripts/
-  build.mjs             生成配色库及两个编辑器的发布目录
+  build.mjs             生成配色库及编辑器的发布目录
   package-vscode.mjs    使用本地、锁定版本的 VSCE 打包
   test.mjs              现有产物校验
   verify-*.mjs          现有主题覆盖和一致性校验
@@ -90,14 +91,15 @@ images/                 图标源文件
 dist/                   生成的 npm 配色库，不提交
 vscode/                 生成的 VS Code 扩展，不提交
 zed/                    生成的 Zed 扩展，提交以支持直接分发
+obsidian/               生成的 Obsidian 主题（theme.css、manifest.json），提交以支持直接分发
 artifacts/              本地 VSIX 和 npm 压缩包，不提交
 ```
 
-修改配色时编辑 `src/palette.json`；修改编辑器映射时编辑 `src/vscode/` 或 `src/zed/` 下的模块。生成目录里的文件会被下一次构建覆盖。
+修改配色时编辑 `src/palette.json`；修改编辑器或应用映射时编辑 `src/vscode/`、`src/zed/` 或 `src/obsidian/` 下的模块。生成目录里的文件会被下一次构建覆盖。
 
 映射模块通过 `colors.mjs` 中的 `opacity()`、`mix()` 和 `shade()` 直接基于 `palette.json` 的 26 个标准令牌计算明暗两套主题，同一套语法与界面规则生成两种版本，不分别维护两份大模板。
 
-所有产物的版本来自根目录 `package.json`。VS Code 清单和 Zed 清单由构建生成，无需手动同步版本。
+所有产物的版本来自根目录 `package.json`。VS Code 清单、Zed 清单和 Obsidian 清单由构建生成，无需手动同步版本。
 
 ## 开发与打包
 
@@ -116,6 +118,8 @@ npm run package:npm    # 校验后生成 artifacts/*.tgz
 安装 VS Code 主题：在扩展面板选择“从 VSIX 安装”，打开 `artifacts/` 中的 VSIX，然后选择 Hakimi Deuteranopia Light 或 Dark。
 
 Zed 的扩展目录是 `zed/`，其中包含清单、许可证和明暗主题。选择“Install Dev Extension”时指定该目录。
+
+安装 Obsidian 主题：在 Obsidian Vault（库）的配置目录 `.obsidian/themes/` 下新建目录 `Hakimi Deuteranopia Safe`，将构建生成的 `obsidian/theme.css` 和 `obsidian/manifest.json` 复制到该目录下（即 `.obsidian/themes/Hakimi Deuteranopia Safe/theme.css` 与 `manifest.json`），随后在 Obsidian 设置 -> 外观 -> 主题中选择“Hakimi Deuteranopia Safe”。支持在“外观 -> 颜色偏好”中切换明暗模式，并完全兼容 Style Settings 插件。
 
 npm 包只包含 `dist/`、README、许可证和包清单；VSIX 只包含扩展清单、主题、README、许可证和图标。打包操作不会发布到任何平台。
 

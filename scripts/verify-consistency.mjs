@@ -14,6 +14,7 @@ const themes = {
     fs.readFileSync('vscode/themes/hakimi-deuteranopia-light.json', 'utf8'),
   ),
 };
+const palette = JSON.parse(fs.readFileSync('src/palette.json', 'utf8'));
 
 const ROLE = Object.fromEntries(
   Object.entries(SYNTAX_PALETTE).map(([flavor, colors]) => [
@@ -454,6 +455,107 @@ for (const [flavor, zedTheme] of [
       const ok = dist >= 0.08;
       console.log(
         `  ${ok ? '✓' : '✗'} ${slotA} vs ${slotB} deutan dEok = ${dist.toFixed(4)}`,
+      );
+      if (!ok) fail++;
+    }
+  }
+}
+
+// -------------------------------------------------------------
+// Obsidian Theme Consistency & Deuteranopia Verification
+// -------------------------------------------------------------
+console.log(
+  '\n===== Obsidian Theme Consistency & Deuteranopia Verification =====',
+);
+const obsidianCss = fs.readFileSync('obsidian/theme.css', 'utf8');
+
+// 1. Verify no BANNED colors in obsidian/theme.css
+const obsidianLeaked = BANNED.filter((c) =>
+  obsidianCss.toLowerCase().includes(c),
+);
+console.log(
+  `  ${obsidianLeaked.length ? `✗ leaked in obsidian: ${obsidianLeaked.join(', ')}` : `✓ none of ${BANNED.length} banned colors present in obsidian/theme.css`}`,
+);
+if (obsidianLeaked.length) fail += obsidianLeaked.length;
+
+// 2. Verify syntax role variables in theme-light and theme-dark
+const EXPECTED_OBSIDIAN_SYNTAX = {
+  light: {
+    '--code-background': 'rgb(var(--ctp-mantle))',
+    '--code-normal': SYNTAX_PALETTE.light.text,
+    '--code-comment': SYNTAX_PALETTE.light.overlay2,
+    '--code-function': SYNTAX_PALETTE.light.blue,
+    '--code-important': SYNTAX_PALETTE.light.yellow,
+    '--code-keyword': SYNTAX_PALETTE.light.mauve,
+    '--code-operator': SYNTAX_PALETTE.light.mauve,
+    '--code-property': SYNTAX_PALETTE.light.text,
+    '--code-punctuation': SYNTAX_PALETTE.light.overlay2,
+    '--code-string': SYNTAX_PALETTE.light.green,
+    '--code-tag': SYNTAX_PALETTE.light.mauve,
+    '--code-value': SYNTAX_PALETTE.light.yellow,
+  },
+  dark: {
+    '--code-background': 'rgb(var(--ctp-mantle))',
+    '--code-normal': SYNTAX_PALETTE.dark.text,
+    '--code-comment': SYNTAX_PALETTE.dark.overlay2,
+    '--code-function': SYNTAX_PALETTE.dark.blue,
+    '--code-important': SYNTAX_PALETTE.dark.yellow,
+    '--code-keyword': SYNTAX_PALETTE.dark.mauve,
+    '--code-operator': SYNTAX_PALETTE.dark.mauve,
+    '--code-property': SYNTAX_PALETTE.dark.text,
+    '--code-punctuation': SYNTAX_PALETTE.dark.overlay2,
+    '--code-string': SYNTAX_PALETTE.dark.green,
+    '--code-tag': SYNTAX_PALETTE.dark.mauve,
+    '--code-value': SYNTAX_PALETTE.dark.yellow,
+  },
+};
+
+for (const flavor of ['light', 'dark']) {
+  console.log(
+    `\n--- Obsidian ${flavor.toUpperCase()} Syntax Role Variables ---`,
+  );
+  for (const [varName, expectedValue] of Object.entries(
+    EXPECTED_OBSIDIAN_SYNTAX[flavor],
+  )) {
+    const escapedValue = expectedValue.replace(/[()]/g, '\\$&');
+    const regex = new RegExp(`${varName}:\\s*${escapedValue}`, 'i');
+    const matched = regex.test(obsidianCss);
+    if (!matched) {
+      console.log(
+        `  ✗ Obsidian ${flavor} ${varName}: expected ${expectedValue}`,
+      );
+      fail++;
+    } else {
+      console.log(`  ✓ Obsidian ${flavor} ${varName} = ${expectedValue}`);
+    }
+  }
+
+  // 3. APCA contrast checks for Obsidian core syntax colors against mantle and base
+  console.log(`\n--- Obsidian ${flavor.toUpperCase()} APCA Contrast ---`);
+  const syn = SYNTAX_PALETTE[flavor];
+  const mantle = palette[flavor].mantle;
+  const base = palette[flavor].base;
+  const syntaxRoles = [
+    ['text', syn.text],
+    ['overlay2', syn.overlay2],
+    ['blue', syn.blue],
+    ['yellow', syn.yellow],
+    ['mauve', syn.mauve],
+    ['green', syn.green],
+    ['red', syn.red],
+  ];
+
+  for (const [bgName, bgHex] of [
+    ['mantle (--code-background)', mantle],
+    ['base (--background-primary)', base],
+  ]) {
+    const simBg = deutan(bgHex);
+    for (const [roleName, fgHex] of syntaxRoles) {
+      const simFg = deutan(fgHex);
+      const lc = Math.abs(apcaLc(simFg, simBg));
+      const ok = lc >= 45;
+      console.log(
+        `  ${ok ? '✓' : '✗'} ${flavor} ${roleName} (${fgHex}) on ${bgName} (${bgHex}): Lc = ${lc.toFixed(1)}`,
       );
       if (!ok) fail++;
     }

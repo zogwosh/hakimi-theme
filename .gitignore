@@ -4,3 +4,6 @@ dist/
 artifacts/
 *.vsix
 vscode-tmp/
+pnpm-lock.yaml
+pnpm-workspace.yaml
+

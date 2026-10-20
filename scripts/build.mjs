@@ -3,6 +3,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { hexToRgb, rgbToHsl, rgbToOklch } from '../src/colors.mjs';
 import {
+  compileObsidianTheme,
+  manifest as obsidianManifest,
+} from '../src/obsidian/index.mjs';
+import {
   compileTheme,
   manifest as vscodeManifest,
 } from '../src/vscode/index.mjs';
@@ -121,6 +125,19 @@ outputs.set(
   fs.readFileSync(path.join(root, 'images/icon.png')),
 );
 
+outputs.set(
+  'obsidian/manifest.json',
+  json({
+    name: obsidianManifest.name,
+    version: pkg.version,
+    minAppVersion: obsidianManifest.minAppVersion,
+    author: obsidianManifest.author,
+    authorUrl: obsidianManifest.authorUrl,
+  }),
+);
+outputs.set('obsidian/theme.css', compileObsidianTheme(palette));
+outputs.set('obsidian/LICENSE', license);
+
 for (const [relative, content] of outputs) {
   const target = path.join(root, relative);
   fs.mkdirSync(path.dirname(target), { recursive: true });
@@ -128,5 +145,5 @@ for (const [relative, content] of outputs) {
 }
 fs.mkdirSync(path.join(root, 'artifacts'), { recursive: true });
 console.log(
-  `Generated ${outputs.size} files for the palette, VS Code, and Zed (${pkg.version}).`,
+  `Generated ${outputs.size} files for the palette, VS Code, Zed, and Obsidian (${pkg.version}).`,
 );

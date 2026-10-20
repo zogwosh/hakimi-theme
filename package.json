@@ -1,7 +1,7 @@
 {
   "name": "hakimi-deutan-theme",
   "version": "2.0.0",
-  "description": "Deuteranopia-focused color tokens and themes for VS Code and Zed",
+  "description": "Deuteranopia-focused color tokens and themes for VS Code, Zed, and Obsidian",
   "type": "module",
   "keywords": [
     "colorblind",

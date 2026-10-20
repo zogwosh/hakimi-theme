@@ -1,5 +1,6 @@
 import { flavors, theme, version } from '../dist/index.js';
 import fs from 'node:fs';
+import { hexToRgb } from '../src/colors.mjs';
 
 console.log('Validating generated deuteranopia theme tokens...');
 
@@ -51,6 +52,8 @@ const styleFiles = [
   'vscode/themes/hakimi-deuteranopia-light.json',
   'vscode/themes/hakimi-deuteranopia-dark.json',
   'zed/themes/hakimi-deuteranopia.json',
+  'obsidian/theme.css',
+  'obsidian/manifest.json',
 ];
 for (const file of styleFiles) {
   if (!fs.existsSync(file)) {
@@ -64,7 +67,7 @@ for (const file of styleFiles) {
   }
 }
 console.log(
-  '✓ CSS, SCSS, Less, VSCode and Zed theme files successfully compiled',
+  '✓ CSS, SCSS, Less, VSCode, Zed and Obsidian theme files successfully compiled',
 );
 
 // 6. Verify VSCode theme files content
@@ -144,6 +147,54 @@ for (const zedTheme of zedThemeFamily.themes) {
   }
 }
 console.log('✓ Zed theme family file successfully validated');
+
+// 8. Verify Obsidian manifest and theme
+const obsidianManifest = JSON.parse(
+  fs.readFileSync('obsidian/manifest.json', 'utf8'),
+);
+if (obsidianManifest.name !== 'Hakimi Deuteranopia Safe') {
+  console.error(
+    `FAIL: Obsidian manifest name is ${obsidianManifest.name}, expected Hakimi Deuteranopia Safe`,
+  );
+  process.exit(1);
+}
+if (obsidianManifest.version !== pkg.version) {
+  console.error(
+    `FAIL: Obsidian manifest version is ${obsidianManifest.version}, expected ${pkg.version}`,
+  );
+  process.exit(1);
+}
+if (obsidianManifest.minAppVersion !== '1.13.0') {
+  console.error(
+    `FAIL: Obsidian manifest minAppVersion is ${obsidianManifest.minAppVersion}, expected 1.13.0`,
+  );
+  process.exit(1);
+}
+if (obsidianManifest.author !== 'hakimi') {
+  console.error(
+    `FAIL: Obsidian manifest author is ${obsidianManifest.author}, expected hakimi`,
+  );
+  process.exit(1);
+}
+console.log('✓ Obsidian manifest successfully validated');
+
+// 9. Verify Obsidian theme.css contains all 26 --ctp-<token> RGB definitions for both light and dark
+const obsidianThemeCss = fs.readFileSync('obsidian/theme.css', 'utf8');
+for (const [flavorName, tokens] of Object.entries(palette)) {
+  for (const [token, hex] of Object.entries(tokens)) {
+    const { r, g, b } = hexToRgb(hex);
+    const expectedVar = `--ctp-${token}: ${r}, ${g}, ${b};`;
+    if (!obsidianThemeCss.includes(expectedVar)) {
+      console.error(
+        `FAIL: obsidian/theme.css missing expected ${flavorName} variable: ${expectedVar}`,
+      );
+      process.exit(1);
+    }
+  }
+}
+console.log(
+  '✓ Obsidian theme.css contains all 26 --ctp-<token> RGB definitions for light and dark',
+);
 
 console.log(
   '\nALL TESTS PASSED SUCCESSFULLY! The Light and Dark deuteranopia theme tokens are verified.',
