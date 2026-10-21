@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { apcaLc, deutan, dEok } from '../src/colors.mjs';
 import { getThemeTokens } from '../src/tokens/index.mjs';
 
-console.log('Verifying Refactored VS Code & Zed Editor Themes...');
+console.log('Verifying Refactored VS Code, Zed Editor & Obsidian Themes...');
 
 const catppuccinTerms = [
   'crust',
@@ -16,6 +16,7 @@ const catppuccinTerms = [
   'mauve',
   'sapphire',
   'maroon',
+  'ctp-',
 ];
 
 // 43 Official captures required by Zed documentation (https://zed.dev/docs/extensions/languages)
@@ -134,9 +135,63 @@ for (const flavor of ['dark', 'light']) {
   console.log('   ✓ Zed 4-Zone background rules strictly satisfied.');
 
   // ---------------------------------------------------------------------------
-  // 3. Zero Catppuccin Leaks Verification
+  // 3. Obsidian 4-Zone Background & Connected Tab Rules
   // ---------------------------------------------------------------------------
-  console.log('3. Zero Catppuccin Leaks Verification:');
+  console.log(
+    '3. Obsidian 4-Zone Background & Connected Tab Rule Verification:',
+  );
+  const obsidianCss = fs.readFileSync('obsidian/theme.css', 'utf8');
+  const flavorSelector = flavor === 'light' ? '.theme-light' : '.theme-dark';
+  const flavorBlockMatch = obsidianCss.match(
+    new RegExp(`${flavorSelector} \\{([\\s\\S]*?)\\n\\}`),
+  );
+  assert(
+    flavorBlockMatch,
+    `Obsidian theme.css is missing selector block for ${flavorSelector}!`,
+  );
+  const flavorDeclarations = flavorBlockMatch[1];
+
+  const extractVar = (name) => {
+    const match = flavorDeclarations.match(new RegExp(`${name}:\\s*([^;]+);`));
+    return match ? match[1].trim() : null;
+  };
+
+  assert.strictEqual(
+    extractVar('--titlebar-background'),
+    extractVar('--status-bar-background'),
+    `Obsidian: TitleBar and StatusBar backgrounds must be identical in ${flavor}!`,
+  );
+  assert.strictEqual(
+    extractVar('--status-bar-background'),
+    tokens.bg.chrome,
+    `Obsidian: StatusBar background must match tokens.bg.chrome in ${flavor}!`,
+  );
+  assert.strictEqual(
+    extractVar('--tab-background-active'),
+    tokens.bg.editor,
+    `Obsidian: Active Tab must seamlessly match tokens.bg.editor in ${flavor}!`,
+  );
+  assert.strictEqual(
+    extractVar('--background-primary'),
+    tokens.bg.editor,
+    `Obsidian: Primary background must match tokens.bg.editor in ${flavor}!`,
+  );
+  assert.strictEqual(
+    extractVar('--background-secondary'),
+    tokens.bg.sidebar,
+    `Obsidian: Secondary background must match tokens.bg.sidebar in ${flavor}!`,
+  );
+  assert.strictEqual(
+    extractVar('--tab-outline-color'),
+    'transparent',
+    `Obsidian: Tab outline color must be transparent to eliminate double bounding boxes!`,
+  );
+  console.log('   ✓ Obsidian 4-Zone background rules strictly satisfied.');
+
+  // ---------------------------------------------------------------------------
+  // 4. Zero Catppuccin Leaks Verification
+  // ---------------------------------------------------------------------------
+  console.log('4. Zero Catppuccin Leaks Verification:');
   const vsCodeStr = JSON.stringify(vsCodeTheme);
   const zedStr = JSON.stringify(zedTheme);
 
@@ -149,13 +204,19 @@ for (const flavor of ['dark', 'light']) {
       !zedStr.includes(`"${term}"`),
       `Found legacy Catppuccin token "${term}" in ${zedThemeFamilyFile}!`,
     );
+    assert(
+      !obsidianCss.includes(term),
+      `Found legacy Catppuccin token "${term}" in obsidian/theme.css!`,
+    );
   }
-  console.log('   ✓ Zero Catppuccin keys or scopes detected in VS Code and Zed.');
+  console.log(
+    '   ✓ Zero Catppuccin keys or scopes detected across VS Code, Zed, and Obsidian.',
+  );
 
   // ---------------------------------------------------------------------------
-  // 4. Zed Official Tree-sitter Captures Coverage
+  // 5. Zed Official Tree-sitter Captures Coverage
   // ---------------------------------------------------------------------------
-  console.log('4. Zed Official Tree-sitter Captures Coverage Verification:');
+  console.log('5. Zed Official Tree-sitter Captures Coverage Verification:');
   const zedSyntax = zedStyle.syntax;
   for (const capture of requiredZedCaptures) {
     assert(
@@ -168,16 +229,20 @@ for (const flavor of ['dark', 'light']) {
       `Capture "${capture}" does not have a valid hex color in Zed ${flavor} theme!`,
     );
   }
-  console.log(`   ✓ All ${requiredZedCaptures.length} official Zed captures strictly covered.`);
+  console.log(
+    `   ✓ All ${requiredZedCaptures.length} official Zed captures strictly covered.`,
+  );
 
   // ---------------------------------------------------------------------------
-  // 5. APCA Contrast Verification
+  // 6. APCA Contrast Verification
   // ---------------------------------------------------------------------------
-  console.log('5. APCA Accessibility Verification (vs Editor Canvas):');
+  console.log('6. APCA Accessibility Verification (vs Editor Canvas):');
   const bg = tokens.bg.editor;
   const fg = tokens.fg.default;
   const fgScore = Math.abs(apcaLc(fg, bg));
-  console.log(`   - Foreground text contrast: Lc ${fgScore.toFixed(1)} (threshold >= 60)`);
+  console.log(
+    `   - Foreground text contrast: Lc ${fgScore.toFixed(1)} (threshold >= 60)`,
+  );
   assert(fgScore >= 60, `Foreground text contrast too low: ${fgScore}`);
 
   for (const [name, color] of Object.entries(tokens.syntax)) {
@@ -189,9 +254,9 @@ for (const flavor of ['dark', 'light']) {
   console.log('   ✓ All key foregrounds pass APCA readability criteria.');
 
   // ---------------------------------------------------------------------------
-  // 6. Deuteranopia Color Difference Verification
+  // 7. Deuteranopia Color Difference Verification
   // ---------------------------------------------------------------------------
-  console.log('6. Deuteranopia Simulated Discriminability:');
+  console.log('7. Deuteranopia Simulated Discriminability:');
   const syntaxPairs = [
     ['keyword', 'function'],
     ['function', 'type'],
@@ -209,12 +274,17 @@ for (const flavor of ['dark', 'light']) {
     const simA = deutan(colA, bg);
     const simB = deutan(colB, bg);
     const diff = dEok(simA, simB);
-    console.log(`   - ΔE_OK(${a}, ${b}) under deutan simulation: ${diff.toFixed(3)}`);
-    assert(diff >= 0.04, `Deutan distinction between ${a} and ${b} too low: ${diff}`);
+    console.log(
+      `   - ΔE_OK(${a}, ${b}) under deutan simulation: ${diff.toFixed(3)}`,
+    );
+    assert(
+      diff >= 0.04,
+      `Deutan distinction between ${a} and ${b} too low: ${diff}`,
+    );
   }
   console.log('   ✓ Deuteranopia distinctiveness verified.');
 }
 
 console.log('\n========================================');
-console.log('All VS Code & Zed verifications passed successfully!');
+console.log('All VS Code, Zed & Obsidian verifications passed successfully!');
 console.log('========================================');

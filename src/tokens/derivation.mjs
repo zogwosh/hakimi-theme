@@ -19,14 +19,17 @@ export function deriveWorkbenchBackgrounds(editorBaseHex, mode = 'dark') {
   const panelLightnessDelta = isDark ? 0.015 : 0.018;
 
   const chromeColor = adjustOklchLightness(editorBaseHex, chromeLightnessDelta);
-  const sidebarColor = adjustOklchLightness(editorBaseHex, sidebarLightnessDelta);
+  const sidebarColor = adjustOklchLightness(
+    editorBaseHex,
+    sidebarLightnessDelta,
+  );
   const panelColor = adjustOklchLightness(editorBaseHex, panelLightnessDelta);
 
   return {
     editor: editorBaseHex,
-    chrome: chromeColor,       // Used for TitleBar and StatusBar (footer) identically
-    sidebar: sidebarColor,     // Used for Primary SideBar
-    panel: panelColor,         // Used for Panels and Secondary SideBar
+    chrome: chromeColor, // Used for TitleBar and StatusBar (footer) identically
+    sidebar: sidebarColor, // Used for Primary SideBar
+    panel: panelColor, // Used for Panels and Secondary SideBar
   };
 }
 
@@ -60,13 +63,19 @@ function normalizedRgbToHex({ r, g, b }) {
 }
 
 function srgbToLinearRgb({ r, g, b }) {
-  const toLinear = (c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  const toLinear = (c) =>
+    c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
   return { r: toLinear(r), g: toLinear(g), b: toLinear(b) };
 }
 
 function linearRgbToSrgb({ r, g, b }) {
-  const toSrgb = (c) => (c <= 0.0031308 ? c * 12.92 : 1.055 * c ** (1 / 2.4) - 0.055);
-  return { r: clamp(toSrgb(r), 0, 1), g: clamp(toSrgb(g), 0, 1), b: clamp(toSrgb(b), 0, 1) };
+  const toSrgb = (c) =>
+    c <= 0.0031308 ? c * 12.92 : 1.055 * c ** (1 / 2.4) - 0.055;
+  return {
+    r: clamp(toSrgb(r), 0, 1),
+    g: clamp(toSrgb(g), 0, 1),
+    b: clamp(toSrgb(b), 0, 1),
+  };
 }
 
 function linearRgbToOklab({ r, g, b }) {

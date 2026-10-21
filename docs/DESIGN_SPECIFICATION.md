@@ -15,7 +15,8 @@
 5. [绿色盲可访问性工程与量化标准 (Deuteranopia Engineering)](#五绿色盲可访问性工程与量化标准-deuteranopia-engineering)
 6. [两层语法渲染生态：LSP Semantic Tokens 与 TextMate](#六两层语法渲染生态lsp-semantic-tokens-与-textmate)
 7. [Zed Editor Tree-sitter 高精语法捕获与架构设计](#七zed-editor-tree-sitter-高精语法捕获与架构设计)
-8. [质量保障与自动化验证体系](#八质量保障与自动化验证体系)
+8. [Obsidian 主题设计与官方 CSS Variables 架构](#八obsidian-主题设计与官方-css-variables-架构)
+9. [质量保障与自动化验证体系](#九质量保障与自动化验证体系)
 
 ---
 
@@ -237,7 +238,29 @@ Tree-sitter 采用自右向左评估的多重捕获回退机制（例如 `(type_
 
 ---
 
-## 八、质量保障与自动化验证体系
+## 八、Obsidian 主题设计与官方 CSS Variables 架构
+
+根据 [Obsidian 官方主题开发规范](https://docs.obsidian.md/Themes/App+themes/Build+a+theme)，Hakimi 全量接入 Obsidian 原生 CSS Variables 架构，彻底剔除 legacy Catppuccin（`ctp-*`）命名与深层 CSS hack，保持选择器低特异性，避免 `!important`：
+
+### 8.1 四层空间流体模型在 Obsidian 中的映射
+- **Zone 1 (Chrome)**：`--titlebar-background == --status-bar-background == --ribbon-background == bg.chrome`，窗口外框与底栏保持严格同色。
+- **Zone 2 (SideBar)**：`--background-secondary == bg.sidebar`，侧边栏与文件树平滑下沉。
+- **Zone 3 (Auxiliary & Floating)**：`--background-modifier-box-shadow == bg.shadow`，`--code-background == bg.panel`。
+- **Zone 4 (Editor Canvas)**：`--background-primary == --tab-background-active == bg.editor`，活动标签页与编辑正文区无缝连通，设置 `--tab-outline-color: transparent` 消除双重边框。
+
+### 8.2 官方 12 阶中性色梯（`--color-base-00` ~ `--color-base-100`）
+严格实现官方要求由主题定义的基础灰阶序列，在 OKLCH 色彩空间内平滑展开，承托内部层级派生。
+
+### 8.3 绿色盲友好的 Extended Colors 与伴生 `-rgb` 变量
+为 `--color-red`, `--color-orange`, `--color-yellow`, `--color-green`, `--color-cyan`, `--color-blue`, `--color-purple`, `--color-pink` 分配绿色盲校准色相，并同步派生 `-rgb` 三通道变量供原生 `rgba()` 调用。
+
+### 8.4 CodeMirror 6 与 Prism 语法双重编码
+- 实时预览模式（`.cm-s-obsidian`）与阅读视图（Prism `.token.*`）共享统一的 `--code-*` 变量体系。
+- 延续色彩 × 字形双重编码：关键字粗体、注释斜体、对象属性鸭翅绿（Teal，与普通变量完全解耦）。
+
+---
+
+## 九、质量保障与自动化验证体系
 
 所有关于色彩、空间与无障碍的规范，均被固化为自动化检验脚本：
 
@@ -246,8 +269,9 @@ Tree-sitter 采用自右向左评估的多重捕获回退机制（例如 `(type_
 npm run check
 ```
 
-流水线执行四大核心检查：
-1. **VS Code & Zed 4-Zone 背景空间推导检查**：自动验证 TitleBar == StatusBar、SideBar 与 Panel 的离散度与明度梯度，以及 Zed 连通标签页。
-2. **零泄漏验证（Zero Leaks）**：遍历生成的 VS Code 和 Zed 主题文件，确保不存在任何 Catppuccin 遗留名称或未对齐的调色板。
+流水线执行五大核心检查：
+1. **VS Code, Zed & Obsidian 4-Zone 背景空间推导检查**：自动验证三端各自的 TitleBar == StatusBar、SideBar 与 Panel 的离散度与明度梯度，以及连通标签页。
+2. **零泄漏验证（Zero Leaks）**：遍历生成的 VS Code、Zed 和 Obsidian 主题文件，确保不存在任何 Catppuccin 遗留名称（`ctp-`, `crust`, `mantle`, `surface*` 等）或未对齐的调色板。
 3. **Zed Tree-sitter 全量捕获断言**：自动化验证 43 项 Zed 官方捕获项 100% 具备有效十六进制色彩。
-4. **APCA 与 $\Delta E_{\text{OK}}$ 数学计算**：实时模拟绿色盲并计算欧氏距离，低于阈值自动报错中断打包。
+4. **Obsidian 官方变量完整性验证**：自动化断言核心官方 Foundations、Chrome 与 Code 变量全部声明覆盖。
+5. **APCA 与 $\Delta E_{\text{OK}}$ 数学计算**：实时模拟绿色盲并计算欧氏距离，低于阈值自动报错中断打包。

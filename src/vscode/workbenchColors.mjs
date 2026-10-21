@@ -2,10 +2,10 @@ import { opacity } from '../colors.mjs';
 
 /**
  * Builds the complete VS Code Workbench UI Colors map from Semantic Tokens.
- * 
+ *
  * Directly conforms to the official VS Code Theme Color specification:
  * https://code.visualstudio.com/api/references/theme-color
- * 
+ *
  * Strictly implements the 4 background zones requested:
  * 1. TitleBar & Footer (StatusBar) & Tab Bar Header: identical background (tokens.bg.chrome)
  * 2. Primary SideBar: dedicated background (tokens.bg.sidebar)
@@ -348,11 +348,17 @@ function getPeekViewColors(tokens) {
     'peekView.border': tokens.border.focus,
     'peekViewEditor.background': tokens.bg.panel,
     'peekViewEditorGutter.background': tokens.bg.panel,
-    'peekViewEditor.matchHighlightBackground': opacity(tokens.intent.warning, 0.3),
+    'peekViewEditor.matchHighlightBackground': opacity(
+      tokens.intent.warning,
+      0.3,
+    ),
     'peekViewResult.background': tokens.bg.panel,
     'peekViewResult.fileForeground': tokens.fg.default,
     'peekViewResult.lineForeground': tokens.fg.muted,
-    'peekViewResult.matchHighlightBackground': opacity(tokens.intent.warning, 0.3),
+    'peekViewResult.matchHighlightBackground': opacity(
+      tokens.intent.warning,
+      0.3,
+    ),
     'peekViewResult.selectionBackground': tokens.bg.surfaceActive,
     'peekViewResult.selectionForeground': tokens.fg.default,
     'peekViewTitle.background': tokens.bg.chrome,

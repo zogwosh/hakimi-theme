@@ -1,158 +1,113 @@
-import { SYNTAX_PALETTE } from '../syntaxPalette.mjs';
-
 /**
- * Compiles Obsidian code syntax variables and CodeMirror/Prism styling rules.
+ * Compiles official Obsidian --code-* CSS variables for a given theme mode.
  *
- * @param {Object} [syntaxPalettes=SYNTAX_PALETTE] Deuteranopia syntax palettes
- * @returns {string} Compiled CSS for code syntax
+ * @param {import('../tokens/index.mjs').ThemeTokens} tokens
+ * @returns {string} CSS declarations for code variables
  */
-export function compileObsidianSyntaxStyles(syntaxPalettes = SYNTAX_PALETTE) {
-  const lightVariables = compileFlavorSyntaxVariables(
-    'light',
-    syntaxPalettes.light,
-  );
-  const darkVariables = compileFlavorSyntaxVariables(
-    'dark',
-    syntaxPalettes.dark,
-  );
-  const codeSyntaxRules = compileSyntaxHighlightingRules();
-
-  return [lightVariables, darkVariables, codeSyntaxRules].join('\n\n');
+export function compileCodeSyntaxVariables(tokens) {
+  return [
+    '  /* --- Code Blocks & Syntax Variables --- */',
+    `  --code-background: ${tokens.bg.panel};`,
+    `  --code-normal: ${tokens.fg.default};`,
+    `  --code-comment: ${tokens.syntax.comment};`,
+    `  --code-keyword: ${tokens.syntax.keyword};`,
+    `  --code-function: ${tokens.syntax.function};`,
+    `  --code-string: ${tokens.syntax.string};`,
+    `  --code-value: ${tokens.syntax.number};`,
+    `  --code-property: ${tokens.syntax.property};`,
+    `  --code-operator: ${tokens.syntax.operator};`,
+    `  --code-punctuation: ${tokens.syntax.punctuation};`,
+    `  --code-tag: ${tokens.syntax.tag};`,
+    `  --code-important: ${tokens.syntax.regex};`,
+    `  --code-error: ${tokens.syntax.error};`,
+  ].join('\n');
 }
 
 /**
- * Compiles --code-* CSS variables for a specific theme flavor.
+ * Compiles CodeMirror 6 and Prism syntax highlighting rules.
+ * Implements the Color x Font Style Dual-Coding Matrix for Deuteranopia accessibility.
  *
- * @param {'light' | 'dark'} flavor
- * @param {Record<string, string>} syntax Flavor syntax color tokens
  * @returns {string}
  */
-function compileFlavorSyntaxVariables(flavor, syntax) {
-  const selector = flavor === 'light' ? '.theme-light' : '.theme-dark';
-
-  return `${selector} {
-  --code-background: rgb(var(--ctp-mantle));
-  --code-normal: ${syntax.text};
-  --code-comment: ${syntax.overlay2};
-  --code-function: ${syntax.blue};
-  --code-important: ${syntax.yellow};
-  --code-keyword: ${syntax.mauve};
-  --code-operator: ${syntax.mauve};
-  --code-property: ${syntax.text};
-  --code-punctuation: ${syntax.overlay2};
-  --code-string: ${syntax.green};
-  --code-tag: ${syntax.mauve};
-  --code-value: ${syntax.yellow};
-  --code-error: ${syntax.red};
-}`;
+export function compileCodeSyntaxRules() {
+  return `/* ------------------Code Syntax Highlighting (Dual-Coding Matrix)------------------- */
+/* Inline Code & Code Blocks */
+code,
+pre > code {
+  color: var(--code-normal);
+  background-color: var(--code-background);
+  font-family: var(--font-monospace);
 }
 
-/**
- * Compiles CodeMirror (.cm-s-obsidian) and Prism (.token.*) syntax styling rules
- * adhering to the 6 Base Colors × 4 Font Styles matrix.
- *
- * @returns {string}
- */
-function compileSyntaxHighlightingRules() {
-  return `/* ------------------Code Syntax Highlighting (6 Base Colors × 4 Font Styles)------------------- */
+/* Keywords (Color: Violet, Style: Bold) */
 .cm-s-obsidian .cm-keyword,
-.cm-s-obsidian .cm-operator,
-.token.keyword,
-.token.operator {
+.token.keyword {
   color: var(--code-keyword);
-  font-weight: var(--font-bold);
+  font-weight: 700;
 }
 
-.cm-s-obsidian .cm-builtin,
-.token.builtin {
-  color: var(--code-keyword);
-  font-weight: var(--font-bold);
+/* Comments (Color: Muted Slate, Style: Italic) */
+.cm-s-obsidian .cm-comment,
+.token.comment {
+  color: var(--code-comment);
   font-style: italic;
 }
 
-.cm-s-obsidian .cm-tag,
-.token.tag {
-  color: var(--code-tag);
-  font-weight: normal;
-}
-
-.cm-s-obsidian .cm-string,
-.cm-s-obsidian .cm-string-2,
-.token.string,
-.token.char {
-  color: var(--code-string);
-}
-
-.token.regex,
-.token.important,
-.cm-s-obsidian .cm-string.cm-formatting {
-  color: var(--code-string);
-  font-weight: var(--font-bold);
-}
-
-.token.namespace {
-  color: var(--code-string);
-  font-style: italic;
-}
-
+/* Functions & Methods (Color: Blue) */
 .cm-s-obsidian .cm-def,
-.cm-s-obsidian .cm-variable-2,
+.cm-s-obsidian .cm-function,
 .token.function {
   color: var(--code-function);
 }
 
-.token.class-name,
-.token.constant {
-  color: var(--code-value);
-  font-weight: var(--font-bold);
+/* Strings (Color: Cyan) */
+.cm-s-obsidian .cm-string,
+.token.string {
+  color: var(--code-string);
 }
 
-.cm-s-obsidian .cm-type,
-.cm-s-obsidian .cm-variable-3 {
-  color: var(--code-value);
-  font-style: italic;
-}
-
+/* Numbers & Values (Color: Peach) */
 .cm-s-obsidian .cm-number,
-.cm-s-obsidian .cm-atom,
 .token.number,
 .token.boolean {
   color: var(--code-value);
 }
 
-.cm-s-obsidian .cm-variable,
+/* Properties & Fields (Color: Teal - Decoupled from Variables) */
 .cm-s-obsidian .cm-property,
-.token.property,
-.token.variable {
-  color: var(--code-normal);
+.token.property {
+  color: var(--code-property);
 }
 
-.cm-s-obsidian .cm-attribute,
-.token.attr-name {
-  color: var(--code-normal);
-  font-style: italic;
+/* Operators (Color: Default Foreground) */
+.cm-s-obsidian .cm-operator,
+.token.operator {
+  color: var(--code-operator);
 }
 
-.cm-s-obsidian .cm-comment,
-.token.comment,
-.token.prolog,
-.token.doctype,
-.token.cdata {
-  color: var(--code-comment);
-  font-style: italic;
-}
-
-.cm-s-obsidian .cm-bracket,
+/* Punctuation & Brackets (Color: Muted Slate) */
 .cm-s-obsidian .cm-punctuation,
 .token.punctuation {
   color: var(--code-punctuation);
 }
 
-.cm-s-obsidian .cm-error,
-.cm-s-obsidian .cm-invalidchar,
-.token.error {
+/* Tags & Built-ins (Color: Violet) */
+.cm-s-obsidian .cm-tag,
+.token.tag,
+.token.builtin {
+  color: var(--code-tag);
+}
+
+/* Regular Expressions & Special (Color: Peach) */
+.token.regex,
+.token.important {
+  color: var(--code-important);
+}
+
+/* Syntax Errors */
+.token.error,
+.cm-s-obsidian .cm-error {
   color: var(--code-error);
-  font-weight: var(--font-bold);
-  text-decoration: underline;
+  text-decoration: underline wavy var(--code-error);
 }`;
 }

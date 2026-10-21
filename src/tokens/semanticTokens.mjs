@@ -2,7 +2,7 @@ import { opacity } from '../colors.mjs';
 
 /**
  * Creates the complete Semantic Token tree for a specific theme mode.
- * 
+ *
  * Organizes tokens into intentional semantic layers:
  * - bg: Background surfaces (including the 4 derived workbench zones)
  * - fg: Foregrounds and typography
@@ -11,7 +11,12 @@ import { opacity } from '../colors.mjs';
  * - syntax: Code syntax highlighting tokens
  * - terminal: ANSI terminal colors
  */
-export function createSemanticTokens({ mode, backgrounds, neutrals, chromatics }) {
+export function createSemanticTokens({
+  mode,
+  backgrounds,
+  neutrals,
+  chromatics,
+}) {
   const isDark = mode === 'dark';
 
   return {
@@ -28,16 +33,25 @@ export function createSemanticTokens({ mode, backgrounds, neutrals, chromatics }
 function createBackgroundTokens(backgrounds, chromatics, isDark) {
   return {
     editor: backgrounds.editor,
-    chrome: backgrounds.chrome,       // TitleBar & StatusBar
+    chrome: backgrounds.chrome, // TitleBar & StatusBar
     sidebar: backgrounds.sidebar,
     panel: backgrounds.panel,
     surfaceHover: opacity(isDark ? '#ffffff' : '#000000', isDark ? 0.05 : 0.04),
-    surfaceActive: opacity(isDark ? '#ffffff' : '#000000', isDark ? 0.09 : 0.08),
-    surfaceSelected: opacity(isDark ? '#ffffff' : '#000000', isDark ? 0.07 : 0.06),
+    surfaceActive: opacity(
+      isDark ? '#ffffff' : '#000000',
+      isDark ? 0.09 : 0.08,
+    ),
+    surfaceSelected: opacity(
+      isDark ? '#ffffff' : '#000000',
+      isDark ? 0.07 : 0.06,
+    ),
     surfaceElevated: backgrounds.panel,
     selection: opacity(chromatics.blue, isDark ? 0.35 : 0.25),
     selectionInactive: opacity(chromatics.blue, isDark ? 0.18 : 0.12),
-    lineHighlight: opacity(isDark ? '#ffffff' : '#000000', isDark ? 0.04 : 0.03),
+    lineHighlight: opacity(
+      isDark ? '#ffffff' : '#000000',
+      isDark ? 0.04 : 0.03,
+    ),
     shadow: opacity('#000000', isDark ? 0.3 : 0.12),
   };
 }

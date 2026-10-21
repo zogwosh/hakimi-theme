@@ -1,12 +1,17 @@
-import { SYNTAX_PALETTE } from '../syntaxPalette.mjs';
-import { compileAppVariables } from './appVariables.mjs';
-import { compileComponentStyles } from './components.mjs';
-import { compileLayoutStyles } from './layout.mjs';
-import { compileObsidianPaletteVariables } from './paletteVars.mjs';
-import { compileStyleSettings } from './styleSettings.mjs';
-import { compileObsidianSyntaxStyles } from './syntax.mjs';
-import { compileTypographyStyles } from './typography.mjs';
-import { compileVendorStyles } from './vendors.mjs';
+import { getThemeTokens } from '../tokens/index.mjs';
+import {
+  compileChromeStructuralRules,
+  compileChromeVariables,
+} from './chrome.mjs';
+import {
+  compileComponentRules,
+  compileComponentVariables,
+} from './components.mjs';
+import { compileFoundationsVariables } from './foundations.mjs';
+import {
+  compileCodeSyntaxRules,
+  compileCodeSyntaxVariables,
+} from './syntax.mjs';
 
 export const manifest = {
   name: 'Hakimi Deuteranopia Safe',
@@ -16,25 +21,60 @@ export const manifest = {
 };
 
 /**
- * Assembles the complete Obsidian theme.css string in a clean, top-down structure.
+ * Compiles the complete Obsidian theme.css string in a clean, top-down structure.
+ * Purely driven by the unified 3-Tier Semantic Tokens and conforms to Obsidian standards.
  *
- * @param {Object} palettes Deuteranopia-safe palettes with light and dark flavors
- * @param {Object} [syntaxPalettes=SYNTAX_PALETTE] Deuteranopia-safe syntax palettes
+ * @param {Object} [_palettes=null] Optional parameter for backwards compatibility
  * @returns {string} Complete compiled theme.css content
  */
-export function compileObsidianTheme(
-  palettes,
-  syntaxPalettes = SYNTAX_PALETTE,
-) {
+export function compileObsidianTheme(_palettes = null) {
+  const banner = compileThemeBanner();
+  const darkThemeVariables = compileFlavorThemeVariables('dark');
+  const lightThemeVariables = compileFlavorThemeVariables('light');
+  const chromeRules = compileChromeStructuralRules();
+  const syntaxRules = compileCodeSyntaxRules();
+  const componentRules = compileComponentRules();
+
   return `${[
-    '/* Hakimi Deuteranopia Safe Theme for Obsidian */',
-    compileAppVariables(),
-    compileStyleSettings(),
-    compileObsidianPaletteVariables(palettes),
-    compileObsidianSyntaxStyles(syntaxPalettes),
-    compileTypographyStyles(),
-    compileComponentStyles(),
-    compileLayoutStyles(),
-    compileVendorStyles(),
+    banner,
+    darkThemeVariables,
+    lightThemeVariables,
+    chromeRules,
+    syntaxRules,
+    componentRules,
   ].join('\n\n')}\n`;
+}
+
+/**
+ * Compiles the top-level theme banner and copyright comment.
+ *
+ * @returns {string}
+ */
+function compileThemeBanner() {
+  return `/* -----------------------------------------------------------------------------
+ * Hakimi Deuteranopia Safe Theme for Obsidian
+ * Version: 2.0.0
+ * Pure Semantic Design Tokens & Deuteranopia Color Calibration
+ * Conforms to Obsidian Developer Documentation (https://docs.obsidian.md/Themes)
+ * ----------------------------------------------------------------------------- */`;
+}
+
+/**
+ * Compiles all CSS variables for a specific theme flavor ('dark' | 'light').
+ *
+ * @param {'dark' | 'light'} flavor
+ * @returns {string}
+ */
+export function compileFlavorThemeVariables(flavor) {
+  const tokens = getThemeTokens(flavor);
+  const selector = flavor === 'light' ? '.theme-light' : '.theme-dark';
+
+  const declarations = [
+    compileFoundationsVariables(tokens),
+    compileChromeVariables(tokens),
+    compileCodeSyntaxVariables(tokens),
+    compileComponentVariables(tokens),
+  ].join('\n\n');
+
+  return `${selector} {\n${declarations}\n}`;
 }

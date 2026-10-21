@@ -2,10 +2,10 @@ import { opacity } from '../colors.mjs';
 
 /**
  * Builds the complete Zed Workbench UI Colors map from Semantic Tokens.
- * 
+ *
  * Conforms to the official Zed Theme Schema:
  * https://zed.dev/schema/themes/v0.2.0.json
- * 
+ *
  * Strictly implements the 4-zone spatial background model:
  * 1. TitleBar & StatusBar & TabBar Header: tokens.bg.chrome (Zone 1: Chrome Frame)
  * 2. Primary SideBar / Project Panel: tokens.bg.sidebar (Zone 2: Primary Navigation)
@@ -67,10 +67,22 @@ function getEditorColors(tokens) {
     'editor.active_wrap_guide': tokens.border.strong,
     'editor.indent_guide': tokens.border.subtle,
     'editor.indent_guide_active': tokens.border.strong,
-    'editor.document_highlight.bracket_background': opacity(tokens.fg.accent, 0.15),
-    'editor.document_highlight.read_background': opacity(tokens.syntax.string, 0.18),
-    'editor.document_highlight.write_background': opacity(tokens.syntax.type, 0.18),
-    'editor.debugger_active_line.background': opacity(tokens.syntax.number, 0.1),
+    'editor.document_highlight.bracket_background': opacity(
+      tokens.fg.accent,
+      0.15,
+    ),
+    'editor.document_highlight.read_background': opacity(
+      tokens.syntax.string,
+      0.18,
+    ),
+    'editor.document_highlight.write_background': opacity(
+      tokens.syntax.type,
+      0.18,
+    ),
+    'editor.debugger_active_line.background': opacity(
+      tokens.syntax.number,
+      0.1,
+    ),
     'minimap.thumb.background': opacity(tokens.fg.accent, 0.2),
     'minimap.thumb.hover_background': opacity(tokens.fg.accent, 0.35),
     'minimap.thumb.active_background': opacity(tokens.fg.accent, 0.5),

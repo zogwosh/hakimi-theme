@@ -1,6 +1,6 @@
 /**
  * Hakimi Theme Primitive Tokens
- * 
+ *
  * Foundational color scales, editor anchor colors, and deuteranopia-safe chromatic palettes.
  * No Catppuccin dependencies.
  */

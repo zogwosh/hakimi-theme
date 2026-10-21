@@ -1,6 +1,5 @@
 import { flavors, theme, version } from '../dist/index.js';
 import fs from 'node:fs';
-import { hexToRgb } from '../src/colors.mjs';
 
 console.log('Validating generated deuteranopia theme tokens...');
 
@@ -178,22 +177,36 @@ if (obsidianManifest.author !== 'hakimi') {
 }
 console.log('✓ Obsidian manifest successfully validated');
 
-// 9. Verify Obsidian theme.css contains all 26 --ctp-<token> RGB definitions for both light and dark
+// 9. Verify Obsidian theme.css contains official semantic CSS variables
 const obsidianThemeCss = fs.readFileSync('obsidian/theme.css', 'utf8');
-for (const [flavorName, tokens] of Object.entries(palette)) {
-  for (const [token, hex] of Object.entries(tokens)) {
-    const { r, g, b } = hexToRgb(hex);
-    const expectedVar = `--ctp-${token}: ${r}, ${g}, ${b};`;
-    if (!obsidianThemeCss.includes(expectedVar)) {
-      console.error(
-        `FAIL: obsidian/theme.css missing expected ${flavorName} variable: ${expectedVar}`,
-      );
-      process.exit(1);
-    }
+const requiredObsidianVariables = [
+  '--background-primary',
+  '--background-secondary',
+  '--background-secondary-alt',
+  '--text-normal',
+  '--text-muted',
+  '--text-faint',
+  '--interactive-accent',
+  '--code-background',
+  '--code-keyword',
+  '--code-function',
+  '--code-string',
+  '--callout-default',
+  '--tab-background-active',
+  '--titlebar-background',
+  '--status-bar-background',
+];
+
+for (const variable of requiredObsidianVariables) {
+  if (!obsidianThemeCss.includes(variable)) {
+    console.error(
+      `FAIL: obsidian/theme.css missing expected official CSS variable: ${variable}`,
+    );
+    process.exit(1);
   }
 }
 console.log(
-  '✓ Obsidian theme.css contains all 26 --ctp-<token> RGB definitions for light and dark',
+  '✓ Obsidian theme.css contains all required official semantic CSS variables',
 );
 
 console.log(

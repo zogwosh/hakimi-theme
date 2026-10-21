@@ -1,6 +1,6 @@
 /**
  * Hakimi Theme Syntax Highlighting Engine for Zed Editor
- * 
+ *
  * Fully and strictly aligned with:
  * 1. Zed Language Extensions Official Tree-sitter Captures Specification:
  *    https://zed.dev/docs/extensions/languages
@@ -69,7 +69,10 @@ function getKeywordSyntax(syntax) {
     'keyword.directive.define': createStyle(syntax.keyword, { bold: true }),
 
     // Asynchronous & Coroutine flow contract (Bold Italic)
-    'keyword.coroutine': createStyle(syntax.keyword, { bold: true, italic: true }),
+    'keyword.coroutine': createStyle(syntax.keyword, {
+      bold: true,
+      italic: true,
+    }),
   };
 }
 
@@ -125,7 +128,10 @@ function getFunctionSyntax(syntax) {
     'function.macro': createStyle(syntax.function, { bold: true }),
 
     // Platform built-ins (Bold Italic)
-    'function.builtin': createStyle(syntax.function, { bold: true, italic: true }),
+    'function.builtin': createStyle(syntax.function, {
+      bold: true,
+      italic: true,
+    }),
 
     // Method decorators (Italic, aligned with VS Code entity.name.function.decorator)
     'function.decorator': createStyle(syntax.function, { italic: true }),
@@ -151,7 +157,10 @@ function getVariableAndPropertySyntax(syntax) {
     field: createStyle(syntax.property),
 
     // Platform built-in globals (Bold Italic)
-    'variable.builtin': createStyle(syntax.variable, { bold: true, italic: true }),
+    'variable.builtin': createStyle(syntax.variable, {
+      bold: true,
+      italic: true,
+    }),
   };
 }
 
@@ -180,7 +189,10 @@ function getLiteralAndStringSyntax(syntax, fg) {
     number: createStyle(syntax.number),
     boolean: createStyle(syntax.constant, { bold: true }),
     constant: createStyle(syntax.constant, { bold: true }),
-    'constant.builtin': createStyle(syntax.constant, { bold: true, italic: true }),
+    'constant.builtin': createStyle(syntax.constant, {
+      bold: true,
+      italic: true,
+    }),
     variant: createStyle(syntax.constant, { bold: true }),
     'text.literal': createStyle(syntax.string),
     link_text: createStyle(fg.accent),
@@ -212,7 +224,10 @@ function getCommentSyntax(syntax, fg) {
     'comment.doc': createStyle(syntax.comment, { bold: true, italic: true }),
 
     // Aliases
-    'comment.documentation': createStyle(syntax.comment, { bold: true, italic: true }),
+    'comment.documentation': createStyle(syntax.comment, {
+      bold: true,
+      italic: true,
+    }),
     hint: createStyle(fg.subtle),
   };
 }

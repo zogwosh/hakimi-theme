@@ -14,7 +14,7 @@ export const manifest = {
 
 /**
  * Compiles a single Zed theme object for the specified mode ('light' | 'dark').
- * 
+ *
  * Uses pure Semantic Tokens and Workbench/Tree-sitter captures conforming to Zed's schema:
  * https://zed.dev/schema/themes/v0.2.0.json
  */
@@ -43,9 +43,6 @@ export function compileZedThemeFamily(_palettes = null) {
     $schema: 'https://zed.dev/schema/themes/v0.2.0.json',
     name: 'Hakimi Deuteranopia Safe',
     author: 'hakimi',
-    themes: [
-      compileZedTheme('light'),
-      compileZedTheme('dark'),
-    ],
+    themes: [compileZedTheme('light'), compileZedTheme('dark')],
   };
 }
