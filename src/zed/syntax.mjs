@@ -127,8 +127,8 @@ function getFunctionSyntax(syntax) {
     // Platform built-ins (Bold Italic)
     'function.builtin': createStyle(syntax.function, { bold: true, italic: true }),
 
-    // Method decorators (Italic, aligned with attributes)
-    'function.decorator': createStyle(syntax.attribute, { italic: true }),
+    // Method decorators (Italic, aligned with VS Code entity.name.function.decorator)
+    'function.decorator': createStyle(syntax.function, { italic: true }),
   };
 }
 
@@ -141,7 +141,7 @@ function getVariableAndPropertySyntax(syntax) {
     // Official captures
     variable: createStyle(syntax.variable),
     'variable.parameter': createStyle(syntax.parameter, { italic: true }),
-    'variable.special': createStyle(syntax.parameter, { italic: true }), // this, self, super
+    'variable.special': createStyle(syntax.keyword, { italic: true }), // this, self, super (aligned with VS Code variable.language)
     property: createStyle(syntax.property),
     primary: createStyle(syntax.variable),
 
@@ -163,10 +163,6 @@ function getAttributeSyntax(syntax) {
   return {
     // Official capture
     attribute: createStyle(syntax.attribute, { italic: true }),
-
-    // Sub-captures
-    attribute_item: createStyle(syntax.attribute, { italic: true }),
-    'tag.attribute': createStyle(syntax.attribute),
   };
 }
 
@@ -234,10 +230,6 @@ function getPunctuationAndOperatorSyntax(syntax) {
     'punctuation.delimiter': createStyle(syntax.punctuation),
     'punctuation.list_marker': createStyle(syntax.punctuation),
     'punctuation.special': createStyle(syntax.punctuation),
-
-    // Sub-captures
-    'punctuation.special.symbol': createStyle(syntax.punctuation),
-    'tag.delimiter': createStyle(syntax.punctuation),
   };
 }
 
