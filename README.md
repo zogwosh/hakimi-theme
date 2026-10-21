@@ -108,6 +108,11 @@ src/
     workbenchColors.mjs 工作区 UI、Modern UI 连通标签页与组件配色
     syntaxHighlighting.mjs LSP 22 类语义高亮与 TextMate 标准语法树
     index.mjs           VS Code 主题生成器
+  zed/                  Zed Editor 官方标准扩展引擎
+    workbenchColors.mjs Zed 4-Zone 工作区流体明度与 UI 交互系统
+    syntax.mjs          Zed 官方 43 种 Tree-sitter Captures 与双重编码语法引擎
+    index.mjs           Zed 主题族定义与扩展清单生成器
+  obsidian/             Obsidian 样式与无障碍配色适配
   colors.mjs            感知色彩空间转换、APCA 计算与 Brettel 绿色盲仿真
 scripts/
   build.mjs             全生态产物生成器（VS Code, Zed, Obsidian, npm 配色库）

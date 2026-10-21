@@ -14,7 +14,8 @@
 4. [认知双重编码矩阵：色彩 × 字形 (Cognitive Dual-Coding Matrix)](#四认知双重编码矩阵色彩--字形-cognitive-dual-coding-matrix)
 5. [绿色盲可访问性工程与量化标准 (Deuteranopia Engineering)](#五绿色盲可访问性工程与量化标准-deuteranopia-engineering)
 6. [两层语法渲染生态：LSP Semantic Tokens 与 TextMate](#六两层语法渲染生态lsp-semantic-tokens-与-textmate)
-7. [质量保障与自动化验证体系](#七质量保障与自动化验证体系)
+7. [Zed Editor Tree-sitter 高精语法捕获与架构设计](#七zed-editor-tree-sitter-高精语法捕获与架构设计)
+8. [质量保障与自动化验证体系](#八质量保障与自动化验证体系)
 
 ---
 
@@ -207,7 +208,36 @@ Hakimi 彻底剔除了以红绿为核心鉴别对立的设计，转而构建正�
 
 ---
 
-## 七、质量保障与自动化验证体系
+## 七、Zed Editor Tree-sitter 高精语法捕获与架构设计
+
+根据 Zed 官方扩展规范（[Zed Language Extensions Syntax Highlighting](https://zed.dev/docs/extensions/languages)），Zed 通过 Tree-sitter 查询文件（`highlights.scm`）将 CST（具体语法树）节点映射至主题的捕获项（Captures）。
+
+Hakimi 彻底解除了 Zed 对 Catppuccin 方案的遗留依赖，全量接入 Hakimi 纯语义 Token 系统与色彩 × 字形双重编码矩阵：
+
+### 7.1 官方 43 种标准 Captures 100% 完整覆盖
+Zed 主题规范所支持的 43 个核心捕获项均具备明确的语义映射与字阶权重：
+- **标识符与变量**：`@variable`（中性正文）、`@variable.parameter`（青色斜体）、`@variable.special`（斜体，`this`/`self`/`super`）、`@constant`（暖橙粗体）、`@constant.builtin`（暖橙粗斜体）
+- **函数与方法**：`@function`（亮蓝常规）、`@constructor`（琥珀金粗体）
+- **类型与抽象**：`@type`（琥珀金常规）、`@type.builtin`（琥珀金粗斜体）、`@attribute`（鸭翅绿/深青斜体）、`@enum`（琥珀金粗体）、`@property`（鸭翅绿/深青常规，严格隔离于普通变量）
+- **关键字与流程**：`@keyword`（紫红粗体）、`@operator`（正文前景色）、`@preproc`（紫红粗体）
+- **字面量与正则**：`@string`（深湖蓝/高亮青）、`@string.escape` / `@string.regex`（暖橙常规）、`@string.special`、`@string.special.symbol`、`@number`（暖橙常规）、`@boolean`（暖橙粗体）
+- **注释与文档**：`@comment`（静默灰色斜体）、`@comment.doc`（静默灰色粗斜体）
+- **标点与分隔**：`@punctuation`、`@punctuation.bracket`、`@punctuation.delimiter`、`@punctuation.list_marker`、`@punctuation.special`（中性灰阶）
+- **结构标记与文本**：`@tag`（紫红常规）、`@tag.doctype`（紫红粗体）、`@title`（紫红粗体）、`@emphasis`（斜体）、`@emphasis.strong`（粗体）、`@text.literal`、`@link_text`、`@link_uri`（高亮蓝斜体）
+- **状态与衍生**：`@label`（斜体）、`@embedded`、`@hint`、`@predictive`（幽灵斜体灰）、`@primary`、`@variant`（暖橙粗体）
+
+### 7.2 回退捕获机制支持 (Fallback Captures)
+Tree-sitter 采用自右向左评估的多重捕获回退机制（例如 `(type_identifier) @type @variable`）。Hakimi 对最细粒度子捕获（如 `variable.member`, `keyword.coroutine`, `function.builtin`）和基捕获（`@variable`, `@type`, `@keyword`）均提供完备且一致的分层定义，确保语言扩展在任意回退层级均能维持正确的色彩对比度与字体形态。
+
+### 7.3 Zed UI 4-Zone 流体空间模型落地
+- **Zone 1 (Chrome)**：`title_bar.background == status_bar.background == tab_bar.background == bg.chrome`，形成稳定上下对齐的窗体框架。
+- **Zone 2 (SideBar)**：`panel.background == surface.background == bg.sidebar`，主项目管理与大纲面板呈现独立微沉层级。
+- **Zone 3 (Auxiliary & Output)**：`editor.subheader.background == elevated_surface.background == terminal.background == bg.panel`，承托控制台与运行时输出。
+- **Zone 4 (Editor Canvas)**：`editor.background == tab.active_background == toolbar.background == bg.editor`，活动标签页与编辑区连通为纯净无接缝的编辑主画布。
+
+---
+
+## 八、质量保障与自动化验证体系
 
 所有关于色彩、空间与无障碍的规范，均被固化为自动化检验脚本：
 
@@ -216,7 +246,8 @@ Hakimi 彻底剔除了以红绿为核心鉴别对立的设计，转而构建正�
 npm run check
 ```
 
-流水线执行三大核心检查：
-1. **4-Zone 背景空间推导检查**：自动验证 TitleBar == StatusBar、SideBar 与 Panel 的离散度与明度梯度。
-2. **零泄漏验证（Zero Leaks）**：遍历生成的 VS Code、Zed、Obsidian 等分发文件，确保不存在任何硬编码的旧版调色板遗留。
-3. **APCA 与 $\Delta E_{\text{OK}}$ 数学计算**：实时模拟绿色盲并计算欧氏距离，低于阈值自动报错中断打包。
+流水线执行四大核心检查：
+1. **VS Code & Zed 4-Zone 背景空间推导检查**：自动验证 TitleBar == StatusBar、SideBar 与 Panel 的离散度与明度梯度，以及 Zed 连通标签页。
+2. **零泄漏验证（Zero Leaks）**：遍历生成的 VS Code 和 Zed 主题文件，确保不存在任何 Catppuccin 遗留名称或未对齐的调色板。
+3. **Zed Tree-sitter 全量捕获断言**：自动化验证 43 项 Zed 官方捕获项 100% 具备有效十六进制色彩。
+4. **APCA 与 $\Delta E_{\text{OK}}$ 数学计算**：实时模拟绿色盲并计算欧氏距离，低于阈值自动报错中断打包。

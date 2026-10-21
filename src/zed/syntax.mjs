@@ -1,629 +1,289 @@
-// Aligned with catppuccin/zed syntax rules
-// Implements the 6 Base Colors × 4 Font Styles Syntax Matrix
-export const getZedSyntax = (palette) => ({
-  // -------------------------------------------------------------
-  // Cool 1: Mauve (#336fd6 / #7ab2ff)
-  // -------------------------------------------------------------
-  // normal: HTML/XML Tag
-  tag: {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: null,
-  },
-  // bold: keywords & control
-  keyword: {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: 700,
-  },
-  'keyword.control': {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: 700,
-  },
-  'keyword.function': {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: 700,
-  },
-  'keyword.return': {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: 700,
-  },
-  'keyword.conditional': {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: 700,
-  },
-  'keyword.Conditional': {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: 700,
-  },
-  'keyword.conditional.ternary': {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: 700,
-  },
-  'keyword.repeat': {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: 700,
-  },
-  'keyword.import': {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: 700,
-  },
-  'keyword.export': {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: 700,
-  },
-  'keyword.type': {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: 700,
-  },
-  'keyword.storage': {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: 700,
-  },
-  'keyword.coroutine': {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: 700,
-  },
-  'keyword.operator': {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: 700,
-  },
-  'keyword.debug': {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: 700,
-  },
-  'keyword.exception': {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: 700,
-  },
-  'keyword.directive': {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: 700,
-  },
-  'keyword.directive.define': {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: 700,
-  },
-  operator: {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: 700,
-  },
-  label: {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: 700,
-  },
-  'tag.doctype': {
-    color: palette.mauve,
-    font_style: null,
-    font_weight: 700,
-  },
-  // italic: language modifiers, self/this, lifetime
-  'keyword.modifier': {
-    color: palette.mauve,
-    font_style: 'italic',
-    font_weight: null,
-  },
-  'variable.special': {
-    color: palette.mauve,
-    font_style: 'italic',
-    font_weight: null,
-  },
-  lifetime: {
-    color: palette.mauve,
-    font_style: 'italic',
-    font_weight: null,
-  },
-  // bold italic: built-ins and primitives
-  'type.builtin': {
-    color: palette.mauve,
-    font_style: 'italic',
-    font_weight: 700,
-  },
-  'function.builtin': {
-    color: palette.mauve,
-    font_style: 'italic',
-    font_weight: 700,
-  },
-  'variable.builtin': {
-    color: palette.mauve,
-    font_style: 'italic',
-    font_weight: 700,
-  },
-  'constant.builtin': {
-    color: palette.mauve,
-    font_style: 'italic',
-    font_weight: 700,
-  },
-  'constant.macro': {
-    color: palette.mauve,
-    font_style: 'italic',
-    font_weight: 700,
-  },
+/**
+ * Hakimi Theme Syntax Highlighting Engine for Zed Editor
+ * 
+ * Fully and strictly aligned with:
+ * 1. Zed Language Extensions Official Tree-sitter Captures Specification:
+ *    https://zed.dev/docs/extensions/languages
+ *    - All 43 Official Theme Captures
+ *    - Standard Tree-sitter Grammar Sub-captures (Rust, TS/JS, Python, Go, C++, etc.)
+ *    - Fallback captures architecture
+ * 2. Cognitive Dual-Coding Matrix (Color × Font Style):
+ *    - Bold (700): Control flow, skeleton, declarations, concrete types, constants
+ *    - Italic: Abstract contracts, interfaces, type parameters, function arguments, meta
+ *    - Bold Italic (700 + italic): Platform standard library built-ins, authoritative documentation
+ *    - Regular: Concrete runtime data, function calls, local variables, properties, literals
+ */
 
-  // -------------------------------------------------------------
-  // Cool 2: Green (#004b8f / #80dcff)
-  // -------------------------------------------------------------
-  // normal: strings & characters
-  string: {
-    color: palette.green,
-    font_style: null,
-    font_weight: null,
-  },
-  'string.special': {
-    color: palette.green,
-    font_style: null,
-    font_weight: null,
-  },
-  'string.special.symbol': {
-    color: palette.green,
-    font_style: null,
-    font_weight: null,
-  },
-  'string.special.path': {
-    color: palette.green,
-    font_style: null,
-    font_weight: null,
-  },
-  'string.special.url': {
-    color: palette.green,
-    font_style: 'italic',
-    font_weight: null,
-  },
-  character: {
-    color: palette.green,
-    font_style: null,
-    font_weight: null,
-  },
-  'character.special': {
-    color: palette.green,
-    font_style: null,
-    font_weight: null,
-  },
-  symbol: {
-    color: palette.green,
-    font_style: null,
-    font_weight: null,
-  },
-  'text.literal': {
-    color: palette.green,
-    font_style: null,
-    font_weight: null,
-  },
-  link_text: {
-    color: palette.green,
-    font_style: null,
-    font_weight: null,
-  },
-  link_uri: {
-    color: palette.green,
-    font_style: 'italic',
-    font_weight: null,
-  },
-  'diff.plus': {
-    color: palette.green,
-    font_style: null,
-    font_weight: null,
-  },
-  // bold: escape & regex
-  'string.escape': {
-    color: palette.green,
-    font_style: null,
-    font_weight: 700,
-  },
-  'string.regex': {
-    color: palette.green,
-    font_style: null,
-    font_weight: 700,
-  },
-  'string.regexp': {
-    color: palette.green,
-    font_style: null,
-    font_weight: 700,
-  },
-  // italic: namespace & module
-  namespace: {
-    color: palette.green,
-    font_style: 'italic',
-    font_weight: null,
-  },
-  module: {
-    color: palette.green,
-    font_style: 'italic',
-    font_weight: null,
-  },
+const FONT_WEIGHT_BOLD = 700;
+const FONT_STYLE_ITALIC = 'italic';
 
-  // -------------------------------------------------------------
-  // Warm 1: Blue (#8a5200 / #f0d68f)
-  // -------------------------------------------------------------
-  // normal: functions & methods
-  function: {
-    color: palette.blue,
-    font_style: null,
-    font_weight: null,
-  },
-  'function.method': {
-    color: palette.blue,
-    font_style: null,
-    font_weight: null,
-  },
-  'function.method.call': {
-    color: palette.blue,
-    font_style: null,
-    font_weight: null,
-  },
-  'function.call': {
-    color: palette.blue,
-    font_style: null,
-    font_weight: null,
-  },
-  'function.definition': {
-    color: palette.blue,
-    font_style: null,
-    font_weight: null,
-  },
-  parent: {
-    color: palette.blue,
-    font_style: null,
-    font_weight: null,
-  },
-  // bold: constructors, components, type tags
-  constructor: {
-    color: palette.blue,
-    font_style: null,
-    font_weight: 700,
-  },
-  'type.tag': {
-    color: palette.blue,
-    font_style: null,
-    font_weight: 700,
-  },
+/**
+ * Generates the complete syntax style map for Zed editor themes.
+ * Organizes tokens into intentional semantic groups with consistent abstraction.
+ */
+export function getZedSyntax(tokens) {
+  const { syntax, fg, intent } = tokens;
 
-  // -------------------------------------------------------------
-  // Warm 2: Yellow (#3a1f0b / #ff9536)
-  // -------------------------------------------------------------
-  // normal: numbers & booleans
-  number: {
-    color: palette.yellow,
-    font_style: null,
-    font_weight: null,
-  },
-  'number.float': {
-    color: palette.yellow,
-    font_style: null,
-    font_weight: null,
-  },
-  float: {
-    color: palette.yellow,
-    font_style: null,
-    font_weight: null,
-  },
-  boolean: {
-    color: palette.yellow,
-    font_style: null,
-    font_weight: null,
-  },
-  variant: {
-    color: palette.yellow,
-    font_style: null,
-    font_weight: null,
-  },
-  // bold: constants, classes, structs, enums
-  constant: {
-    color: palette.yellow,
-    font_style: null,
-    font_weight: 700,
-  },
-  'type.class': {
-    color: palette.yellow,
-    font_style: null,
-    font_weight: 700,
-  },
-  'type.class.definition': {
-    color: palette.yellow,
-    font_style: null,
-    font_weight: 700,
-  },
-  'type.struct': {
-    color: palette.yellow,
-    font_style: null,
-    font_weight: 700,
-  },
-  'type.enum': {
-    color: palette.yellow,
-    font_style: null,
-    font_weight: 700,
-  },
-  enum: {
-    color: palette.yellow,
-    font_style: null,
-    font_weight: 700,
-  },
-  // italic: types, interfaces, type parameters
-  type: {
-    color: palette.yellow,
-    font_style: 'italic',
-    font_weight: null,
-  },
-  'type.interface': {
-    color: palette.yellow,
-    font_style: 'italic',
-    font_weight: null,
-  },
-  'type.parameter': {
-    color: palette.yellow,
-    font_style: 'italic',
-    font_weight: null,
-  },
-  'type.super': {
-    color: palette.yellow,
-    font_style: 'italic',
-    font_weight: null,
-  },
-  'type.definition': {
-    color: palette.yellow,
-    font_style: 'italic',
-    font_weight: null,
-  },
-  // bold italic: macros, decorators, annotations, preproc
-  'function.macro': {
-    color: palette.yellow,
-    font_style: 'italic',
-    font_weight: 700,
-  },
-  'function.special': {
-    color: palette.yellow,
-    font_style: 'italic',
-    font_weight: 700,
-  },
-  'function.special.definition': {
-    color: palette.yellow,
-    font_style: 'italic',
-    font_weight: 700,
-  },
-  'function.decorator': {
-    color: palette.yellow,
-    font_style: 'italic',
-    font_weight: 700,
-  },
-  preproc: {
-    color: palette.yellow,
-    font_style: 'italic',
-    font_weight: 700,
-  },
-  attribute_item: {
-    color: palette.yellow,
-    font_style: 'italic',
-    font_weight: 700,
-  },
+  return {
+    ...getKeywordSyntax(syntax),
+    ...getTypeSyntax(syntax),
+    ...getFunctionSyntax(syntax),
+    ...getVariableAndPropertySyntax(syntax),
+    ...getAttributeSyntax(syntax),
+    ...getLiteralAndStringSyntax(syntax, fg),
+    ...getCommentSyntax(syntax, fg),
+    ...getPunctuationAndOperatorSyntax(syntax),
+    ...getMarkupAndTagSyntax(syntax, fg),
+    ...getDiagnosticSyntax(syntax, intent, fg),
+  };
+}
 
-  // -------------------------------------------------------------
-  // Neutral 1: Text (#45494c / #e0e0e0)
-  // -------------------------------------------------------------
-  // normal: variables & properties
-  variable: {
-    color: palette.text,
-    font_style: null,
-    font_weight: null,
-  },
-  'variable.member': {
-    color: palette.text,
-    font_style: null,
-    font_weight: null,
-  },
-  property: {
-    color: palette.text,
-    font_style: null,
-    font_weight: null,
-  },
-  primary: {
-    color: palette.text,
-    font_style: null,
-    font_weight: null,
-  },
-  field: {
-    color: palette.text,
-    font_style: null,
-    font_weight: null,
-  },
-  text: {
-    color: palette.text,
-    font_style: null,
-    font_weight: null,
-  },
-  embedded: {
-    color: palette.text,
-    font_style: null,
-    font_weight: null,
-  },
-  // italic: parameters & attributes
-  'variable.parameter': {
-    color: palette.text,
-    font_style: 'italic',
-    font_weight: null,
-  },
-  parameter: {
-    color: palette.text,
-    font_style: 'italic',
-    font_weight: null,
-  },
-  attribute: {
-    color: palette.text,
-    font_style: 'italic',
-    font_weight: null,
-  },
-  'tag.attribute': {
-    color: palette.text,
-    font_style: 'italic',
-    font_weight: null,
-  },
-  emphasis: {
-    color: palette.text,
-    font_style: 'italic',
-    font_weight: null,
-  },
+/**
+ * Keywords, control flow, declarations, and preprocessors.
+ * Role: Structural skeleton and control flow anchors (Bold).
+ */
+function getKeywordSyntax(syntax) {
+  return {
+    // Official captures
+    keyword: createStyle(syntax.keyword, { bold: true }),
+    label: createStyle(syntax.keyword, { italic: true }),
+    preproc: createStyle(syntax.keyword, { bold: true }),
 
-  // -------------------------------------------------------------
-  // Neutral 2: Overlay2 (#6f706f / #99a0a8)
-  // -------------------------------------------------------------
-  // normal: punctuation & delimiters
-  punctuation: {
-    color: palette.overlay2,
-    font_style: null,
-    font_weight: null,
-  },
-  'punctuation.bracket': {
-    color: palette.overlay2,
-    font_style: null,
-    font_weight: null,
-  },
-  'punctuation.delimiter': {
-    color: palette.overlay2,
-    font_style: null,
-    font_weight: null,
-  },
-  'punctuation.special': {
-    color: palette.overlay2,
-    font_style: null,
-    font_weight: null,
-  },
-  'punctuation.special.symbol': {
-    color: palette.overlay2,
-    font_style: null,
-    font_weight: null,
-  },
-  'punctuation.list_marker': {
-    color: palette.overlay2,
-    font_style: null,
-    font_weight: null,
-  },
-  'tag.delimiter': {
-    color: palette.overlay2,
-    font_style: null,
-    font_weight: null,
-  },
-  predictive: {
-    color: palette.overlay2,
-    font_style: null,
-    font_weight: null,
-  },
-  // italic: comments
-  comment: {
-    color: palette.overlay2,
-    font_style: 'italic',
-    font_weight: null,
-  },
-  'comment.documentation': {
-    color: palette.overlay2,
-    font_style: 'italic',
-    font_weight: null,
-  },
-  hint: {
-    color: palette.overlay2,
-    font_style: 'italic',
-    font_weight: null,
-  },
-  'comment.hint': {
-    color: palette.overlay2,
-    font_style: 'italic',
-    font_weight: null,
-  },
-  'comment.info': {
-    color: palette.overlay2,
-    font_style: 'italic',
-    font_weight: null,
-  },
-  'comment.note': {
-    color: palette.overlay2,
-    font_style: 'italic',
-    font_weight: null,
-  },
-  // bold italic: documentation comments
-  'comment.doc': {
-    color: palette.overlay2,
-    font_style: 'italic',
-    font_weight: 700,
-  },
-  'string.doc': {
-    color: palette.overlay2,
-    font_style: 'italic',
-    font_weight: 700,
-  },
-  'string.documentation': {
-    color: palette.overlay2,
-    font_style: 'italic',
-    font_weight: 700,
-  },
+    // Sub-captures & control grammar
+    'keyword.control': createStyle(syntax.keyword, { bold: true }),
+    'keyword.function': createStyle(syntax.keyword, { bold: true }),
+    'keyword.return': createStyle(syntax.keyword, { bold: true }),
+    'keyword.conditional': createStyle(syntax.keyword, { bold: true }),
+    'keyword.Conditional': createStyle(syntax.keyword, { bold: true }),
+    'keyword.conditional.ternary': createStyle(syntax.keyword, { bold: true }),
+    'keyword.repeat': createStyle(syntax.keyword, { bold: true }),
+    'keyword.import': createStyle(syntax.keyword, { bold: true }),
+    'keyword.export': createStyle(syntax.keyword, { bold: true }),
+    'keyword.type': createStyle(syntax.keyword, { bold: true }),
+    'keyword.storage': createStyle(syntax.keyword, { bold: true }),
+    'keyword.operator': createStyle(syntax.keyword, { bold: true }),
+    'keyword.debug': createStyle(syntax.keyword, { bold: true }),
+    'keyword.exception': createStyle(syntax.keyword, { bold: true }),
+    'keyword.modifier': createStyle(syntax.keyword, { bold: true }),
+    'keyword.directive': createStyle(syntax.keyword, { bold: true }),
+    'keyword.directive.define': createStyle(syntax.keyword, { bold: true }),
 
-  // -------------------------------------------------------------
-  // Semantic Error / Diff
-  // -------------------------------------------------------------
-  error: {
-    color: palette.red,
-    font_style: null,
-    font_weight: 700,
-  },
-  'diff.minus': {
-    color: palette.red,
-    font_style: null,
-    font_weight: 700,
-  },
-  'comment.error': {
-    color: palette.red,
-    font_style: 'italic',
-    font_weight: 700,
-  },
-  'comment.warning': {
-    color: palette.yellow,
-    font_style: 'italic',
-    font_weight: 700,
-  },
-  'comment.warn': {
-    color: palette.yellow,
-    font_style: 'italic',
-    font_weight: 700,
-  },
-  'comment.todo': {
-    color: palette.blue,
-    font_style: 'italic',
-    font_weight: 700,
-  },
-  predoc: {
-    color: palette.red,
-    font_style: null,
-    font_weight: 700,
-  },
-  'emphasis.strong': {
-    color: palette.text,
-    font_style: null,
-    font_weight: 700,
-  },
-  title: {
-    color: palette.text,
-    font_style: null,
-    font_weight: 800,
-  },
-  concept: {
-    color: palette.mauve,
-    font_style: 'italic',
-    font_weight: 700,
-  },
-});
+    // Asynchronous & Coroutine flow contract (Bold Italic)
+    'keyword.coroutine': createStyle(syntax.keyword, { bold: true, italic: true }),
+  };
+}
+
+/**
+ * Types, interfaces, classes, and generic type parameters.
+ * Role: Type hierarchy and abstract contracts (Color × Font Style duality).
+ */
+function getTypeSyntax(syntax) {
+  return {
+    // Official captures
+    type: createStyle(syntax.type),
+    'type.builtin': createStyle(syntax.type, { bold: true, italic: true }),
+    constructor: createStyle(syntax.type, { bold: true }),
+    enum: createStyle(syntax.type, { bold: true }),
+
+    // Concrete type definitions (Bold)
+    'type.class': createStyle(syntax.type, { bold: true }),
+    'type.class.definition': createStyle(syntax.type, { bold: true }),
+    'type.struct': createStyle(syntax.type, { bold: true }),
+    'type.enum': createStyle(syntax.type, { bold: true }),
+    'type.super': createStyle(syntax.type, { bold: true }),
+    'type.definition': createStyle(syntax.type, { bold: true }),
+    'type.tag': createStyle(syntax.type),
+
+    // Abstract type contracts & generic parameters (Italic)
+    'type.interface': createStyle(syntax.type, { italic: true }),
+    'type.parameter': createStyle(syntax.type, { italic: true }),
+    namespace: createStyle(syntax.type, { italic: true }),
+    module: createStyle(syntax.type, { italic: true }),
+    lifetime: createStyle(syntax.type, { italic: true }),
+  };
+}
+
+/**
+ * Functions, methods, and executable invocations.
+ * Role: Dynamic execution and declarations.
+ */
+function getFunctionSyntax(syntax) {
+  return {
+    // Official captures
+    function: createStyle(syntax.function),
+
+    // Invocations & Methods (Regular)
+    'function.method': createStyle(syntax.function),
+    'function.call': createStyle(syntax.function),
+    'function.method.call': createStyle(syntax.function),
+    'function.special': createStyle(syntax.function),
+    parent: createStyle(syntax.function),
+
+    // Declarations & Macros (Bold)
+    'function.definition': createStyle(syntax.function, { bold: true }),
+    'function.special.definition': createStyle(syntax.function, { bold: true }),
+    'function.macro': createStyle(syntax.function, { bold: true }),
+
+    // Platform built-ins (Bold Italic)
+    'function.builtin': createStyle(syntax.function, { bold: true, italic: true }),
+
+    // Method decorators (Italic, aligned with attributes)
+    'function.decorator': createStyle(syntax.attribute, { italic: true }),
+  };
+}
+
+/**
+ * Variables, parameters, and struct/object properties.
+ * Calibrated deuteranopia-safe separation between variables and properties.
+ */
+function getVariableAndPropertySyntax(syntax) {
+  return {
+    // Official captures
+    variable: createStyle(syntax.variable),
+    'variable.parameter': createStyle(syntax.parameter, { italic: true }),
+    'variable.special': createStyle(syntax.parameter, { italic: true }), // this, self, super
+    property: createStyle(syntax.property),
+    primary: createStyle(syntax.variable),
+
+    // Sub-captures & Fallback aliases
+    parameter: createStyle(syntax.parameter, { italic: true }),
+    'variable.member': createStyle(syntax.property),
+    field: createStyle(syntax.property),
+
+    // Platform built-in globals (Bold Italic)
+    'variable.builtin': createStyle(syntax.variable, { bold: true, italic: true }),
+  };
+}
+
+/**
+ * Attributes, annotations, and decorators.
+ * Role: Metadata and structural annotations (Italic).
+ */
+function getAttributeSyntax(syntax) {
+  return {
+    // Official capture
+    attribute: createStyle(syntax.attribute, { italic: true }),
+
+    // Sub-captures
+    attribute_item: createStyle(syntax.attribute, { italic: true }),
+    'tag.attribute': createStyle(syntax.attribute),
+  };
+}
+
+/**
+ * Literals, strings, regular expressions, and numeric constants.
+ */
+function getLiteralAndStringSyntax(syntax, fg) {
+  return {
+    // Official captures
+    string: createStyle(syntax.string),
+    'string.escape': createStyle(syntax.regex),
+    'string.regex': createStyle(syntax.regex),
+    'string.special': createStyle(syntax.string),
+    'string.special.symbol': createStyle(syntax.constant),
+    number: createStyle(syntax.number),
+    boolean: createStyle(syntax.constant, { bold: true }),
+    constant: createStyle(syntax.constant, { bold: true }),
+    'constant.builtin': createStyle(syntax.constant, { bold: true, italic: true }),
+    variant: createStyle(syntax.constant, { bold: true }),
+    'text.literal': createStyle(syntax.string),
+    link_text: createStyle(fg.accent),
+    link_uri: createStyle(fg.accent, { italic: true }),
+    embedded: createStyle(fg.default),
+
+    // Sub-captures & Numeric formats
+    'number.float': createStyle(syntax.number),
+    float: createStyle(syntax.number),
+    'constant.macro': createStyle(syntax.constant, { bold: true }),
+    'string.regexp': createStyle(syntax.regex),
+    'string.special.path': createStyle(syntax.string),
+    'string.special.url': createStyle(fg.accent, { italic: true }),
+    character: createStyle(syntax.string),
+    'character.special': createStyle(syntax.regex),
+    symbol: createStyle(syntax.constant),
+    text: createStyle(fg.default),
+  };
+}
+
+/**
+ * Code comments and authoritative documentation.
+ * Role: Contextual explanations and formal documentation specifications.
+ */
+function getCommentSyntax(syntax, fg) {
+  return {
+    // Official captures
+    comment: createStyle(syntax.comment, { italic: true }),
+    'comment.doc': createStyle(syntax.comment, { bold: true, italic: true }),
+
+    // Aliases
+    'comment.documentation': createStyle(syntax.comment, { bold: true, italic: true }),
+    hint: createStyle(fg.subtle),
+  };
+}
+
+/**
+ * Operators, punctuation, and structural brackets.
+ * Role: Neutral framing that doesn't distract from semantic code tokens.
+ */
+function getPunctuationAndOperatorSyntax(syntax) {
+  return {
+    // Official captures
+    operator: createStyle(syntax.operator),
+    punctuation: createStyle(syntax.punctuation),
+    'punctuation.bracket': createStyle(syntax.punctuation),
+    'punctuation.delimiter': createStyle(syntax.punctuation),
+    'punctuation.list_marker': createStyle(syntax.punctuation),
+    'punctuation.special': createStyle(syntax.punctuation),
+
+    // Sub-captures
+    'punctuation.special.symbol': createStyle(syntax.punctuation),
+    'tag.delimiter': createStyle(syntax.punctuation),
+  };
+}
+
+/**
+ * Markup, titles, emphasis, and HTML/XML tags.
+ */
+function getMarkupAndTagSyntax(syntax, fg) {
+  return {
+    // Official captures
+    tag: createStyle(syntax.tag),
+    'tag.doctype': createStyle(syntax.keyword, { bold: true }),
+    title: createStyle(syntax.keyword, { bold: true }),
+    emphasis: createStyle(fg.default, { italic: true }),
+    'emphasis.strong': createStyle(fg.default, { bold: true }),
+
+    // Sub-captures
+    strong: createStyle(fg.default, { bold: true }),
+  };
+}
+
+/**
+ * Diagnostic indicators, diff markers, and predictive ghost text.
+ */
+function getDiagnosticSyntax(syntax, intent, fg) {
+  return {
+    // Official captures
+    predictive: createStyle(fg.subtle, { italic: true }),
+
+    // Error and invalid tokens (Bold)
+    error: createStyle(syntax.error, { bold: true }),
+    invalid: createStyle(syntax.error, { bold: true }),
+
+    // Diff highlights
+    'diff.plus': createStyle(intent.success),
+    'diff.minus': createStyle(intent.danger),
+  };
+}
+
+/**
+ * Pure factory for Zed HighlightStyleContent objects.
+ * Enforces consistency and eliminates repetitive object structuring.
+ */
+function createStyle(color, { bold = false, italic = false } = {}) {
+  return {
+    color,
+    font_style: italic ? FONT_STYLE_ITALIC : null,
+    font_weight: bold ? FONT_WEIGHT_BOLD : null,
+  };
+}

@@ -3,65 +3,177 @@ import fs from 'node:fs';
 import { apcaLc, deutan, dEok } from '../src/colors.mjs';
 import { getThemeTokens } from '../src/tokens/index.mjs';
 
-console.log('Verifying Refactored VS Code Theme & Design Tokens...');
+console.log('Verifying Refactored VS Code & Zed Editor Themes...');
+
+const catppuccinTerms = [
+  'crust',
+  'mantle',
+  'surface0',
+  'surface1',
+  'surface2',
+  'rosewater',
+  'flamingo',
+  'mauve',
+  'sapphire',
+  'maroon',
+];
+
+// 43 Official captures required by Zed documentation (https://zed.dev/docs/extensions/languages)
+const requiredZedCaptures = [
+  'attribute',
+  'boolean',
+  'comment',
+  'comment.doc',
+  'constant',
+  'constant.builtin',
+  'constructor',
+  'embedded',
+  'emphasis',
+  'emphasis.strong',
+  'enum',
+  'function',
+  'hint',
+  'keyword',
+  'label',
+  'link_text',
+  'link_uri',
+  'number',
+  'operator',
+  'predictive',
+  'preproc',
+  'primary',
+  'property',
+  'punctuation',
+  'punctuation.bracket',
+  'punctuation.delimiter',
+  'punctuation.list_marker',
+  'punctuation.special',
+  'string',
+  'string.escape',
+  'string.regex',
+  'string.special',
+  'string.special.symbol',
+  'tag',
+  'tag.doctype',
+  'text.literal',
+  'title',
+  'type',
+  'type.builtin',
+  'variable',
+  'variable.special',
+  'variable.parameter',
+  'variant',
+];
+
+const zedThemeFamilyFile = 'zed/themes/hakimi-deuteranopia.json';
+const zedThemeFamily = JSON.parse(fs.readFileSync(zedThemeFamilyFile, 'utf8'));
 
 for (const flavor of ['dark', 'light']) {
-  console.log(`\n--- Validating ${flavor.toUpperCase()} Theme ---`);
+  console.log(`\n========================================`);
+  console.log(`  Validating ${flavor.toUpperCase()} Theme`);
+  console.log(`========================================`);
+
   const tokens = getThemeTokens(flavor);
-  const themeFile = `vscode/themes/hakimi-deuteranopia-${flavor}.json`;
-  const theme = JSON.parse(fs.readFileSync(themeFile, 'utf8'));
+  const vsCodeThemeFile = `vscode/themes/hakimi-deuteranopia-${flavor}.json`;
+  const vsCodeTheme = JSON.parse(fs.readFileSync(vsCodeThemeFile, 'utf8'));
+  const zedTheme = zedThemeFamily.themes.find((t) => t.appearance === flavor);
+  assert(zedTheme, `Zed theme for appearance ${flavor} not found!`);
 
-  // 1. Verify 4-zone background rules
-  const { colors } = theme;
-  console.log('1. Background 4-Zone Rule Verification:');
-  console.log(`   - TitleBar: ${colors['titleBar.activeBackground']}`);
-  console.log(`   - StatusBar: ${colors['statusBar.background']}`);
-  console.log(`   - SideBar:  ${colors['sideBar.background']}`);
-  console.log(`   - Panel:    ${colors['panel.background']}`);
-  console.log(`   - Editor:   ${colors['editor.background']}`);
-
+  // ---------------------------------------------------------------------------
+  // 1. VS Code 4-Zone Background Rules
+  // ---------------------------------------------------------------------------
+  console.log('1. VS Code 4-Zone Background Rule Verification:');
+  const vsColors = vsCodeTheme.colors;
   assert.strictEqual(
-    colors['titleBar.activeBackground'],
-    colors['statusBar.background'],
-    `TitleBar and StatusBar backgrounds must be identical in ${flavor}!`,
+    vsColors['titleBar.activeBackground'],
+    vsColors['statusBar.background'],
+    `VS Code: TitleBar and StatusBar backgrounds must be identical in ${flavor}!`,
   );
   assert.notStrictEqual(
-    colors['sideBar.background'],
-    colors['panel.background'],
-    `SideBar and Panel backgrounds should be distinct in ${flavor}!`,
+    vsColors['sideBar.background'],
+    vsColors['panel.background'],
+    `VS Code: SideBar and Panel backgrounds should be distinct in ${flavor}!`,
   );
   assert.strictEqual(
-    colors['editor.background'],
+    vsColors['editor.background'],
     tokens.bg.editor,
-    `Editor background must match tokens.bg.editor!`,
+    `VS Code: Editor background must match tokens.bg.editor!`,
   );
-  console.log('   ✓ 4-Zone background rules strictly satisfied.');
+  console.log('   ✓ VS Code 4-Zone background rules strictly satisfied.');
 
-  // 2. Verify no legacy Catppuccin color names exist
-  console.log('2. Zero Catppuccin Leaks Verification:');
-  const catppuccinTerms = [
-    'crust',
-    'mantle',
-    'surface0',
-    'surface1',
-    'surface2',
-    'rosewater',
-    'flamingo',
-    'mauve',
-    'sapphire',
-    'maroon',
-  ];
-  const themeJsonStr = JSON.stringify(theme);
+  // ---------------------------------------------------------------------------
+  // 2. Zed 4-Zone Background Rules & Connected Tabs
+  // ---------------------------------------------------------------------------
+  console.log('2. Zed 4-Zone Background & Connected Tab Rule Verification:');
+  const zedStyle = zedTheme.style;
+  assert.strictEqual(
+    zedStyle['title_bar.background'],
+    zedStyle['status_bar.background'],
+    `Zed: TitleBar and StatusBar backgrounds must be identical in ${flavor}!`,
+  );
+  assert.strictEqual(
+    zedStyle['tab_bar.background'],
+    zedStyle['title_bar.background'],
+    `Zed: TabBar background must match TitleBar (Zone 1 Chrome) in ${flavor}!`,
+  );
+  assert.strictEqual(
+    zedStyle['tab.active_background'],
+    zedStyle['editor.background'],
+    `Zed: Active Tab must seamlessly match Editor background in ${flavor}!`,
+  );
+  assert.strictEqual(
+    zedStyle['editor.background'],
+    tokens.bg.editor,
+    `Zed: Editor background must match tokens.bg.editor!`,
+  );
+  assert.strictEqual(
+    zedStyle['panel.background'],
+    tokens.bg.sidebar,
+    `Zed: Project panel background must match tokens.bg.sidebar!`,
+  );
+  console.log('   ✓ Zed 4-Zone background rules strictly satisfied.');
+
+  // ---------------------------------------------------------------------------
+  // 3. Zero Catppuccin Leaks Verification
+  // ---------------------------------------------------------------------------
+  console.log('3. Zero Catppuccin Leaks Verification:');
+  const vsCodeStr = JSON.stringify(vsCodeTheme);
+  const zedStr = JSON.stringify(zedTheme);
+
   for (const term of catppuccinTerms) {
     assert(
-      !themeJsonStr.includes(`"${term}"`),
-      `Found legacy Catppuccin token "${term}" in ${themeFile}!`,
+      !vsCodeStr.includes(`"${term}"`),
+      `Found legacy Catppuccin token "${term}" in ${vsCodeThemeFile}!`,
+    );
+    assert(
+      !zedStr.includes(`"${term}"`),
+      `Found legacy Catppuccin token "${term}" in ${zedThemeFamilyFile}!`,
     );
   }
-  console.log('   ✓ Zero Catppuccin keys or scopes detected.');
+  console.log('   ✓ Zero Catppuccin keys or scopes detected in VS Code and Zed.');
 
-  // 3. APCA Contrast Verification
-  console.log('3. APCA Accessibility Verification (vs Editor Canvas):');
+  // ---------------------------------------------------------------------------
+  // 4. Zed Official Tree-sitter Captures Coverage
+  // ---------------------------------------------------------------------------
+  console.log('4. Zed Official Tree-sitter Captures Coverage Verification:');
+  const zedSyntax = zedStyle.syntax;
+  for (const capture of requiredZedCaptures) {
+    assert(
+      zedSyntax[capture] !== undefined,
+      `Missing required Tree-sitter capture "${capture}" in Zed ${flavor} theme!`,
+    );
+    assert(
+      typeof zedSyntax[capture].color === 'string' &&
+        zedSyntax[capture].color.startsWith('#'),
+      `Capture "${capture}" does not have a valid hex color in Zed ${flavor} theme!`,
+    );
+  }
+  console.log(`   ✓ All ${requiredZedCaptures.length} official Zed captures strictly covered.`);
+
+  // ---------------------------------------------------------------------------
+  // 5. APCA Contrast Verification
+  // ---------------------------------------------------------------------------
+  console.log('5. APCA Accessibility Verification (vs Editor Canvas):');
   const bg = tokens.bg.editor;
   const fg = tokens.fg.default;
   const fgScore = Math.abs(apcaLc(fg, bg));
@@ -69,15 +181,17 @@ for (const flavor of ['dark', 'light']) {
   assert(fgScore >= 60, `Foreground text contrast too low: ${fgScore}`);
 
   for (const [name, color] of Object.entries(tokens.syntax)) {
-    if (name === 'comment') continue; // Comments can have lower contrast
+    if (name === 'comment') continue;
     const score = Math.abs(apcaLc(color, bg));
     console.log(`   - Syntax ${name} (${color}): Lc ${score.toFixed(1)}`);
     assert(score >= 45, `Syntax ${name} contrast too low: ${score}`);
   }
   console.log('   ✓ All key foregrounds pass APCA readability criteria.');
 
-  // 4. Deuteranopia Color Difference Verification
-  console.log('4. Deuteranopia Simulated Discriminability:');
+  // ---------------------------------------------------------------------------
+  // 6. Deuteranopia Color Difference Verification
+  // ---------------------------------------------------------------------------
+  console.log('6. Deuteranopia Simulated Discriminability:');
   const syntaxPairs = [
     ['keyword', 'function'],
     ['function', 'type'],
@@ -102,5 +216,5 @@ for (const flavor of ['dark', 'light']) {
 }
 
 console.log('\n========================================');
-console.log('All tests passed successfully!');
+console.log('All VS Code & Zed verifications passed successfully!');
 console.log('========================================');
