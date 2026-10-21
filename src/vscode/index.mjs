@@ -1,8 +1,6 @@
-// Aligned with catppuccin-vsc/src/theme/index.ts
-import { SYNTAX_PALETTE, TERMINAL_PALETTE } from '../syntaxPalette.mjs';
-import { getSemanticTokens } from './semanticTokens.mjs';
-import { getTokenColors } from './tokenColors.mjs';
-import { getUiColors } from './uiColors.mjs';
+import { getThemeTokens } from '../tokens/index.mjs';
+import { getWorkbenchColors } from './workbenchColors.mjs';
+import { getSyntaxHighlighting } from './syntaxHighlighting.mjs';
 
 export const manifest = {
   publisher: 'hakimi',
@@ -40,39 +38,22 @@ export const manifest = {
   files: ['themes/*.json', 'images/icon.png', 'README.md', 'LICENSE'],
 };
 
-export const defaultOptions = {
-  accent: 'sapphire',
-  boldKeywords: true,
-  italicComments: true,
-  italicKeywords: true,
-  workbenchMode: 'default',
-  bracketMode: 'rainbow',
-  extraBordersEnabled: false,
-};
-
-export const compileTheme = (flavor, palette, options = defaultOptions) => {
-  const isLatte = flavor === 'light';
-  const paletteAnsi = TERMINAL_PALETTE[flavor];
-
-  const context = {
-    flavor,
-    palette,
-    paletteAnsi,
-    options,
-    isLatte,
-  };
-
-  const syntaxContext = {
-    ...context,
-    palette: SYNTAX_PALETTE[flavor],
-  };
+/**
+ * Compiles a VS Code theme JSON object for the given flavor ('light' | 'dark').
+ * Uses pure Semantic Tokens and Workbench/Syntax mappings conforming to VS Code specifications.
+ */
+export function compileTheme(flavor) {
+  const isLight = flavor === 'light';
+  const tokens = getThemeTokens(flavor);
+  const colors = getWorkbenchColors(tokens);
+  const { tokenColors, semanticTokenColors } = getSyntaxHighlighting(tokens);
 
   return {
-    name: `Hakimi Deuteranopia ${isLatte ? 'Light' : 'Dark'}`,
-    type: isLatte ? 'light' : 'dark',
-    colors: getUiColors(context),
+    name: `Hakimi Deuteranopia ${isLight ? 'Light' : 'Dark'}`,
+    type: isLight ? 'light' : 'dark',
+    colors,
     semanticHighlighting: true,
-    semanticTokenColors: getSemanticTokens(syntaxContext),
-    tokenColors: getTokenColors(syntaxContext),
+    semanticTokenColors,
+    tokenColors,
   };
-};
+}

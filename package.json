@@ -45,7 +45,7 @@
   ],
   "scripts": {
     "build": "node scripts/build.mjs",
-    "verify": "node scripts/test.mjs && node scripts/verify-consistency.mjs",
+    "verify": "node scripts/test.mjs && node scripts/verify-tokens.mjs",
     "test": "npm run build && npm run verify",
     "check": "npm test && npm run lint",
     "fmt": "biome format --write .",

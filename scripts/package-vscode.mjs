@@ -7,15 +7,37 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const pkg = JSON.parse(
   fs.readFileSync(path.join(root, 'package.json'), 'utf8'),
 );
-const cli = path.join(root, 'node_modules/@vscode/vsce/vsce');
-const output = path.join(root, 'artifacts', `${pkg.name}-${pkg.version}.vsix`);
-const result = spawnSync(
-  process.execPath,
-  [cli, 'package', '--no-dependencies', '--out', output],
-  {
-    cwd: path.join(root, 'vscode'),
-    stdio: 'inherit',
-  },
-);
+
+const artifactsDir = path.join(root, 'artifacts');
+if (!fs.existsSync(artifactsDir)) {
+  fs.mkdirSync(artifactsDir, { recursive: true });
+}
+
+const output = path.join(artifactsDir, `${pkg.name}-${pkg.version}.vsix`);
+const directCli = path.join(root, 'node_modules/@vscode/vsce/vsce');
+
+let result;
+if (fs.existsSync(directCli)) {
+  result = spawnSync(
+    process.execPath,
+    [directCli, 'package', '--no-dependencies', '--out', output],
+    {
+      cwd: path.join(root, 'vscode'),
+      stdio: 'inherit',
+    },
+  );
+} else {
+  const npxCmd = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+  result = spawnSync(
+    npxCmd,
+    ['@vscode/vsce', 'package', '--no-dependencies', '--out', output],
+    {
+      cwd: path.join(root, 'vscode'),
+      stdio: 'inherit',
+      shell: process.platform === 'win32',
+    },
+  );
+}
+
 if (result.error) throw result.error;
 process.exit(result.status ?? 1);
