@@ -53,6 +53,7 @@
     "lint:fix": "biome lint --write .",
     "package:vscode": "npm run check && node scripts/package-vscode.mjs",
     "install:zed": "node scripts/install-zed.mjs",
+    "install:obsidian": "node scripts/install-obsidian.mjs",
     "package:npm": "npm run check && npm pack --ignore-scripts --pack-destination artifacts",
     "prepack": "npm run check"
   }

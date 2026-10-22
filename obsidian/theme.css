@@ -38,16 +38,29 @@
 
   /* --- Typography & Foregrounds --- */
   --text-normal: #e0e0e0;
+  --text-normal-rgb: 224, 224, 224;
   --text-muted: #99a0a8;
+  --text-muted-rgb: 153, 160, 168;
   --text-faint: #6c7880;
   --text-on-accent: #141c21;
   --text-on-accent-inverted: #e0e0e0;
-  --text-selection: #f5f7fa;
-  --text-highlight-bg: #7ab2ff59;
-  --text-highlight-bg-active: #7ab2ff2e;
+  --text-selection: #7ab2ff59;
+  --text-highlight-bg: rgba(var(--color-yellow-rgb), 0.4);
+  --text-highlight-bg-active: rgba(var(--color-orange-rgb), 0.6);
   --text-accent: #7ab2ff;
   --text-accent-hover: #79b8ff;
   --caret-color: #7ab2ff;
+
+  /* --- Headings & Inline Titles --- */
+  --inline-title-color: #e0e0e0;
+  --inline-title-weight: 700;
+  --heading-formatting: #6c7880;
+  --h1-color: #e0e0e0;
+  --h2-color: #e0e0e0;
+  --h3-color: #e0e0e0;
+  --h4-color: #e0e0e0;
+  --h5-color: #e0e0e0;
+  --h6-color: #e0e0e0;
 
   /* --- Neutral Base Scale (--color-base-*) --- */
   --color-base-10: #1f2a30;
@@ -104,15 +117,26 @@
   --tab-text-color: #99a0a8;
   --tab-text-color-active: #f5f7fa;
   --tab-text-color-focused: #e0e0e0;
+  --tab-text-color-focused-active: #f5f7fa;
   --tab-outline-color: transparent;
   --tab-divider-color: #33424a;
+
+  /* --- Scrollbars --- */
+  --scrollbar-bg: transparent;
+  --scrollbar-thumb-bg: #33424a;
+  --scrollbar-active-thumb-bg: #41535c;
 
   /* --- Navigation & File Explorer --- */
   --nav-item-color: #99a0a8;
   --nav-item-color-hover: #e0e0e0;
   --nav-item-color-active: #f5f7fa;
+  --nav-item-color-selected: #f5f7fa;
   --nav-item-background-hover: #ffffff0d;
   --nav-item-background-active: #ffffff12;
+  --nav-item-background-selected: #ffffff12;
+  --nav-indentation-guide-color: #33424a;
+  --nav-collapse-icon-color: #99a0a8;
+  --nav-collapse-icon-color-collapsed: #6c7880;
 
   /* --- Code Blocks & Syntax Variables --- */
   --code-background: #2a363c;
@@ -141,47 +165,66 @@
   --link-unresolved-decoration-style: dashed;
   --link-unresolved-decoration-color: #33424a;
 
-  /* --- Built-in Callout Type Colors --- */
-  --callout-default: var(--color-blue);
-  --callout-note: var(--color-blue);
-  --callout-summary: var(--color-blue);
-  --callout-info: var(--color-cyan);
-  --callout-todo: var(--color-cyan);
-  --callout-tip: var(--color-green);
-  --callout-check: var(--color-green);
-  --callout-done: var(--color-green);
-  --callout-question: var(--color-yellow);
-  --callout-help: var(--color-yellow);
-  --callout-faq: var(--color-yellow);
-  --callout-warning: var(--color-yellow);
-  --callout-caution: var(--color-yellow);
-  --callout-attention: var(--color-yellow);
-  --callout-failure: var(--color-red);
-  --callout-fail: var(--color-red);
-  --callout-missing: var(--color-red);
-  --callout-danger: var(--color-red);
-  --callout-error: var(--color-red);
-  --callout-bug: var(--color-red);
-  --callout-example: var(--color-purple);
-  --callout-quote: var(--text-muted);
+  --callout-default: var(--color-blue-rgb);
+  --callout-summary: var(--color-blue-rgb);
+  --callout-info: var(--color-cyan-rgb);
+  --callout-todo: var(--color-cyan-rgb);
+  --callout-tip: var(--color-green-rgb);
+  --callout-success: var(--color-green-rgb);
+  --callout-question: var(--color-yellow-rgb);
+  --callout-warning: var(--color-yellow-rgb);
+  --callout-fail: var(--color-red-rgb);
+  --callout-error: var(--color-red-rgb);
+  --callout-bug: var(--color-red-rgb);
+  --callout-example: var(--color-purple-rgb);
+  --callout-quote: var(--text-muted-rgb);
 
   /* --- Tables & Lists --- */
   --table-border-color: #33424a;
+  --table-border-width: 1px;
   --table-header-background: #2a363c;
-  --table-row-even-background: transparent;
-  --table-row-odd-background: #ffffff0d;
+  --table-header-background-hover: #ffffff0d;
+  --table-header-border-color: #33424a;
+  --table-header-border-width: 1px;
+  --table-header-color: #f5f7fa;
+  --table-text-color: #e0e0e0;
+  --table-background: transparent;
+  --table-column-alt-background: #ffffff0d;
   --list-marker-color: #99a0a8;
 
   /* --- Tags, Checkboxes & Blockquotes --- */
   --tag-color: #7ab2ff;
+  --tag-color-hover: #7ab2ff;
   --tag-background: #ffffff12;
   --tag-background-hover: #ffffff17;
   --tag-border-color: #33424a;
+  --tag-border-color-hover: #41535c;
+  --tag-border-width: 1px;
+  --tag-radius: var(--radius-s);
+  --tag-padding-x: 0.5em;
+  --tag-padding-y: 0.15em;
   --checkbox-color: #7ab2ff;
+  --checkbox-color-hover: #79b8ff;
   --checkbox-marker-color: #141c21;
   --checkbox-border-color: #41535c;
+  --checkbox-border-color-hover: #7ab2ff;
+  --checklist-done-color: #6c7880;
+  --checklist-done-decoration: line-through;
   --blockquote-border-color: #7ab2ff;
   --blockquote-border-thickness: 2px;
+  --blockquote-color: #99a0a8;
+  --blockquote-background-color: transparent;
+
+  /* --- Properties (Metadata) --- */
+  --metadata-background: transparent;
+  --metadata-border-color: #33424a;
+  --metadata-divider-color: #33424a;
+  --metadata-divider-color-hover: #41535c;
+  --metadata-divider-color-focus: #7ab2ff;
+  --metadata-property-background-hover: #ffffff0d;
+  --metadata-property-background-active: #ffffff17;
+  --metadata-label-text-color: #99a0a8;
+  --metadata-label-text-color-hover: #e0e0e0;
 }
 
 .theme-light {
@@ -217,16 +260,29 @@
 
   /* --- Typography & Foregrounds --- */
   --text-normal: #45494c;
+  --text-normal-rgb: 69, 73, 76;
   --text-muted: #6f706f;
+  --text-muted-rgb: 111, 112, 111;
   --text-faint: #9e9085;
   --text-on-accent: #ffffff;
   --text-on-accent-inverted: #45494c;
-  --text-selection: #1f2328;
-  --text-highlight-bg: #336fd640;
-  --text-highlight-bg-active: #336fd61f;
+  --text-selection: #336fd640;
+  --text-highlight-bg: rgba(var(--color-yellow-rgb), 0.4);
+  --text-highlight-bg-active: rgba(var(--color-orange-rgb), 0.6);
   --text-accent: #336fd6;
   --text-accent-hover: #0842a0;
   --caret-color: #336fd6;
+
+  /* --- Headings & Inline Titles --- */
+  --inline-title-color: #45494c;
+  --inline-title-weight: 700;
+  --heading-formatting: #9e9085;
+  --h1-color: #45494c;
+  --h2-color: #45494c;
+  --h3-color: #45494c;
+  --h4-color: #45494c;
+  --h5-color: #45494c;
+  --h6-color: #45494c;
 
   /* --- Neutral Base Scale (--color-base-*) --- */
   --color-base-10: #f9e4d2;
@@ -283,15 +339,26 @@
   --tab-text-color: #6f706f;
   --tab-text-color-active: #1f2328;
   --tab-text-color-focused: #45494c;
+  --tab-text-color-focused-active: #1f2328;
   --tab-outline-color: transparent;
   --tab-divider-color: #dec9b7;
+
+  /* --- Scrollbars --- */
+  --scrollbar-bg: transparent;
+  --scrollbar-thumb-bg: #dec9b7;
+  --scrollbar-active-thumb-bg: #c4af9d;
 
   /* --- Navigation & File Explorer --- */
   --nav-item-color: #6f706f;
   --nav-item-color-hover: #45494c;
   --nav-item-color-active: #1f2328;
+  --nav-item-color-selected: #1f2328;
   --nav-item-background-hover: #0000000a;
   --nav-item-background-active: #0000000f;
+  --nav-item-background-selected: #0000000f;
+  --nav-indentation-guide-color: #dec9b7;
+  --nav-collapse-icon-color: #6f706f;
+  --nav-collapse-icon-color-collapsed: #9e9085;
 
   /* --- Code Blocks & Syntax Variables --- */
   --code-background: #fff0de;
@@ -320,47 +387,66 @@
   --link-unresolved-decoration-style: dashed;
   --link-unresolved-decoration-color: #dec9b7;
 
-  /* --- Built-in Callout Type Colors --- */
-  --callout-default: var(--color-blue);
-  --callout-note: var(--color-blue);
-  --callout-summary: var(--color-blue);
-  --callout-info: var(--color-cyan);
-  --callout-todo: var(--color-cyan);
-  --callout-tip: var(--color-green);
-  --callout-check: var(--color-green);
-  --callout-done: var(--color-green);
-  --callout-question: var(--color-yellow);
-  --callout-help: var(--color-yellow);
-  --callout-faq: var(--color-yellow);
-  --callout-warning: var(--color-yellow);
-  --callout-caution: var(--color-yellow);
-  --callout-attention: var(--color-yellow);
-  --callout-failure: var(--color-red);
-  --callout-fail: var(--color-red);
-  --callout-missing: var(--color-red);
-  --callout-danger: var(--color-red);
-  --callout-error: var(--color-red);
-  --callout-bug: var(--color-red);
-  --callout-example: var(--color-purple);
-  --callout-quote: var(--text-muted);
+  --callout-default: var(--color-blue-rgb);
+  --callout-summary: var(--color-blue-rgb);
+  --callout-info: var(--color-cyan-rgb);
+  --callout-todo: var(--color-cyan-rgb);
+  --callout-tip: var(--color-green-rgb);
+  --callout-success: var(--color-green-rgb);
+  --callout-question: var(--color-yellow-rgb);
+  --callout-warning: var(--color-yellow-rgb);
+  --callout-fail: var(--color-red-rgb);
+  --callout-error: var(--color-red-rgb);
+  --callout-bug: var(--color-red-rgb);
+  --callout-example: var(--color-purple-rgb);
+  --callout-quote: var(--text-muted-rgb);
 
   /* --- Tables & Lists --- */
   --table-border-color: #dec9b7;
+  --table-border-width: 1px;
   --table-header-background: #fff0de;
-  --table-row-even-background: transparent;
-  --table-row-odd-background: #0000000a;
+  --table-header-background-hover: #0000000a;
+  --table-header-border-color: #dec9b7;
+  --table-header-border-width: 1px;
+  --table-header-color: #1f2328;
+  --table-text-color: #45494c;
+  --table-background: transparent;
+  --table-column-alt-background: #0000000a;
   --list-marker-color: #6f706f;
 
   /* --- Tags, Checkboxes & Blockquotes --- */
   --tag-color: #336fd6;
+  --tag-color-hover: #336fd6;
   --tag-background: #0000000f;
   --tag-background-hover: #00000014;
   --tag-border-color: #dec9b7;
+  --tag-border-color-hover: #c4af9d;
+  --tag-border-width: 1px;
+  --tag-radius: var(--radius-s);
+  --tag-padding-x: 0.5em;
+  --tag-padding-y: 0.15em;
   --checkbox-color: #336fd6;
+  --checkbox-color-hover: #0842a0;
   --checkbox-marker-color: #ffffff;
   --checkbox-border-color: #c4af9d;
+  --checkbox-border-color-hover: #336fd6;
+  --checklist-done-color: #9e9085;
+  --checklist-done-decoration: line-through;
   --blockquote-border-color: #336fd6;
   --blockquote-border-thickness: 2px;
+  --blockquote-color: #6f706f;
+  --blockquote-background-color: transparent;
+
+  /* --- Properties (Metadata) --- */
+  --metadata-background: transparent;
+  --metadata-border-color: #dec9b7;
+  --metadata-divider-color: #dec9b7;
+  --metadata-divider-color-hover: #c4af9d;
+  --metadata-divider-color-focus: #336fd6;
+  --metadata-property-background-hover: #0000000a;
+  --metadata-property-background-active: #00000014;
+  --metadata-label-text-color: #6f706f;
+  --metadata-label-text-color-hover: #45494c;
 }
 
 /* ------------------Window Chrome & Connected Tabs Rules------------------- */
@@ -482,13 +568,13 @@ pre > code {
 
 /* Callouts: Clean borders and accessible typography */
 .callout {
-  border-left: 3px solid var(--callout-color);
+  border-left: 3px solid rgb(var(--callout-color));
   border-radius: var(--radius-s);
-  background-color: rgba(var(--callout-color-rgb, var(--interactive-accent-rgb)), 0.08);
+  background-color: rgba(var(--callout-color), 0.08);
 }
 
 .callout-title {
-  color: var(--callout-color);
+  color: rgb(var(--callout-color));
   font-weight: 600;
 }
 
@@ -496,12 +582,13 @@ pre > code {
 .tag {
   color: var(--tag-color);
   background-color: var(--tag-background);
-  border: 1px solid var(--tag-border-color);
-  border-radius: var(--radius-s);
+  border: var(--tag-border-width, 1px) solid var(--tag-border-color);
+  border-radius: var(--tag-radius, var(--radius-s));
   padding: 0.1em 0.4em;
   transition: background-color 0.15s ease;
 }
 
 .tag:hover {
   background-color: var(--tag-background-hover);
+  border-color: var(--tag-border-color-hover);
 }

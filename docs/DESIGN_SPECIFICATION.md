@@ -255,7 +255,17 @@ Tree-sitter 采用自右向左评估的多重捕获回退机制（例如 `(type_
 ### 8.3 绿色盲友好的 Extended Colors 与伴生 `-rgb` 变量
 为 `--color-red`, `--color-orange`, `--color-yellow`, `--color-green`, `--color-cyan`, `--color-blue`, `--color-purple`, `--color-pink` 分配绿色盲校准色相，并同步派生 `-rgb` 三通道变量供原生 `rgba()` 调用。
 
-### 8.4 CodeMirror 6 与 Prism 语法双重编码
+### 8.4 文本高亮与选区变量标准对齐 (Selection & Highlight)
+- **选区背景色**：`--text-selection` 严格绑定至半透明感知的选区底色 `tokens.bg.selection`（亮色 `#336fd640`，暗色 `#7ab2ff59`），杜绝因误设为纯色高对比前景文字色而引发的“实心黑框”遮挡异常。
+- **正文高亮色**：`--text-highlight-bg` 使用绿色盲高敏感度琥珀黄通道 `rgba(var(--color-yellow-rgb), 0.4)`，活动项 `--text-highlight-bg-active` 使用暖橙通道 `rgba(var(--color-orange-rgb), 0.6)`。
+- **文档标题与排版**：严格对齐 `--inline-title-color` 与 `--h1-color` ~ `--h6-color` 为 `tokens.fg.default`，`--heading-formatting` 保持静默 `tokens.fg.subtle`。
+
+### 8.5 官方原生组件全字段对齐规范
+- **Callout 原生架构**：所有内置类型色（`--callout-default`, `--callout-info`, `--callout-warning`, `--callout-error`, `--callout-success` 等）全部输出官方要求的原始 RGB 通道三元组（`var(--color-*-rgb)`），使原生 `rgba(var(--callout-color), ...)` 正常渲染，彻底消除 hex 直传导致的语法错误。
+- **表格系统**：对齐 `--table-column-alt-background`, `--table-header-background`, `--table-header-color`, `--table-border-color` 等官方字段。
+- **导航与滚动条**：对齐 `--nav-item-*`, `--nav-indentation-guide-color`, `--scrollbar-*`。
+
+### 8.6 CodeMirror 6 与 Prism 语法双重编码
 - 实时预览模式（`.cm-s-obsidian`）与阅读视图（Prism `.token.*`）共享统一的 `--code-*` 变量体系。
 - 延续色彩 × 字形双重编码：关键字粗体、注释斜体、对象属性鸭翅绿（Teal，与普通变量完全解耦）。
 

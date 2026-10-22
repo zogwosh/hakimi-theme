@@ -186,6 +186,8 @@ const requiredObsidianVariables = [
   '--text-normal',
   '--text-muted',
   '--text-faint',
+  '--text-selection',
+  '--inline-title-color',
   '--interactive-accent',
   '--code-background',
   '--code-keyword',

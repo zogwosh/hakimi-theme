@@ -186,6 +186,21 @@ for (const flavor of ['dark', 'light']) {
     'transparent',
     `Obsidian: Tab outline color must be transparent to eliminate double bounding boxes!`,
   );
+  assert.strictEqual(
+    extractVar('--text-selection'),
+    tokens.bg.selection,
+    `Obsidian: Text selection background must match tokens.bg.selection in ${flavor}!`,
+  );
+  assert.strictEqual(
+    extractVar('--inline-title-color'),
+    tokens.fg.default,
+    `Obsidian: Inline title color must match tokens.fg.default in ${flavor}!`,
+  );
+  assert.strictEqual(
+    extractVar('--callout-default'),
+    'var(--color-blue-rgb)',
+    `Obsidian: Callout default must reference RGB triplet in ${flavor}!`,
+  );
   console.log('   ✓ Obsidian 4-Zone background rules strictly satisfied.');
 
   // ---------------------------------------------------------------------------

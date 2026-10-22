@@ -22,47 +22,67 @@ export function compileComponentVariables(tokens) {
     '  --link-unresolved-decoration-style: dashed;',
     `  --link-unresolved-decoration-color: ${tokens.border.subtle};`,
     '',
-    '  /* --- Built-in Callout Type Colors --- */',
-    '  --callout-default: var(--color-blue);',
-    '  --callout-note: var(--color-blue);',
-    '  --callout-summary: var(--color-blue);',
-    '  --callout-info: var(--color-cyan);',
-    '  --callout-todo: var(--color-cyan);',
-    '  --callout-tip: var(--color-green);',
-    '  --callout-check: var(--color-green);',
-    '  --callout-done: var(--color-green);',
-    '  --callout-question: var(--color-yellow);',
-    '  --callout-help: var(--color-yellow);',
-    '  --callout-faq: var(--color-yellow);',
-    '  --callout-warning: var(--color-yellow);',
-    '  --callout-caution: var(--color-yellow);',
-    '  --callout-attention: var(--color-yellow);',
-    '  --callout-failure: var(--color-red);',
-    '  --callout-fail: var(--color-red);',
-    '  --callout-missing: var(--color-red);',
-    '  --callout-danger: var(--color-red);',
-    '  --callout-error: var(--color-red);',
-    '  --callout-bug: var(--color-red);',
-    '  --callout-example: var(--color-purple);',
-    '  --callout-quote: var(--text-muted);',
+    /* --- Built-in Callout Type Colors (RGB triplets for rgba mixing) --- */
+    '  --callout-default: var(--color-blue-rgb);',
+    '  --callout-summary: var(--color-blue-rgb);',
+    '  --callout-info: var(--color-cyan-rgb);',
+    '  --callout-todo: var(--color-cyan-rgb);',
+    '  --callout-tip: var(--color-green-rgb);',
+    '  --callout-success: var(--color-green-rgb);',
+    '  --callout-question: var(--color-yellow-rgb);',
+    '  --callout-warning: var(--color-yellow-rgb);',
+    '  --callout-fail: var(--color-red-rgb);',
+    '  --callout-error: var(--color-red-rgb);',
+    '  --callout-bug: var(--color-red-rgb);',
+    '  --callout-example: var(--color-purple-rgb);',
+    '  --callout-quote: var(--text-muted-rgb);',
     '',
     '  /* --- Tables & Lists --- */',
     `  --table-border-color: ${tokens.border.subtle};`,
+    '  --table-border-width: 1px;',
     `  --table-header-background: ${tokens.bg.panel};`,
-    '  --table-row-even-background: transparent;',
-    `  --table-row-odd-background: ${tokens.bg.surfaceHover};`,
+    `  --table-header-background-hover: ${tokens.bg.surfaceHover};`,
+    `  --table-header-border-color: ${tokens.border.subtle};`,
+    '  --table-header-border-width: 1px;',
+    `  --table-header-color: ${tokens.fg.highContrast};`,
+    `  --table-text-color: ${tokens.fg.default};`,
+    '  --table-background: transparent;',
+    `  --table-column-alt-background: ${tokens.bg.surfaceHover};`,
     `  --list-marker-color: ${tokens.fg.muted};`,
     '',
     '  /* --- Tags, Checkboxes & Blockquotes --- */',
     `  --tag-color: ${tokens.fg.accent};`,
+    `  --tag-color-hover: ${tokens.fg.accent};`,
     `  --tag-background: ${tokens.bg.surfaceSelected};`,
     `  --tag-background-hover: ${tokens.bg.surfaceActive};`,
     `  --tag-border-color: ${tokens.border.subtle};`,
+    `  --tag-border-color-hover: ${tokens.border.strong};`,
+    '  --tag-border-width: 1px;',
+    '  --tag-radius: var(--radius-s);',
+    '  --tag-padding-x: 0.5em;',
+    '  --tag-padding-y: 0.15em;',
     `  --checkbox-color: ${tokens.fg.accent};`,
+    `  --checkbox-color-hover: ${linkHover};`,
     `  --checkbox-marker-color: ${tokens.fg.onAccent};`,
     `  --checkbox-border-color: ${tokens.border.strong};`,
+    `  --checkbox-border-color-hover: ${tokens.border.focus};`,
+    `  --checklist-done-color: ${tokens.fg.subtle};`,
+    '  --checklist-done-decoration: line-through;',
     `  --blockquote-border-color: ${tokens.fg.accent};`,
     '  --blockquote-border-thickness: 2px;',
+    `  --blockquote-color: ${tokens.fg.muted};`,
+    '  --blockquote-background-color: transparent;',
+    '',
+    '  /* --- Properties (Metadata) --- */',
+    '  --metadata-background: transparent;',
+    `  --metadata-border-color: ${tokens.border.subtle};`,
+    `  --metadata-divider-color: ${tokens.border.subtle};`,
+    `  --metadata-divider-color-hover: ${tokens.border.strong};`,
+    `  --metadata-divider-color-focus: ${tokens.border.focus};`,
+    `  --metadata-property-background-hover: ${tokens.bg.surfaceHover};`,
+    `  --metadata-property-background-active: ${tokens.bg.surfaceActive};`,
+    `  --metadata-label-text-color: ${tokens.fg.muted};`,
+    `  --metadata-label-text-color-hover: ${tokens.fg.default};`,
   ].join('\n');
 }
 
@@ -82,13 +102,13 @@ export function compileComponentRules() {
 
 /* Callouts: Clean borders and accessible typography */
 .callout {
-  border-left: 3px solid var(--callout-color);
+  border-left: 3px solid rgb(var(--callout-color));
   border-radius: var(--radius-s);
-  background-color: rgba(var(--callout-color-rgb, var(--interactive-accent-rgb)), 0.08);
+  background-color: rgba(var(--callout-color), 0.08);
 }
 
 .callout-title {
-  color: var(--callout-color);
+  color: rgb(var(--callout-color));
   font-weight: 600;
 }
 
@@ -96,13 +116,14 @@ export function compileComponentRules() {
 .tag {
   color: var(--tag-color);
   background-color: var(--tag-background);
-  border: 1px solid var(--tag-border-color);
-  border-radius: var(--radius-s);
+  border: var(--tag-border-width, 1px) solid var(--tag-border-color);
+  border-radius: var(--tag-radius, var(--radius-s));
   padding: 0.1em 0.4em;
   transition: background-color 0.15s ease;
 }
 
 .tag:hover {
   background-color: var(--tag-background-hover);
+  border-color: var(--tag-border-color-hover);
 }`;
 }
