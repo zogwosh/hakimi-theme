@@ -16,6 +16,7 @@ export function createSemanticTokens({
   backgrounds,
   neutrals,
   chromatics,
+  terminalAnsi,
 }) {
   const isDark = mode === 'dark';
 
@@ -26,7 +27,7 @@ export function createSemanticTokens({
     border: createBorderTokens(neutrals, chromatics),
     intent: createIntentTokens(chromatics),
     syntax: createSyntaxTokens(chromatics, neutrals),
-    terminal: createTerminalTokens(backgrounds, neutrals, chromatics),
+    terminal: createTerminalTokens(backgrounds, neutrals, terminalAnsi),
   };
 }
 
@@ -107,25 +108,25 @@ function createSyntaxTokens(chromatics, neutrals) {
   };
 }
 
-function createTerminalTokens(backgrounds, neutrals, chromatics) {
+function createTerminalTokens(backgrounds, neutrals, terminalAnsi) {
   return {
     background: backgrounds.panel,
     foreground: neutrals.textDefault,
-    ansiBlack: neutrals.textSubtle,
-    ansiRed: chromatics.red,
-    ansiGreen: chromatics.teal,
-    ansiYellow: chromatics.amber,
-    ansiBlue: chromatics.blue,
-    ansiMagenta: chromatics.violet,
-    ansiCyan: chromatics.cyan,
-    ansiWhite: neutrals.textHighContrast,
-    ansiBrightBlack: neutrals.textMuted,
-    ansiBrightRed: chromatics.red,
-    ansiBrightGreen: chromatics.teal,
-    ansiBrightYellow: chromatics.amber,
-    ansiBrightBlue: chromatics.blue,
-    ansiBrightMagenta: chromatics.violet,
-    ansiBrightCyan: chromatics.cyan,
-    ansiBrightWhite: neutrals.textHighContrast,
+    ansiBlack: terminalAnsi.black,
+    ansiRed: terminalAnsi.red,
+    ansiGreen: terminalAnsi.green,
+    ansiYellow: terminalAnsi.yellow,
+    ansiBlue: terminalAnsi.blue,
+    ansiMagenta: terminalAnsi.magenta,
+    ansiCyan: terminalAnsi.cyan,
+    ansiWhite: terminalAnsi.white,
+    ansiBrightBlack: terminalAnsi.brightBlack,
+    ansiBrightRed: terminalAnsi.brightRed,
+    ansiBrightGreen: terminalAnsi.brightGreen,
+    ansiBrightYellow: terminalAnsi.brightYellow,
+    ansiBrightBlue: terminalAnsi.brightBlue,
+    ansiBrightMagenta: terminalAnsi.brightMagenta,
+    ansiBrightCyan: terminalAnsi.brightCyan,
+    ansiBrightWhite: terminalAnsi.brightWhite,
   };
 }

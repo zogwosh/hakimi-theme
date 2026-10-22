@@ -283,6 +283,67 @@ for (const flavor of ['dark', 'light']) {
     );
   }
   console.log('   ✓ Deuteranopia distinctiveness verified.');
+
+  // ---------------------------------------------------------------------------
+  // 8. Terminal ANSI 16-Color Palette Verification
+  // ---------------------------------------------------------------------------
+  console.log('8. Terminal ANSI 16-Color Palette Verification:');
+  const term = tokens.terminal;
+  const termBg = term.background;
+
+  const normalColors = [
+    ['Black', term.ansiBlack],
+    ['Red', term.ansiRed],
+    ['Green', term.ansiGreen],
+    ['Yellow', term.ansiYellow],
+    ['Blue', term.ansiBlue],
+    ['Magenta', term.ansiMagenta],
+    ['Cyan', term.ansiCyan],
+    ['White', term.ansiWhite],
+  ];
+
+  const brightColors = [
+    ['BrightBlack', term.ansiBrightBlack],
+    ['BrightRed', term.ansiBrightRed],
+    ['BrightGreen', term.ansiBrightGreen],
+    ['BrightYellow', term.ansiBrightYellow],
+    ['BrightBlue', term.ansiBrightBlue],
+    ['BrightMagenta', term.ansiBrightMagenta],
+    ['BrightCyan', term.ansiBrightCyan],
+    ['BrightWhite', term.ansiBrightWhite],
+  ];
+
+  for (let i = 0; i < 8; i++) {
+    const [normName, normCol] = normalColors[i];
+    const [brName, brCol] = brightColors[i];
+
+    // Guarantee Normal and Bright are never identical duplicates
+    assert.notStrictEqual(
+      normCol,
+      brCol,
+      `Terminal ${flavor}: ${normName} and ${brName} must have distinct colors!`,
+    );
+
+    const pairDiff = dEok(normCol, brCol);
+    console.log(`   - ΔE_OK(${normName}, ${brName}): ${pairDiff.toFixed(3)}`);
+    assert(
+      pairDiff >= 0.04,
+      `Terminal ${flavor}: Distinction between ${normName} and ${brName} too low (${pairDiff.toFixed(3)})!`,
+    );
+  }
+
+  // Yellow pair specific distinction under Deuteranopia simulation
+  const simYellow = deutan(term.ansiYellow, termBg);
+  const simBrightYellow = deutan(term.ansiBrightYellow, termBg);
+  const yellowDeutanDiff = dEok(simYellow, simBrightYellow);
+  console.log(
+    `   - ΔE_OK(Yellow, BrightYellow) under deutan: ${yellowDeutanDiff.toFixed(3)}`,
+  );
+  assert(
+    yellowDeutanDiff >= 0.05,
+    `Terminal ${flavor}: Yellow vs BrightYellow deutan distinction too low (${yellowDeutanDiff.toFixed(3)})!`,
+  );
+  console.log('   ✓ Terminal ANSI 16-color palette verified.');
 }
 
 console.log('\n========================================');

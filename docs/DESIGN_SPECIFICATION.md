@@ -16,7 +16,8 @@
 6. [两层语法渲染生态：LSP Semantic Tokens 与 TextMate](#六两层语法渲染生态lsp-semantic-tokens-与-textmate)
 7. [Zed Editor Tree-sitter 高精语法捕获与架构设计](#七zed-editor-tree-sitter-高精语法捕获与架构设计)
 8. [Obsidian 主题设计与官方 CSS Variables 架构](#八obsidian-主题设计与官方-css-variables-架构)
-9. [质量保障与自动化验证体系](#九质量保障与自动化验证体系)
+9. [终端 ANSI 16 色主题设计与无障碍规范 (Terminal ANSI Specification)](#九终端-ansi-16-色主题设计与无障碍规范-terminal-ansi-specification)
+10. [质量保障与自动化验证体系](#十质量保障与自动化验证体系)
 
 ---
 
@@ -260,7 +261,29 @@ Tree-sitter 采用自右向左评估的多重捕获回退机制（例如 `(type_
 
 ---
 
-## 九、质量保障与自动化验证体系
+## 九、终端 ANSI 16 色主题设计与无障碍规范 (Terminal ANSI Specification)
+
+终端环境（VT100 / XTerm）受限于 ANSI 16 个物理槽位（0-7 标准色 + 8-15 高亮色）。由于 CLI 程序无法任意自定 24-bit 颜色，终端主题必须在严格的 16 色槽位内承担全部信息表达与绿色盲辨识任务。
+
+### 9.1 浅色模式下的“语义反转”工程原理（Semantic Inversion）
+传统浅色终端常常面临“White 文字浅底融化”的问题。Hakimi 采取严密的语义反转架构：
+- **White (7) 与 Bright White (15)**：映射为深色文本（`tokens.fg.default` 与 `tokens.fg.highContrast`），使得任何强制输出 White 前景的 CLI 脚本在浅色背景上保持高达 $7.8:1 \sim 13.5:1$ 的高对比度。
+- **Black (0)**：映射为高对比深黑前景色，确保 `\e[30m` 字符绝不隐形。
+- **Bright Black (8)**：映射为 `textMuted`（`#6f706f`），完美胜任 `zsh-autosuggestions`、Fish 命令补全与弱化提示。
+
+### 9.2 绿色盲核心色差与 Yellow 专项加重工程
+- **绿色盲安全青绿（Green / Teal）**：无论暗色还是亮色，Green 槽位均使用高蓝光分量的 Teal 青绿（暗色 `#50c0b6` / 亮色 `#00747a`），与 Red 的感知色差 $\Delta E_{\text{OK}} \ge 0.11$，确保 `git status` 与 `git diff` 增删对比一目了然。
+- **Yellow 专项排版加重**：
+  - 传统浅色黄色在浅底上容易退化为无对比度的脏黄色，或者与深褐色混淆（$\Delta E < 0.03$）。
+  - Hakimi 采用“排版加重原则”：**Normal Yellow** 为清润中度金黄（`#8f6300`, $4.56:1$），**Bright Yellow** 为极深浓郁焦糖铜（`#4a2800`, $11.3:1$）。两者感知色差跃升至 **$\Delta E_{\text{OK}} = 0.224$**，彻底解决肉眼混淆痛点。
+
+### 9.3 Bright 梯度与招牌 Peach 暖桃色归位
+- 在暗色模式下，Bright 色阶通过 OKLCH 感知上浮 +10% 穿透力；
+- 将 **11 号槽（Bright Yellow）** 赋予 Hakimi 招牌桃色 **Peach（暗色 `#ff9536`）**，丰富终端暖色层级并强化双重编码。
+
+---
+
+## 十、质量保障与自动化验证体系
 
 所有关于色彩、空间与无障碍的规范，均被固化为自动化检验脚本：
 
@@ -269,9 +292,10 @@ Tree-sitter 采用自右向左评估的多重捕获回退机制（例如 `(type_
 npm run check
 ```
 
-流水线执行五大核心检查：
+流水线执行六大核心检查：
 1. **VS Code, Zed & Obsidian 4-Zone 背景空间推导检查**：自动验证三端各自的 TitleBar == StatusBar、SideBar 与 Panel 的离散度与明度梯度，以及连通标签页。
 2. **零泄漏验证（Zero Leaks）**：遍历生成的 VS Code、Zed 和 Obsidian 主题文件，确保不存在任何 Catppuccin 遗留名称（`ctp-`, `crust`, `mantle`, `surface*` 等）或未对齐的调色板。
 3. **Zed Tree-sitter 全量捕获断言**：自动化验证 43 项 Zed 官方捕获项 100% 具备有效十六进制色彩。
 4. **Obsidian 官方变量完整性验证**：自动化断言核心官方 Foundations、Chrome 与 Code 变量全部声明覆盖。
 5. **APCA 与 $\Delta E_{\text{OK}}$ 数学计算**：实时模拟绿色盲并计算欧氏距离，低于阈值自动报错中断打包。
+6. **终端 ANSI 16 色与色差全量断言**：确保全部 8 组 Normal 与 Bright 均有 $\ge 0.04$ 的明显色差，且 Yellow 对在绿色盲模拟下保持 $\Delta E_{\text{OK}} \ge 0.05$。
