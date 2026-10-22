@@ -1,6 +1,6 @@
 {
   "name": "hakimi-deutan-theme",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Deuteranopia-focused color tokens and themes for VS Code, Zed, and Obsidian",
   "type": "module",
   "keywords": [
